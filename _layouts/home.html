@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.css" />
+</head>
+<body>
+    <img src="/assets/images/background.jpg" id="background" />
+    <div id="background-mask"></div>
+    <div class="flex" style="height: 100%;">
+        <div class="nav-left">
+            {% include posts.html %}
+        </div>
+        <div class="flex-1" style="overflow-y: auto; padding: 15px;">
+            {{content}}
+        </div>
+    </div>
+    <script src="/assets/js/background.js"></script>
+</body>
+</html>

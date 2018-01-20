@@ -1,0 +1,7 @@
+<ul class="posts">
+{% for post in site.posts %}
+    <a href="{{ post.url }}">
+        <li>{{ post.title }}</li>
+    </a>
+{% endfor %}
+</ul>
