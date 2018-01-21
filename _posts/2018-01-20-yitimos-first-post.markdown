@@ -2,10 +2,9 @@
 layout: post
 title:  "Yitimo's first post!"
 date:   2018-01-20 13:45:23 +0800
+author: "yitimo"
 categories: jekyll update
 ---
-
-# 我是大标题
 
 我是摘要
 
