@@ -24,3 +24,6 @@ github_username:  yitimo
 markdown: kramdown
 
 exclude: [desc.md]
+
+plugins:
+  - jekyll-seo-tag
