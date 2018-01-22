@@ -22,14 +22,15 @@
 <body>
     <img src="/assets/images/background.jpg" id="background" />
     <div id="background-mask"></div>
-    <div class="flex" style="height: 100%;">
-        <div class="nav-left">
-            {% include posts.html %}
-        </div>
-        <div class="flex-1" style="overflow-y: auto; padding: 15px;">
-            {{content}}
+    <div class="home-head flex">
+        <img src="/assets/images/yitimo.jpg" class="avater" />
+        <div class="flex-1 info">
+            Yitimo's Blog
         </div>
     </div>
-    <script src="/assets/js/background.js"></script>
+    <div class="home-body">
+        {{content}}
+    </div>
+    <script src="/assets/js/init.js"></script>
 </body>
 </html>

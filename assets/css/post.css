@@ -3,7 +3,7 @@ html, body {
     box-sizing: border-box;
     color: #ffffff;
     height: 100%;width: 100%;
-    max-width: 1024px;
+    max-width: 960px;
 }
 .post-date {
     text-align: center;
