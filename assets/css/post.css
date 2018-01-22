@@ -130,7 +130,7 @@ code.highlighter-rouge {
 div.highlighter-rouge {
     margin: 15px 0;
     padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.8);
     color: #000000;
     border-radius: 4px;
     overflow-x: auto;
@@ -152,4 +152,41 @@ div.highlighter-rouge {
     height: 10px;width: 10px;
     border-radius: 0;
     background-color: #666666;
+}
+table {
+    margin: 15px auto;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+tr {
+    border-top: 1px solid #c6cbd1;
+    background: rgba(50, 50, 50, 0.5);
+}
+tr:nth-child(2n) {
+    background: rgba(0, 0, 0, 0.5);
+}
+th {
+    font-weight: 600;
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+/* code part */
+.language-javascript code .kd,.language-javascript  code .k {
+    color: #0000ff;
+}
+.language-javascript code .s1 {
+    color: #a31515;
+}
+.language-javascript code .mi {
+    color: #09885a;
+}
+.language-javascript code .c1,.language-javascript  code .cm {
+    color: #008000;
 }

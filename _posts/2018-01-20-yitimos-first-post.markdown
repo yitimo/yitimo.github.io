@@ -26,5 +26,7 @@ categories: jekyll update
 
 ``` javascript
 console.log('yitimo !');
-console.log('long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !long yitimo !');
+console.log('lo!long yitimo !');
+let i = 1;
+var j = i.toString();
 ```
