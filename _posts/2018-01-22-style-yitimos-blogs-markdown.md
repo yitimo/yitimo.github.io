@@ -1,9 +1,14 @@
 ---
 layout: post
-title:  "Style yitimo's blog's markdown"
+title:  Style yitimo's blog's markdown
 date:   2018-01-22 12:54:23 +0800
-author: "yitimo"
+author: yitimo
 categories: jekyll update
+keywords:
+- markdown style,
+- yitimo,
+- yitimo's blog
+description: markdown content style of yitimo's blog
 ---
 
 ## 代码段
