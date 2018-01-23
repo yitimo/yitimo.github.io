@@ -120,6 +120,9 @@ ul {
     color: #4f4f4f;
     margin-top: 5px;
 }
+.post-row:not(:first-of-type) {
+    border-top: 1px solid #ddd;
+}
 .home-head {
     margin: 10% auto 32px auto;
     width: 90%;

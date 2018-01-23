@@ -5,7 +5,7 @@ layout: home
 {% for post in site.posts %}
     {% assign posti = forloop.index | modulo: 3 %}
     {% if posti == 1 %}
-    <div class="flex">
+    <div class="flex post-row">
     {% endif %}
     <a href="{{ post.url }}" class="flex-1 post-item">
         {{ post.title }}
