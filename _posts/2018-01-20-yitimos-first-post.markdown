@@ -4,6 +4,7 @@ title:  "Yitimo's first post!"
 date:   2018-01-20 13:45:23 +0800
 author: "yitimo"
 categories: jekyll update
+tags: ["test"]
 ---
 
 我是摘要

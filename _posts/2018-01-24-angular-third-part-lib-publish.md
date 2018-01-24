@@ -4,6 +4,7 @@ title:  angular第三方包开发整理
 date:   2018-01-24 09:42:23 +0800
 author: yitimo
 categories: jekyll update
+tags: ["angular"]
 keywords:
 - angular,
 - npm package publish,

@@ -4,6 +4,7 @@ title:  "Little Test for SEO by Yitimo"
 date:   2018-01-22 09:12:23 +0800
 author: "yitimo"
 categories: jekyll update
+tags: ["test"]
 ---
 
 我是摘要

@@ -4,6 +4,7 @@ title:  Style yitimo's blog's markdown
 date:   2018-01-22 12:54:23 +0800
 author: yitimo
 categories: jekyll update
+tags: ["test"]
 keywords:
 - markdown style,
 - yitimo,
