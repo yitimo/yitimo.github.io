@@ -3,6 +3,9 @@ html, body, div, ul, li, label, p, hr {
     box-sizing: border-box;
     color: #ffffff;
 }
+html, body {
+    height: 100%;width: 100%;
+}
 ::-webkit-scrollbar
 {
     width: 6px;
@@ -27,9 +30,6 @@ a {
 a:hover, a:active, a:checked {
     outline: none;
     text-decoration: none;
-}
-html, body {
-    height: 100%;width: 100%;
 }
 * {
     user-select: none;
@@ -124,7 +124,8 @@ ul {
     border-top: 1px solid #ddd;
 }
 .home-head {
-    margin: 10% auto 32px auto;
+    margin: 0 auto;
+    padding: 50px 0;
     width: 90%;
     max-width: 400px;
     text-align: center;
