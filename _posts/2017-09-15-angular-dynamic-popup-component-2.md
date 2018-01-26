@@ -11,7 +11,7 @@ keywords:
 - popup
 description: 参考 @angular/material 实现的动态弹窗组件
 ---
-承接[上文](/jekyll/update/2018/01/26/angular-dynamic-popup-component.html)，本文将从一个基本的angular启动项目开始搭建一个具有基本功能、较通用、低耦合、可扩展的popup弹窗(脸红)，主要分为以下几步:
+承接[上文](/jekyll/update/2017/09/14/angular-dynamic-popup-component.html)，本文将从一个基本的angular启动项目开始搭建一个具有基本功能、较通用、低耦合、可扩展的popup弹窗(脸红)，主要分为以下几步:
 1. 基本项目结构搭建
 2. 弹窗服务
 3. 弹窗的引用对象
