@@ -10,7 +10,7 @@ keywords:
 - angular source code
 description: 从源码分析angular启动过程中模块的编译细节。
 ---
-承接[上文](/jekyll/update/2018/01/26/how-angular-bootstrap-in-jit.html)。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 ``PlatformRef`` ，以及执行平台引用提供的方法编译根模块 ``AppModule`` 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。
+承接[上文](/jekyll/update/2017/09/25/how-angular-bootstrap-in-jit.html)。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 ``PlatformRef`` ，以及执行平台引用提供的方法编译根模块 ``AppModule`` 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。
 
 ## 编译的起点
 
