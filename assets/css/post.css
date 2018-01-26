@@ -28,6 +28,18 @@ ul, ol {
     font-weight: 600;
     border-left: 3px solid rgba(255, 255, 255, 0.7);
 }
+ul ul {
+    border-left: none;
+}
+ol ul {
+    border-left: none;
+}
+ul ol {
+    border-left: none;
+}
+ol ol {
+    border-left: none;
+}
 li {
     padding: 5px 0;
 }

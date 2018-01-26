@@ -19,8 +19,10 @@ description: 个人研究angular(v4.3)源码，对其在JIT模式下的启动引
 * XXX-Injector: 注入器 ( *也就是到处注入的服务实例* )
 * XXX-Factory: 工厂 ( *包括了 编译器工厂、平台工厂、模块工厂、组建工厂等，所有这些类都由工厂创建出来* )
 * XXX-Ref: 引用 ( *工厂创建出的所有类都是一个引用，通过引用来进行控制* )
+
 ### 启动过程的实现目标
 首先不直接查看angular源代码，而是从实际项目的启动代码入手，一般的实际项目通过这样的代码启动:
+
 ```
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app';
@@ -29,6 +31,7 @@ platformBrowserDynamic()
     .bootstrapModule(AppModule)
     .catch((err) => console.error(err));
 ```
+
 根据涉及的两个方法的返回类型可以看出angular的启动整体来看分为两部曲:
 1. 创建平台引用 platformBrowserDynamic()
 2. 使用创建的平台引用进一步创建模块引用 bootstrapModule(AppModule)
@@ -37,15 +40,18 @@ platformBrowserDynamic()
 
 ### 得到平台引用 PlatformRef
 首先在 /packages/platform-browser-dynamic/src/platform-browser-dynamic.ts 下找到 platformBrowserDynamic 方法的定义:
+
 ```
 // JIT下创建 平台工厂
 export const platformBrowserDynamic = createPlatformFactory(
     platformCoreDynamic, 'browserDynamic', INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS);
 ```
+
 可见 platformBrowserDynamic 本身是一个平台工厂，直接执行平台工厂就可以得到一个平台引用。
 
 根据传入的参数可以得出，创建好的平台名称为 browserDynamic，注入了一个名字很长的服务，并且依赖一个父级工厂叫做 platformCoreDynamic。
 进入 INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS 发现有意思的几个注入器如下:
+
 ```
 { // 传入的是一个资源加载器 内含一个get方法用来创建XmlHttpRequest对象请求资源
     provide: COMPILER_OPTIONS,
@@ -57,8 +63,10 @@ export const platformBrowserDynamic = createPlatformFactory(
 {provide: DOCUMENT, useFactory: _document, deps: []}, // windows 的 document 对象
 ```
 
----
+<hr />
+
 进入父平台 platformCoreDynamic 的实现:
+
 ```
 // 作为根平台工厂的父平台 这个也使用平台工厂创建，但其父平台为 核心平台
 export const platformCoreDynamic = createPlatformFactory(platformCore, 'coreDynamic', [
@@ -66,10 +74,13 @@ export const platformCoreDynamic = createPlatformFactory(platformCore, 'coreDyna
   {provide: CompilerFactory, useClass: JitCompilerFactory},
 ]);
 ```
+
 这个平台表面上也没做什么厉害的事情，不就是注入了一个编译选项 COMPILER_OPTIONS，还是空的，以及一个看名字很厉害实际上更厉害的 JitCompilerFactory，直接翻译为JIT编译器工厂，那就是用来生成编译器的东西。
 
----
+<hr />
+
 然后继续往下进入爷爷平台 platformCore 的实现:
+
 ```
 // 核心平台的服务商 比较厉害的就是 PlatformRef_
 const _CORE_PLATFORM_PROVIDERS: Provider[] = [
@@ -84,7 +95,9 @@ const _CORE_PLATFORM_PROVIDERS: Provider[] = [
 // 核心工厂无父平台 就直接传null 命名为 core
 export const platformCore = createPlatformFactory(null, 'core', _CORE_PLATFORM_PROVIDERS);
 ```
+
 亲戚关系就到爷爷这里为止了，现在进入 createPlatformFactory 看看平台工厂是怎么创建的(不是创建平台，而是创建工厂):
+
 ```
 export function createPlatformFactory(
     parentPlatformFactory: ((extraProviders?: Provider[]) => PlatformRef) | null, name: string, // 父级工厂
@@ -118,7 +131,9 @@ export function assertPlatform(requiredToken: any): PlatformRef {
   return platform;
 }
 ```
+
 看来核心的创建平台的代码就在 createPlatform 里了:
+
 ```
 // 最顶级的平台工厂会执行并创建出平台
 export function createPlatform(injector: Injector): PlatformRef {
@@ -136,11 +151,13 @@ export function createPlatform(injector: Injector): PlatformRef {
   return _platform;
 }
 ```
+
 看完 createPlatform，没错angular又继续踢皮球了，回忆创建爷爷平台时注入的那一堆服务中，就有个 PlatformRef，可不就是平台引用吗~
 
 ### 使用创建的平台引用启动根模块
 上面的爷爷平台注入了一个平台引用，其实现是 PlatformRef_，其提供了启动模块的一些方法，将在两部曲的第二步中用到。
 首先径直在 /packages/core/src/application_ref.ts 下的 PlatformRef_ 中找到 bootstrapModule 方法:
+
 ```
 // 启动根模块就是调用这个
 bootstrapModule<M>(
@@ -161,6 +178,7 @@ private _bootstrapModuleWithZone<M>(
         .then((moduleFactory) => this._bootstrapModuleFactoryWithZone(moduleFactory, ngZone)); // 启动模块工厂并加入NgZone
 }
 ```
+
 里面涉及到了几个步骤:
 1. 从注入器中取出前面在爸爸平台注入的 CompilerFactory
 2. 使用 CompilerFactory 创建出编译器并传入编译选项(可以为空)
@@ -169,6 +187,7 @@ private _bootstrapModuleWithZone<M>(
 其中 compileModuleAsync 即编译模块的细节涉及到了许多其他的东西，限于篇幅本文暂且不去解读它。
 
 现在最后剩下了一个 _bootstrapModuleFactoryWithZone 方法。此方法做的事情主要是使用传入的模块工厂(由异步编译模块得到)创建出最终的模块来，并为其注入一个新建的NgZone实例:
+
 ```
 private _bootstrapModuleFactoryWithZone<M>(moduleFactory: NgModuleFactory<M>, ngZone?: NgZone):
       Promise<NgModuleRef<M>> {
@@ -199,7 +218,9 @@ private _bootstrapModuleFactoryWithZone<M>(moduleFactory: NgModuleFactory<M>, ng
     });
   }
 ```
+
 收回前面最后这两个字，现在皮球又踢给了 _moduleDoBootstrap 方法:
+
 ```
 private _moduleDoBootstrap(moduleRef: InternalNgModuleRef<any>): void {
     // 得到app引用
@@ -220,10 +241,13 @@ private _moduleDoBootstrap(moduleRef: InternalNgModuleRef<any>): void {
     this._modules.push(moduleRef);
 }
 ```
+
 这里是不是有点恍然大悟，模块启动好后，此方法中进一步操作了启动组件，也就是我们在AppModule中都要配置给bootstrap的入口组件:
+
 ```
 bootstrap: [ AppComponent ]
 ```
+
 至此模块引用也彻底创建好了，也就是说angular项目终于是启动成功了，当然其中模块以及组件编译过程还深不可测，值得细细研究。
 
 ## 总结
