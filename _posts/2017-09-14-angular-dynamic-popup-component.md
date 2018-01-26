@@ -57,4 +57,4 @@ private getComponentRootNode(componentRef: ComponentRef<any>): HTMLElement {
 ```
 此办法是笔者从Material2的茫茫源代码中找到的，Google自己都直接这么插，那就放心使用了。这里不得不赞叹Material2中Dialog模块的实现，实在是有够复杂。
 ### 总结
-本文主要在讲思路，扯到最后才开始要进入主题来动态创建组件，不过仅仅是创建出组件并添加到DOM中去还只是第一步，一个健壮的弹窗模块(Material2那样的)还得有一套完善的交互能力，比如弹出和关闭时的订阅和传值，这些就要通过注入服务到组件中来实现了，限于篇幅将在 [下一篇文章](/jekyll/update/2018/01/26/angular-dynamic-popup-component-2.html) 中回归实际实现一个通过动态创建组件实现的弹窗模块出来。
+本文主要在讲思路，扯到最后才开始要进入主题来动态创建组件，不过仅仅是创建出组件并添加到DOM中去还只是第一步，一个健壮的弹窗模块(Material2那样的)还得有一套完善的交互能力，比如弹出和关闭时的订阅和传值，这些就要通过注入服务到组件中来实现了，限于篇幅将在 [下一篇文章](/jekyll/update/2017/09/15/angular-dynamic-popup-component-2.html) 中回归实际实现一个通过动态创建组件实现的弹窗模块出来。
