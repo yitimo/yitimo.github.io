@@ -18,7 +18,8 @@ email: admin@yitimo.com
 description: >- # this means to ignore newlines until "baseurl:"
   yitimo的个人博客
 baseurl: ""
-url: "https://blog.yitimo.com"
+url: ""
+server_url: "https://blog.yitimo.com"
 github_username:  yitimo
 
 markdown: kramdown
