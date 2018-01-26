@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  个人从源码理解angular项目在JIT模式下的启动过程
-date:   2018-01-26 17:07:23 +0800
+title:  从源码理解angular项目在JIT模式下的启动过程
+date:   2017-09-25 16:56:00 +0800
 author: yitimo
 categories: jekyll update
 tags: ["angular"]

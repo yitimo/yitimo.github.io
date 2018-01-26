@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  动态创建angular组件实现popup弹窗(下)
-date:   2018-01-26 16:58:23 +0800
+date:   2017-09-15 10:41:00 +0800
 author: yitimo
 categories: jekyll update
 tags: ["angular"]
@@ -120,7 +120,7 @@ import { YupRef, YUP_DATA } from '../popup.ref';
 import { mask, dialog } from '../animations';
 
 @Component({
-    template: `
+    template: `{% raw %}
     <div class="yup-mask" [@mask]="disp" (click)="!data?.mask && close(false)"></div>
     <div class="yup-body" [@dialog]="disp">
         <div class="yup-body-head">{{data?.title || '消息'}}</div>
@@ -129,7 +129,7 @@ import { mask, dialog } from '../animations';
             <div class="btn default" (click)="close(false)">{{data?.no || '取消'}}</div>
             <div class="btn primary" (click)="close(true)">{{data?.ok || '确认'}}</div>
         </div>
-    </div>
+    </div>{% endraw %}
     `,
     styles: [`这里省略一堆样式`]
     animations: [mask, dialog]

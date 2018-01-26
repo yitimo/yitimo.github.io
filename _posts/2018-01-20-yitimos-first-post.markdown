@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Yitimo's first post!"
+title:  "Yitimo's first post on jekyll"
 date:   2018-01-20 13:45:23 +0800
 author: "yitimo"
 categories: jekyll update
@@ -9,25 +9,53 @@ tags: ["test"]
 
 我是摘要
 
-## 我是大章
+## 代码段
 
-我是章摘要
+ class         | desc         | example
+---------------|--------------|-------------------
+ p             | 符号等        | , ( ) [ ] ; ,
+ nx            | 变量方法名称   | console log
+ kd            | 声明型关键字   | let var function
+ o             | 操作符        | = + - * / ?: < >
+ mi            | 数字等        | 1 2 3
+ s1            | 字符串        | 'hello 123'
+ cm            | 注释段        | /**/
+ k             | 关键字        | return
+ c1            | 单行注释      | //
 
-- 我是列表内容1
-- 我是列表内容2
-- 我是列表内容3
+<hr />
 
-## 我是大章２
+ 示例代码段：
 
-### 我是小节２-1
-
-这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。这里有行内代码，就是``angular``哦。
-
-以下是代码段：
-
-``` javascript
-console.log('yitimo !');
-console.log('lo!long yitimo !');
-let i = 1;
-var j = i.toString();
-```
+ ``` javascript
+ var enumTest = { AA, BB, CC };
+ let i = 1; // i am i
+ let j = 1;
+ let str = 'hello 123';
+ let k = sum(i, j).toString();
+ console.log([k, 2]);
+ /**
+ * get sum of ii and jj
+ */
+ function sum(ii, jj) {
+     console.log(1);
+        console.log(11);
+     return ii + jj;
+ }
+ ```
+ ```
+ var enumTest = { AA, BB, CC };
+ let i = 1; // i am i
+ let j = 1;
+ let str = 'hello 123';
+ let k = sum(i, j).toString();
+ console.log([k, 2]);
+ /**
+ * get sum of ii and jj
+ */
+ function sum(ii, jj) {
+     console.log(1);
+        console.log(11);
+     return ii + jj;
+ }
+ ```
