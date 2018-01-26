@@ -28,3 +28,5 @@ exclude: [desc.md]
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
+# gems:
+#     - jekyll-minifier

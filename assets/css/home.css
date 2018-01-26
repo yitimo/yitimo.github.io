@@ -144,3 +144,24 @@ ul {
 .avater {
     height: 100px;width: 100px;
 }
+.home-foot {
+    margin: 64px auto;
+    width: 100%;
+    max-width: 760px;
+    font-size: 14px;
+}
+.home-foot a {
+    display: block;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+}
+.home-foot a:hover {
+    text-decoration: underline;
+}
+.home-foot > div {
+    padding: 0 15px;
+}
+.home-foot > div:not(:first-of-type) {
+    border-left: 1px solid #dddddd;
+}
