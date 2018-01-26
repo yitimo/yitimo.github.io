@@ -11,7 +11,7 @@ keywords:
 - popup
 description: 参考 @angular/material 实现的动态弹窗组件
 ---
-承接[上文](http://www.jianshu.com/p/cf32ba870ed5)，本文将从一个基本的angular启动项目开始搭建一个具有基本功能、较通用、低耦合、可扩展的popup弹窗(脸红)，主要分为以下几步:
+承接[上文](/jekyll/update/2018/01/26/angular-dynamic-popup-component.html)，本文将从一个基本的angular启动项目开始搭建一个具有基本功能、较通用、低耦合、可扩展的popup弹窗(脸红)，主要分为以下几步:
 1. 基本项目结构搭建
 2. 弹窗服务
 3. 弹窗的引用对象
@@ -33,7 +33,7 @@ description: 参考 @angular/material 实现的动态弹窗组件
 现在我们只来关心src目录下的实现。
 ### 弹窗服务
 弹窗服务的职责是提供一个叫做open的方法，用来创建出组件并显示，还得对创建好的组件进行良好的控制:
-```
+``` javascript
 import { Injectable, ApplicationRef, ComponentFactoryResolver,
     ComponentRef, EmbeddedViewRef } from '@angular/core';
 import { YupRef, ComponentType } from './popup.ref';
@@ -71,7 +71,7 @@ export interface ComponentType<T> {
 ```
 ### 弹窗的引用对象
 上面服务中的open方法实际上把创建组件的细节通过new一个YupRef即弹窗引用来实现，这是因为考虑到服务本身是单例，如果仅使用open方法直接创建多个弹窗，在使用时会丢失除了最后一个弹窗外的控制能力，笔者这里采用的办法是将创建的弹窗封装成一个类即YupRef:
-```
+``` javascript
 import { ComponentRef, InjectionToken, ReflectiveInjector, ComponentFactory } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -114,7 +114,7 @@ export class YupRef<T> {
 这样一来每次调用open方法后都能得到一个YupRef对象，提供了关闭方法以及对关闭事件的订阅方法。
 ### 预制弹窗组件
 弹窗服务中的open方法需要两个参数，第二个是传入的自定义数据，第一个就是需要创建的组件了，现在我们创建出几个预制组件，以dialog.component为例: 
-```
+``` javascript
 import { Component, Injector } from '@angular/core';
 import { YupRef, YUP_DATA } from '../popup.ref';
 import { mask, dialog } from '../animations';
@@ -169,7 +169,7 @@ export class DialogComponent {
 * 直接使用angular动画会失效，因为是暴力添加到DOM中的方式，必须手动setTimeout过等动画结束再真正销毁组件。
 
 创建好组件后再服务中添加快捷创建此组件的方法:
-```
+``` javascript
 public dialog(config: {
     title?: string,
     msg?: string,
@@ -181,7 +181,7 @@ public dialog(config: {
 }
 ```
 额外需要提一点是虽然这样创建的组件没有被一开始就添加到页面中，仍然需要在所属模块的declaration中声明，并且还得在entryComponent中声明过，否则angular就会通过报错的方式让你这么做，就像下面这个弹窗模块的定义这样:
-```
+``` javascript
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogComponent, AlertComponent, ToastComponent, LoadComponent } from './templates';
@@ -198,14 +198,14 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 export class YupModule {}
 ```
 而此弹窗模块真正需要导出的东西有4个，都列在index.ts中: 
-```
+``` javascript
 export { YupModule } from './module'; // 需要在AppModule中引入
 export { DialogService as Yup } from './service'; // 用于发起弹窗
 export { YupRef, YUP_DATA } from './popup.ref'; // 用于创建自定义弹窗时提供控制
 ```
 ### 使用方法
 最终在外界的使用方式如下:
-```
+``` javascript
 constructor(
     public yup: Yup // 其实是DialogService，被笔者改了名
 ) { }
@@ -221,7 +221,7 @@ public ngOnInit() {
 }
 ```
 当不想使用预制的弹窗组件时，大可以自行创建好一个组件，然后使用open方法:
-```
+``` javascript
 this.yup.open(CustomComponent, '我是自定义数据').afterClose().subscribe((res) => {
     console.log(`我已经被关闭了，不过我能携带出来数据: 【${res}】`);
 });

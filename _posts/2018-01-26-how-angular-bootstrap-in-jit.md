@@ -23,7 +23,7 @@ description: 个人研究angular(v4.3)源码，对其在JIT模式下的启动引
 ### 启动过程的实现目标
 首先不直接查看angular源代码，而是从实际项目的启动代码入手，一般的实际项目通过这样的代码启动:
 
-```
+``` javascript
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app';
 
@@ -41,7 +41,7 @@ platformBrowserDynamic()
 ### 得到平台引用 PlatformRef
 首先在 /packages/platform-browser-dynamic/src/platform-browser-dynamic.ts 下找到 platformBrowserDynamic 方法的定义:
 
-```
+``` javascript
 // JIT下创建 平台工厂
 export const platformBrowserDynamic = createPlatformFactory(
     platformCoreDynamic, 'browserDynamic', INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS);
@@ -52,7 +52,7 @@ export const platformBrowserDynamic = createPlatformFactory(
 根据传入的参数可以得出，创建好的平台名称为 browserDynamic，注入了一个名字很长的服务，并且依赖一个父级工厂叫做 platformCoreDynamic。
 进入 INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS 发现有意思的几个注入器如下:
 
-```
+``` javascript
 { // 传入的是一个资源加载器 内含一个get方法用来创建XmlHttpRequest对象请求资源
     provide: COMPILER_OPTIONS,
     useValue: {providers: [{provide: ResourceLoader, useClass: ResourceLoaderImpl}]},
@@ -67,7 +67,7 @@ export const platformBrowserDynamic = createPlatformFactory(
 
 进入父平台 platformCoreDynamic 的实现:
 
-```
+``` javascript
 // 作为根平台工厂的父平台 这个也使用平台工厂创建，但其父平台为 核心平台
 export const platformCoreDynamic = createPlatformFactory(platformCore, 'coreDynamic', [
   {provide: COMPILER_OPTIONS, useValue: {}, multi: true},
@@ -81,7 +81,7 @@ export const platformCoreDynamic = createPlatformFactory(platformCore, 'coreDyna
 
 然后继续往下进入爷爷平台 platformCore 的实现:
 
-```
+``` javascript
 // 核心平台的服务商 比较厉害的就是 PlatformRef_
 const _CORE_PLATFORM_PROVIDERS: Provider[] = [
   { provide: PLATFORM_ID, useValue: 'unknown' },   // 用于设置缺省平台名
@@ -98,7 +98,7 @@ export const platformCore = createPlatformFactory(null, 'core', _CORE_PLATFORM_P
 
 亲戚关系就到爷爷这里为止了，现在进入 createPlatformFactory 看看平台工厂是怎么创建的(不是创建平台，而是创建工厂):
 
-```
+``` javascript
 export function createPlatformFactory(
     parentPlatformFactory: ((extraProviders?: Provider[]) => PlatformRef) | null, name: string, // 父级工厂
     providers: Provider[] = []
@@ -134,7 +134,7 @@ export function assertPlatform(requiredToken: any): PlatformRef {
 
 看来核心的创建平台的代码就在 createPlatform 里了:
 
-```
+``` javascript
 // 最顶级的平台工厂会执行并创建出平台
 export function createPlatform(injector: Injector): PlatformRef {
   // 存在平台 && 未销毁 && 不允许多个平台
@@ -158,7 +158,7 @@ export function createPlatform(injector: Injector): PlatformRef {
 上面的爷爷平台注入了一个平台引用，其实现是 PlatformRef_，其提供了启动模块的一些方法，将在两部曲的第二步中用到。
 首先径直在 /packages/core/src/application_ref.ts 下的 PlatformRef_ 中找到 bootstrapModule 方法:
 
-```
+``` javascript
 // 启动根模块就是调用这个
 bootstrapModule<M>(
     moduleType: Type<M>, // 模块类
@@ -188,7 +188,7 @@ private _bootstrapModuleWithZone<M>(
 
 现在最后剩下了一个 _bootstrapModuleFactoryWithZone 方法。此方法做的事情主要是使用传入的模块工厂(由异步编译模块得到)创建出最终的模块来，并为其注入一个新建的NgZone实例:
 
-```
+``` javascript
 private _bootstrapModuleFactoryWithZone<M>(moduleFactory: NgModuleFactory<M>, ngZone?: NgZone):
       Promise<NgModuleRef<M>> {
     // 创建新的NgZone实例
@@ -221,7 +221,7 @@ private _bootstrapModuleFactoryWithZone<M>(moduleFactory: NgModuleFactory<M>, ng
 
 收回前面最后这两个字，现在皮球又踢给了 _moduleDoBootstrap 方法:
 
-```
+``` javascript
 private _moduleDoBootstrap(moduleRef: InternalNgModuleRef<any>): void {
     // 得到app引用
     const appRef = moduleRef.injector.get(ApplicationRef) as ApplicationRef;
@@ -244,7 +244,7 @@ private _moduleDoBootstrap(moduleRef: InternalNgModuleRef<any>): void {
 
 这里是不是有点恍然大悟，模块启动好后，此方法中进一步操作了启动组件，也就是我们在AppModule中都要配置给bootstrap的入口组件:
 
-```
+``` javascript
 bootstrap: [ AppComponent ]
 ```
 

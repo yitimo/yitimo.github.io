@@ -33,18 +33,18 @@ description: 参考 @angular/material 实现的动态弹窗组件
 #### 组建工厂——组件真正的创建者
 在组件中创建组件的核心代码分两步:
 1. 创建组件工厂
-```
+``` javascript
 let componentFactory = this.componentFactoryResolver.resolveComponentFactory(待创建组件);
 ```
 2. 把工厂提供给容器创建出组件
-```
+``` javascript
 let componentRef = viewContainerRef.createComponent(componentFactory);
 ```
 现在的问题在于，在服务中得不到viewContainerRef，工厂倒是能创建成功。
 其实有工厂了已经足够了，查看componentFactory提供的成员里面包含了一个create方法，顾名思义这应该就是用来创建组件的了。
 create方法有个必选参数类型为Injector，顾名思义就是注入器，即这个创建的组件打算注入些什么服务进去，暴力点直接写null也没问题。
 直接使用工厂创建组件返回的同样是一个ComponentRef类型的引用，可见此时组件确实是创建出来了，但是还没有将其插入到视图中去。此时可以再暴力一点，直接用原生DOM操作插入到body标签的末尾去: 
-```
+``` javascript
 window.document.body.appendChild(
     this.getComponentRootNode(componentRef)
 );
@@ -57,4 +57,4 @@ private getComponentRootNode(componentRef: ComponentRef<any>): HTMLElement {
 ```
 此办法是笔者从Material2的茫茫源代码中找到的，Google自己都直接这么插，那就放心使用了。这里不得不赞叹Material2中Dialog模块的实现，实在是有够复杂。
 ### 总结
-本文主要在讲思路，扯到最后才开始要进入主题来动态创建组件，不过仅仅是创建出组件并添加到DOM中去还只是第一步，一个健壮的弹窗模块(Material2那样的)还得有一套完善的交互能力，比如弹出和关闭时的订阅和传值，这些就要通过注入服务到组件中来实现了，限于篇幅将在 [下一篇文章](http://www.jianshu.com/p/d17396696e9b) 中回归实际实现一个通过动态创建组件实现的弹窗模块出来。
+本文主要在讲思路，扯到最后才开始要进入主题来动态创建组件，不过仅仅是创建出组件并添加到DOM中去还只是第一步，一个健壮的弹窗模块(Material2那样的)还得有一套完善的交互能力，比如弹出和关闭时的订阅和传值，这些就要通过注入服务到组件中来实现了，限于篇幅将在 [下一篇文章](/jekyll/update/2018/01/26/angular-dynamic-popup-component-2.html) 中回归实际实现一个通过动态创建组件实现的弹窗模块出来。
