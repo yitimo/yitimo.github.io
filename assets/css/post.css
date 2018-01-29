@@ -1,7 +1,6 @@
-html, body {
-    margin: 0 auto; padding: 8px;
-    height: 100%;width: 100%;
-    max-width: 960px;
+.article {
+    max-width: 960px;margin: 0 auto;
+    padding: 0 8px;
 }
 .post-date {
     text-align: center;
