@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+<script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+</head>
+<body>
+    <img src="/assets/images/background.jpg" id="background" />
+    <div id="background-mask"></div>
+    <div class="article">
+        <h1>使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端</h1>
+        <div class="post-date">by <span>yitimo</span> at <span>26 February 2018</span></div>
+        <p>本文将搭建一个不具有任何功能的NEO轻钱包，所有的精力都仅集中于成功运行<code class="highlighter-rouge">neon-wallet-db</code>项目并搭配全节点的<code class="highlighter-rouge">neo-cli /rpc</code>接口为轻钱包客户端提供服务。
+首先需要准备几个项目：</p>
+<ol>
+  <li><a href="https://github.com/CityOfZion/neon-wallet-db">neon-wallet-db</a></li>
+  <li><a href="https://github.com/CityOfZion/neon-js">neon-js</a></li>
+  <li><a href="https://github.com/neo-project/neo-cli">neo-cli</a></li>
+  <li>任意实现的web客户端(本文将使用<code class="highlighter-rouge">angular</code>)</li>
+</ol>
+
+<p>然后是劝退部分，即笔者完成壮举准备的环境：</p>
+<ol>
+  <li>4台debian虚拟机，均运行共识节点</li>
+  <li>4台虚拟机中一台作为<code class="highlighter-rouge">RPC</code>节点运行提供<code class="highlighter-rouge">/rpc</code>接口</li>
+  <li>4台虚拟机中另一台运行<code class="highlighter-rouge">neon-wallet-db</code>项目</li>
+  <li>运行<code class="highlighter-rouge">neon-wallet-db</code>项目的前提如下：
+  4.1 运行<code class="highlighter-rouge">mongodb</code>服务端
+  4.2 运行<code class="highlighter-rouge">redis</code>服务端
+  4.3 安装<code class="highlighter-rouge">python</code>环境（笔者为 3.6.3）（建议搭配pyenv+virtualenv）
+  4.4 安装<code class="highlighter-rouge">heroku cli</code> 后续将使用<code class="highlighter-rouge">heroku local</code>运行项目</li>
+</ol>
+
+<h2 id="neon-wallet-db-项目的必要性">NEON-WALLET-DB 项目的必要性</h2>
+<p>neon社区维护的neon轻钱包项目实际上为一个 <code class="highlighter-rouge">react</code> + <code class="highlighter-rouge">electron</code> 的web项目，内部通过调用<code class="highlighter-rouge">neon-js</code>提供的api实现与测试网乃至主网的交互。
+然后思考一下轻钱包是如何做到不同步全节点也能进行<code class="highlighter-rouge">transaction</code>的。
+答案是不可能。这里的轻钱包不过是在远程调用<code class="highlighter-rouge">/rpc</code>接口罢了，全节点由远程的<code class="highlighter-rouge">neo-cli</code>来维护。
+那么问题来了，既然所有操作其实都是在调用<code class="highlighter-rouge">/rpc</code>接口，那<code class="highlighter-rouge">neon-wallet-db</code>项目又是用来做什么的？这还得从<code class="highlighter-rouge">nel-cli</code>都提供了哪些接口说起：
+<img src="http://upload-images.jianshu.io/upload_images/4740306-eeded87466cdb4a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" /></p>
+
+<p>没错就只有这么一些，而一个基于NEO的DAPP要做的事情就是用这么几个接口来搞事情。其中交易如何进行且不说，先关注如何查询交易记录(即区块链技术中广为流传的utxo)，毫无疑问这些utxo是包含在区块中并保存在全节点里的，那就需要一个接口来获取区块信息，也就是上面的<code class="highlighter-rouge">getblock</code>接口：
+<img src="http://upload-images.jianshu.io/upload_images/4740306-1c68e52540a2a9eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" /></p>
+
+<p>如图所示调用方法就是，拿区块索引来查区块信息，那如何实现查询一个地址的余额呢？用上面提供的<code class="highlighter-rouge">getbalance</code>接口就想得太美了，此接口得前提是要打开钱包，也就是只能获取这个<code class="highlighter-rouge">neo-cli</code>中打开的钱包的余额。真正做法是——遍历所有区块所有<code class="highlighter-rouge">utxo</code>自己算。这就是为什么还需要<code class="highlighter-rouge">neon-wallet-db</code>的原因，需要它来事先遍历、存储好uxto等数据，那么只要请求其提供的接口，就可以直接获取其处理过的方便使用的数据，而不需要遍历NEO全节点百万计(截至目前的测试网)的区块信息了。</p>
+
+<p><em>未完待填坑</em></p>
+<h2 id="运行私链共识节点">运行私链共识节点</h2>
+<h2 id="配置-neon-wallet-db-以及-neon-js">配置 neon-wallet-db 以及 neon-js</h2>
+<h2 id="顺利接入私链">顺利接入私链</h2>
+
+        <div class="flex" style="margin: 30px 0;">
+            <div class="flex-1">
+                <a class="another-post" href="/jekyll/update/2018/02/06/how-to-run-neo-node.html">上一篇： NEO全节点客户端的基本使用，节点的运行和共识达成</a>
+                </div>
+            <a class="back" href="/">回到首页</a>
+        </div>
+    </div>
+    <div class="footer flex" style="overflow-x: auto;">
+    <div class="flex-1">
+        yitimo的其他站点: <br /><br />
+        <a target="blank" href="https://github.com/yitimo">GitHub</a>
+        <a target="blank" href="https://www.yitimo.com">个人网站</a>
+    </div>
+    <div class="flex-1">
+        站点同时部署在以下地址: <br /><br />
+        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
+        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
+        <a href="https://yitimo.github.io">yitimo.github.io</a>
+    </div>
+    <div class="flex-1">
+        联系我: <br /><br />
+        <a href="javascript:void(0)">admin@yitimo.com</a>
+        <a href="javascript:void(0)">yitimohu@gmail.com</a>
+    </div>
+</div>
+    <script src="/assets/js/init.js"></script>
+</body>
+</html>

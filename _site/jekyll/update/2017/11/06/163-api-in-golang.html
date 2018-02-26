@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用golang调用网易云音乐api | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+<script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+</head>
+<body>
+    <img src="/assets/images/background.jpg" id="background" />
+    <div id="background-mask"></div>
+    <div class="article">
+        <h1>使用golang调用网易云音乐api</h1>
+        <div class="post-date">by <span>yitimo</span> at <span> 6 November 2017</span></div>
+        <h2 id="2018-01-26-迁移更新">2018-01-26 迁移更新</h2>
+<p>现已将所有已实现api都使用新版加密请求方式，部分调用url及参数参考自 <a href="https://github.com/Binaryify/NeteaseCloudMusicApi">NeteaseCloudMusicApi</a> 。</p>
+
+<hr />
+
+<p>本文将展示笔者经过肤浅的golang学习后，使用golang对网易云音乐api进行分析的经历，最终实现一个基本的api，可以做到代为向网易云音乐的api请求数据。笔者使用的是martini web框架，并参考了网上现有的各种网易云音乐api的python实现，在此一并谢过。
+目前实现的api只有以下几个:</p>
+
+<ol>
+  <li>歌曲搜索</li>
+  <li>歌曲详情</li>
+  <li>含实际mp3地址的下载信息</li>
+</ol>
+
+<p>其中第三个下载能力是最磨人的，不过毕竟是可以直接获取下载链接的接口，还算值得。</p>
+
+<h2 id="一搜索能力">一、搜索能力</h2>
+
+<p>这里使用的是 <code class="highlighter-rouge">http://music.163.com/api/search/get/</code> 这个api地址，发送的是POST请求，需要注意的点就是必须带上的几个头部以及参数的格式，实现难度相对中等。在golang下的请求核心代码如下:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/** 
+ * 执行搜索
+ * params: 	关键词 类型 页码 数量
+ * return:	字符串形式的请求结果
+ */
+func Search(words string, stype string, page int, limit int) string {
+	// 创建客户端
+	client := &amp;http.Client{}
+	// 格式化参数
+	_o, _l := formatParams(page, limit)
+	// 设置body
+	form := url.Values{}
+	form.Set("s", words)
+	form.Set("type", stype)
+	form.Set("limit", _l)
+	form.Set("offset", _o)
+	body := strings.NewReader(form.Encode())
+	// 创建请求
+	request, _ := http.NewRequest("POST", "http://music.163.com/api/search/get/", body)
+	//设置头部
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("Cookie", "appver=2.0.2")
+	request.Header.Set("Referer", "http://music.163.com")
+	request.Header.Set("Content-Length", (string)(body.Len()))
+	// 发起请求
+	response, reqErr := client.Do(request)
+	// 错误处理
+	if reqErr!= nil {
+		fmt.Println("Fatal error ", reqErr.Error())
+		return `{"data": null, "state": false, "msg": "请求失败"}`
+	}
+	defer response.Body.Close()
+	resBody, _ := ioutil.ReadAll(response.Body)
+	return string(resBody)
+}
+
+/**
+* 传入 搜索类型 页码 数量
+* 返回 搜索类型 偏移 数量
+*/
+func formatParams(page int, limit int) (string, string) {
+	if page &lt; 1 {
+		page = 1
+	}
+	if limit &lt; 1 {
+		limit = 0
+	}
+	return strconv.Itoa((page - 1) * limit), strconv.Itoa(limit)
+}
+</code></pre></div></div>
+
+<p>传入的参数即 <code class="highlighter-rouge">关键词，搜索类型，数量，偏移量</code> 四个。最终效果像这样:</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-71dad47b316dca0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求参数" /></p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-69ed01787d6ca866.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+
+<h2 id="二歌曲详情">二、歌曲详情</h2>
+
+<p>歌曲详情接口比搜索接口要简单很多，因为是更开放的GET请求，不需要加复杂的头部:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func SongInfo(id string) string {
+	res, err := http.Get("http://music.163.com/api/song/detail/?id=" + id + "&amp;ids=[" + id + "]")
+	// 错误处理
+	if err != nil {
+		fmt.Println("Fatal error ", err)
+		return `{code: 0}`
+	}
+	defer res.Body.Close()
+	rs, _ := ioutil.ReadAll(res.Body)
+	return string(rs)
+}
+</code></pre></div></div>
+<p>请求结果像这样:</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-2e24bac45a90ba18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+
+<p>相比搜索接口的结果，详情接口能拿到具体的封面信息这应该是最有用的，因为搜索得到的结果中图片都是假的，可惜的是详情结果中的 <code class="highlighter-rouge">mp3Url</code> 字段是空的，说明想要真正听到歌曲还得使用别的接口才行。</p>
+
+<h2 id="三歌曲下载">三、歌曲下载</h2>
+
+<p>歌曲下载接口应该是变动最多的接口了，经测试很多网上现有的方式都没有用，最靠谱的应该是使用其官方的请求方式，接口为 <code class="highlighter-rouge">http://music.163.com/weapi/song/enhance/player/url?csrf_token=</code> ，参数为两个很长的加密的字符串，要做的斗争就是如何得到这两个字符串。</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-a3bf6ae3d5bd2ad4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="官网中的请求" /></p>
+
+<p>参考网上现有的前辈大佬的分析，个人描述的加密过程如下:</p>
+
+<ol>
+  <li>将请求参数使用一个固定的标识字符串进行 AES加密并进行base64编码</li>
+  <li>从 <code class="highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 中随机取出16次字符组成一个秘钥</li>
+  <li>将1得到的结果使用2得到的秘钥串再进行一次 AES加密并base64编码，至此得到第一个参数 <code class="highlighter-rouge">params</code></li>
+  <li>将2中的秘钥倒序后转ascii码，然后转16进制字符串得到一个中间字符串</li>
+  <li>将4得到的中间字符串转为十进制大整数1，将另两个固定的16进制字符串也都转为十进制大整数2、3</li>
+  <li>5中得到了三个大整数，现在执行 pow(大整数1, 大整数2, 大整数3) ，即1的2次幂取模3，得到新的大整数4</li>
+  <li>将6得到的大整数4转为16进制字符串，并在左边补满0补满256位，最终得到第二个参数 <code class="highlighter-rouge">encSecKey</code></li>
+</ol>
+
+<p>封装好的函数如下:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func EncParams(param string) (string, string, error) {
+	// 创建 key
+	secKey := createSecretKey(16);
+	// 第一次加密 使用固定的 nonce
+	if aes1, err1 := aesEncrypt(param, nonce); err1 != nil {
+		return "", "", err1
+	} else {
+		// 第二次加密 使用创建的 key
+		if aes2, err2 := aesEncrypt(aes1, secKey); err2 != nil {
+			return "", "", err2
+		} else {
+			// 得到 加密好的 param 以及 加密好的key
+			return aes2, rsaEncrypt(secKey, pubKey, modulus), nil
+		}
+	}
+}
+</code></pre></div></div>
+
+<p>具体的实现有个小几十行，详见 <a href="https://github.com/yitimo/api-163-go/blob/master/madoka/encrypt.go">github</a> 吧。</p>
+
+<p>得到两个参数后，发的是POST请求，顺利得到结果:</p>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-38cab244bf22f315.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+
+<h2 id="收尾总结">收尾总结</h2>
+
+<p>第三个接口中对笔者来说磨人的两点在于:</p>
+
+<ol>
+  <li>对golang经验不够导致数据类型转来转去花了不少力气，以及还涉及到了大数运算，数据的格式化真的是虐惨了</li>
+  <li>上文提到的 <code class="highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 这个字符串中， 最后的 <code class="highlighter-rouge">+/</code> 很关键不能少</li>
+</ol>
+
+<ul>
+  <li>笔者的小项目托管在 <a href="https://github.com/yitimo/api-163-go">github</a> ，还是个很小的小项目，没来得及养肥，关于上文三个接口的细节实现好歹是有了。</li>
+  <li>笔者的 <a href="https://api.163.yitimo.com">小api地址</a> 在上面的图中已经出现过了，也还没来得及养肥 :)</li>
+  <li>关于作为示例的歌曲名为 《再见二丁目》，讲的是林夕老爷在东京被明哥放了鸽子很彷徨 :)</li>
+</ul>
+
+        <div class="flex" style="margin: 30px 0;">
+            <div class="flex-1">
+                <a class="another-post" href="/jekyll/update/2017/10/16/anguar-popup-in-material-style.html">上一篇： 从源码看 angular/material2 中 dialog模块 的实现</a>
+                
+                <a class="another-post" href="/jekyll/update/2018/01/09/angular-third-part-lib-publish.html">下一篇： angular第三方包开发整理</a>
+            </div>
+            <a class="back" href="/">回到首页</a>
+        </div>
+    </div>
+    <div class="footer flex" style="overflow-x: auto;">
+    <div class="flex-1">
+        yitimo的其他站点: <br /><br />
+        <a target="blank" href="https://github.com/yitimo">GitHub</a>
+        <a target="blank" href="https://www.yitimo.com">个人网站</a>
+    </div>
+    <div class="flex-1">
+        站点同时部署在以下地址: <br /><br />
+        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
+        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
+        <a href="https://yitimo.github.io">yitimo.github.io</a>
+    </div>
+    <div class="flex-1">
+        联系我: <br /><br />
+        <a href="javascript:void(0)">admin@yitimo.com</a>
+        <a href="javascript:void(0)">yitimohu@gmail.com</a>
+    </div>
+</div>
+    <script src="/assets/js/init.js"></script>
+</body>
+</html>
