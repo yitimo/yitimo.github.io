@@ -108,7 +108,7 @@ pip install -r requirements.txt
 
 疑问:
 
-代码中涉及到``os.environ.get``方法的操作会抛出异常，这受限与笔者对``python``项目的理解不足，所以直接全都删掉，写死了配置。
+代码中涉及到``os.environ.get``方法的操作会抛出异常，这受限于笔者对``python``项目的理解不足，所以直接全都删掉，写死了配置。
 
 下一步操作是手动同步一下区块，新建一个``rebuild.py``:
 
