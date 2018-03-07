@@ -77,7 +77,7 @@
 <h2 id="neon-js-提供的接口">neon-js 提供的接口</h2>
 
 <p>浏览<code class="highlighter-rouge">neon-js</code>源码大致能找到其提供的几类接口：</p>
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 这算是个别名，用它能实现很多底层操作</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 这算是个别名，用它能实现很多底层操作</span>
 <span class="k">import</span> <span class="nx">Neon</span> <span class="k">from</span> <span class="s1">'@cityofzion/neon-js'</span><span class="p">;</span>
 <span class="c1">// tx包含了交易相关接口</span>
 <span class="c1">// wallet包含了钱包相关接口</span>
@@ -96,11 +96,11 @@
 
 <h2 id="完成用户给用户转账">完成用户给用户转账</h2>
 
-<p><em>题外话：用angular项目作为轻钱包客户端有一个天然优势，就是支持TypeScript，强大的代码提示节省了不少精力。</em></p>
+<p><em>题外话：用angular项目作为轻钱包客户端有一个天然优势，就是支持javascript，强大的代码提示节省了不少精力。</em></p>
 
 <p>创建一个转账交易，然后签名并广播这个交易的代码如下：</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 创建utxo</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 创建utxo</span>
 <span class="kd">let</span> <span class="nx">utxo</span> <span class="o">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">.</span><span class="nx">createContractTx</span><span class="p">(</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">,</span> <span class="c1">// 谁转账填谁的余额</span>
     <span class="nx">api</span><span class="p">.</span><span class="nx">makeIntent</span><span class="p">({</span><span class="na">NEO</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="s1">'目标地址'</span><span class="p">),</span> <span class="c1">// 转到谁的地址多少钱</span>
@@ -118,7 +118,7 @@
 
 <p>其中有两个参数需要额外获取，也就是<code class="highlighter-rouge">this.balance</code>和<code class="highlighter-rouge">this.rpcUrl</code>，在ngOninit()中先获取到：</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
     <span class="c1">// 传入地址获取改地址的余额，用于后续计算交易的输入</span>
     <span class="nx">api</span><span class="p">.</span><span class="nx">neonDB</span><span class="p">.</span><span class="nx">getBalance</span><span class="p">(</span><span class="s1">'TestNet'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">owner</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">res</span><span class="p">:</span> <span class="nx">wallet</span><span class="p">.</span><span class="nx">Balance</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">balance</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
@@ -145,7 +145,7 @@
 
 <p>至于合约调用交易参数略有不同：</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">newTx</span> <span class="o">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">.</span><span class="nx">createInvocationTx</span><span class="p">(</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">newTx</span> <span class="o">=</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">.</span><span class="nx">createInvocationTx</span><span class="p">(</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">balance</span><span class="p">,</span> <span class="c1">// 用户的余额</span>
     <span class="nx">api</span><span class="p">.</span><span class="nx">makeIntent</span><span class="p">({</span><span class="na">NEO</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="nx">wallet</span><span class="p">.</span><span class="nx">getAddressFromScriptHash</span><span class="p">(</span><span class="s1">'代币的脚本哈希去掉最前面的0x'</span><span class="p">)),</span> <span class="c1">// 转1NEO到代币的地址</span>
     <span class="p">{</span><span class="na">operation</span><span class="p">:</span> <span class="s1">'mintTokens'</span><span class="p">,</span> <span class="na">scriptHash</span><span class="p">:</span> <span class="s1">'合约的脚本哈希去掉最前面的0x'</span><span class="p">},</span> <span class="c1">// 合约mintTokens以获取代币</span>
@@ -177,7 +177,7 @@
 
 <p>现在要转过来说说一个智能合约是如何工作的(非源码层面，仅关注其代码逻辑)，先看下面这段只能合约代码：</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="kd">class</span> <span class="nx">YitimoA</span><span class="p">:</span> <span class="nx">SmartContract</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="kd">class</span> <span class="nx">YitimoA</span><span class="p">:</span> <span class="nx">SmartContract</span>
 <span class="p">{</span>
     <span class="kr">public</span> <span class="kr">static</span> <span class="nx">readonly</span> <span class="kr">byte</span><span class="p">[]</span> <span class="nx">Owner</span> <span class="o">=</span> <span class="s2">"AaHEnwbT15CYHaWYyfbmAxWWaGT3Zzvk3B"</span><span class="p">.</span><span class="nx">ToScriptHash</span><span class="p">();</span>
 

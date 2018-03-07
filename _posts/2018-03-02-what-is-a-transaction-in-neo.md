@@ -25,7 +25,7 @@ description: Personal thought on kinds of transactions in NEO.
 ## neon-js 提供的接口
 
 浏览``neon-js``源码大致能找到其提供的几类接口：
-``` typescript
+``` javascript
 // 这算是个别名，用它能实现很多底层操作
 import Neon from '@cityofzion/neon-js';
 // tx包含了交易相关接口
@@ -45,11 +45,11 @@ import {tx, wallet, api, rpc} from '@cityofzion/neon-js';
 
 ## 完成用户给用户转账
 
-*题外话：用angular项目作为轻钱包客户端有一个天然优势，就是支持TypeScript，强大的代码提示节省了不少精力。*
+*题外话：用angular项目作为轻钱包客户端有一个天然优势，就是支持javascript，强大的代码提示节省了不少精力。*
 
 创建一个转账交易，然后签名并广播这个交易的代码如下：
 
-```typescript
+```javascript
 // 创建utxo
 let utxo = tx.Transaction.createContractTx(
     this.balance, // 谁转账填谁的余额
@@ -68,7 +68,7 @@ rpc.Query.sendRawTransaction(utxo).execute(this.rpcUrl).then((res) => {
 
 其中有两个参数需要额外获取，也就是``this.balance``和``this.rpcUrl``，在ngOninit()中先获取到：
 
-``` typescript
+``` javascript
 ngOnInit() {
     // 传入地址获取改地址的余额，用于后续计算交易的输入
     api.neonDB.getBalance('TestNet', this.owner).then((res: wallet.Balance) => {
@@ -96,7 +96,7 @@ ngOnInit() {
 
 至于合约调用交易参数略有不同：
 
-``` typescript
+``` javascript
 let newTx = tx.Transaction.createInvocationTx(
     this.balance, // 用户的余额
     api.makeIntent({NEO: 1}, wallet.getAddressFromScriptHash('代币的脚本哈希去掉最前面的0x')), // 转1NEO到代币的地址
@@ -129,7 +129,7 @@ let newTx = tx.Transaction.createInvocationTx(
 
 现在要转过来说说一个智能合约是如何工作的(非源码层面，仅关注其代码逻辑)，先看下面这段只能合约代码：
 
-``` typescript
+``` javascript
 public class YitimoA: SmartContract
 {
     public static readonly byte[] Owner = "AaHEnwbT15CYHaWYyfbmAxWWaGT3Zzvk3B".ToScriptHash();
