@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEO区块数据解析 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+<script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+</head>
+<body>
+    <img src="/assets/images/background.jpg" id="background" />
+    <div id="background-mask"></div>
+    <div class="article">
+        <h1>NEO区块数据解析</h1>
+        <div class="post-date">by <span>yitimo</span> at <span> 2 March 2018</span></div>
+        <p>本文将通过NEO节点提供的<code class="highlighter-rouge">/rpc</code>接口中的<code class="highlighter-rouge">getblock</code>接口获取NEO测试网上的包含了各种类型的交易的区块数据并进行解析。</p>
+
+<p><code class="highlighter-rouge">getblock</code>接口支持两个参数，第一个是区块的哈希或者高度，第二个是用来指明返回哈希数据还是json数据。那么问题的关键就是哈希数据跟json数据之间的区别，NEO区块链上存储的是序列化过的哈希数据，而想要用户能看得懂区块数据就必须反序列化区块数据。</p>
+
+<p>比如直接获取NEO测试网的创世区块得到的两类数据如下：</p>
+
+<p><em>待完成。。。</em></p>
+
+
+        <div class="flex" style="margin: 30px 0;">
+            <div class="flex-1">
+                <a class="another-post" href="/jekyll/update/2018/03/02/what-is-a-transaction-in-neo.html">上一篇： 个人理解NEO中的合约交易</a>
+                
+                <a class="another-post" href="/jekyll/update/2018/03/26/how-owner-withdraw-assets-from-ico-contract.html">下一篇： 管理员如何从ICO合约中取出NEO</a>
+            </div>
+            <a class="back" href="/">回到首页</a>
+        </div>
+    </div>
+    <div class="footer flex" style="overflow-x: auto;">
+    <div class="flex-1">
+        yitimo的其他站点: <br /><br />
+        <a target="blank" href="https://github.com/yitimo">GitHub</a>
+        <a target="blank" href="https://www.yitimo.com">个人网站</a>
+    </div>
+    <div class="flex-1">
+        站点同时部署在以下地址: <br /><br />
+        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
+        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
+        <a href="https://yitimo.github.io">yitimo.github.io</a>
+    </div>
+    <div class="flex-1">
+        联系我: <br /><br />
+        <a href="javascript:void(0)">admin@yitimo.com</a>
+        <a href="javascript:void(0)">yitimohu@gmail.com</a>
+    </div>
+</div>
+    <script src="/assets/js/init.js"></script>
+</body>
+</html>
