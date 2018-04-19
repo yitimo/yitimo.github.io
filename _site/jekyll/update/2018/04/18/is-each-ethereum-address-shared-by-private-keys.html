@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>是否可能生成两个完全一致的ETH私钥 | yitimo的个人博客</title>
+    <title>是否可能两个ETH私钥对应同一个地址 | yitimo的个人博客</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="HandheldFriendly" content="True" />
@@ -60,7 +60,7 @@
     <img src="/assets/images/background.jpg" id="background" />
     <div id="background-mask"></div>
     <div class="article">
-        <h1>是否可能生成两个完全一致的ETH私钥</h1>
+        <h1>是否可能两个ETH私钥对应同一个地址</h1>
         <div class="post-date">by <span>yitimo</span> at <span>18 April 2018</span></div>
         <p>原提问<a href="https://ethereum.stackexchange.com/questions/10055/is-each-ethereum-address-shared-by-theoretically-2-96-private-keys">在这里</a>。</p>
 
@@ -119,9 +119,64 @@ func newKey(rand io.Reader) (*Key, error) {
 
 <h2 id="个人总结">个人总结</h2>
 
-<p>从这个提问来看，至少<code class="highlighter-rouge">go-ethereum</code>中通过限制私钥生成的范围来保证不会有两个私钥对应同一公钥，也就是不超出椭圆曲线的周期范围。
-不过，仍然可能存在某次生成新私钥时这个私钥是全网中曾经生成过的，这虽然难度很高，但耐不住区块链完全公开，完全可能有比较无聊又恶趣味的人不停碰撞私钥。虽然说这个私钥机制被推翻的那天密码学跟区块链必然都会有较大冲击，至少目前这事情也只是理论上可行。
-不过回到笔者一开始的目的，使用<code class="highlighter-rouge">neon-js</code>中的私钥生成方法来创建一个NEO私钥，这货直接使用的是js中的<code class="highlighter-rouge">encrypt.getRandomValues</code>，其随机性以及对双重私钥(对应同一地址)的防御能力又有多少呢？答案看来得去追踪<code class="highlighter-rouge">NEO-CLI</code>自己的私钥生成算法了。</p>
+<p>生成重复私钥和生成对应同一地址的私钥是两个问题，后者可以通过限制私钥生成范围来避免，但前者反而会因为了避免后者而增加发生几率(从<code class="highlighter-rouge">1/2\*\*256</code>增加到<code class="highlighter-rouge">1/某个限制值</code>)。</p>
+
+<p>从这个提问来看，至少<code class="highlighter-rouge">go-ethereum</code>中通过限制私钥生成的范围来保证不会有两个私钥对应同一公钥，也就是不超出椭圆曲线的周期范围(仍不能避免理论上生成两个相同私钥的可能)。
+不过，仍然可能存在某次生成新私钥时这个私钥是全网中曾经生成过的，这虽然难度很高，但耐不住区块链完全公开，完全可能有比较无聊又恶趣味的人不停碰撞私钥。虽然说这个私钥机制被推翻的那天密码学跟区块链必然都会有较大冲击，但至少目前这事情也只是理论上可行。</p>
+
+<p>深入目前最新的<code class="highlighter-rouge">go-ethereum</code>源码，在<a href=""></a>中可以看到私钥是这么创建的：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>privateKeyECDSA, err := ecdsa.GenerateKey(crypto.S256(), reader)
+</code></pre></div></div>
+
+<p>也就是调用了<code class="highlighter-rouge">crypto/ecdsa</code>库的<code class="highlighter-rouge">GenerateKey</code>方法，给的范围是<code class="highlighter-rouge">crypto.S256()</code>，这个值在<a href="https://github.com/ethereum/go-ethereum/blob/master/crypto/secp256k1/curve.go">curve.go</a>中可以找到：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var theCurve = new(BitCurve)
+
+func init() {
+	// See SEC 2 section 2.7.1
+	// curve parameters taken from:
+	// http://www.secg.org/collateral/sec2_final.pdf
+	theCurve.P = math.MustParseBig256("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")
+	theCurve.N = math.MustParseBig256("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")
+	theCurve.B = math.MustParseBig256("0x0000000000000000000000000000000000000000000000000000000000000007")
+	theCurve.Gx = math.MustParseBig256("0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")
+	theCurve.Gy = math.MustParseBig256("0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8")
+	theCurve.BitSize = 256
+}
+
+// S256 returns a BitCurve which implements secp256k1.
+func S256() *BitCurve {
+	return theCurve
+}
+</code></pre></div></div>
+
+<p>并在<a href="https://github.com/ethereum/go-ethereum/blob/master/crypto/crypto.go">crypto.go</a>中定义了如下变量用于限制范围，超过此范围的就视为非法私钥：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var (
+	secp256k1_N, _  = new(big.Int).SetString("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 16)
+	secp256k1_halfN = new(big.Int).Div(secp256k1_N, big.NewInt(2))
+)
+</code></pre></div></div>
+
+<p>不过回到笔者一开始的目的，使用<code class="highlighter-rouge">neon-js</code>中的私钥生成方法来创建一个NEO私钥，这货直接使用的是js中的<code class="highlighter-rouge">encrypt.getRandomValues</code>，其随机性以及对双重私钥(对应同一地址)的防御能力又有多少呢？答案看来得去追踪<code class="highlighter-rouge">NEO-CLI</code>自己的私钥生成算法了。如果没找错的话是<a href="https://github.com/neo-project/neo/blob/master/neo/Wallets/Wallet.cs">下面这段</a>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public WalletAccount CreateAccount()
+{
+    byte[] privateKey = new byte[32];
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(privateKey);
+    }
+    WalletAccount account = CreateAccount(privateKey);
+    Array.Clear(privateKey, 0, privateKey.Length);
+    return account;
+}
+</code></pre></div></div>
+
+<p>仅通过C#自带的库生成，没找到范围限制，也就是跟<code class="highlighter-rouge">neon-js</code>的做法一样，把随机程度压力交给大佬了，这样来看不知是好消息还是坏消息，可以放心使用<code class="highlighter-rouge">neon-js</code>来创建私钥了，反正没比<code class="highlighter-rouge">neo</code>核心的创建方法差到哪里去。</p>
+
+<p>再提出个大胆的想法，如果集齐一万甚至更多的志愿者，每天也不挖矿，每人整个超级计算机就碰撞某个范围的ETH私钥(可以看作是难度巨大的挖矿)，协商如果谁遇到了巨额存款地址就平摊，哲学角度这就是在挑战区块链核心的信仰了。</p>
 
         <div class="flex" style="margin: 30px 0;">
             <div class="flex-1">
