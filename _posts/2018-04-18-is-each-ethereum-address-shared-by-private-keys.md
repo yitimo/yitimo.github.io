@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  是否可能生成两个完全一致的ETH私钥
+title:  是否可能两个ETH私钥对应同一个地址
 date:   2018-04-18 18:16:13 +0800
 author: yitimo
 categories: jekyll update
@@ -67,6 +67,65 @@ func newKey(rand io.Reader) (*Key, error) {
 
 ## 个人总结
 
-从这个提问来看，至少``go-ethereum``中通过限制私钥生成的范围来保证不会有两个私钥对应同一公钥，也就是不超出椭圆曲线的周期范围。
-不过，仍然可能存在某次生成新私钥时这个私钥是全网中曾经生成过的，这虽然难度很高，但耐不住区块链完全公开，完全可能有比较无聊又恶趣味的人不停碰撞私钥。虽然说这个私钥机制被推翻的那天密码学跟区块链必然都会有较大冲击，至少目前这事情也只是理论上可行。
-不过回到笔者一开始的目的，使用``neon-js``中的私钥生成方法来创建一个NEO私钥，这货直接使用的是js中的``encrypt.getRandomValues``，其随机性以及对双重私钥(对应同一地址)的防御能力又有多少呢？答案看来得去追踪``NEO-CLI``自己的私钥生成算法了。
+生成重复私钥和生成对应同一地址的私钥是两个问题，后者可以通过限制私钥生成范围来避免，但前者反而会因为了避免后者而增加发生几率(从``1/2\*\*256``增加到``1/某个限制值``)。
+
+从这个提问来看，至少``go-ethereum``中通过限制私钥生成的范围来保证不会有两个私钥对应同一公钥，也就是不超出椭圆曲线的周期范围(仍不能避免理论上生成两个相同私钥的可能)。
+不过，仍然可能存在某次生成新私钥时这个私钥是全网中曾经生成过的，这虽然难度很高，但耐不住区块链完全公开，完全可能有比较无聊又恶趣味的人不停碰撞私钥。虽然说这个私钥机制被推翻的那天密码学跟区块链必然都会有较大冲击，但至少目前这事情也只是理论上可行。
+
+深入目前最新的``go-ethereum``源码，在[]()中可以看到私钥是这么创建的：
+
+```
+privateKeyECDSA, err := ecdsa.GenerateKey(crypto.S256(), reader)
+```
+
+也就是调用了``crypto/ecdsa``库的``GenerateKey``方法，给的范围是``crypto.S256()``，这个值在[curve.go](https://github.com/ethereum/go-ethereum/blob/master/crypto/secp256k1/curve.go)中可以找到：
+
+```
+var theCurve = new(BitCurve)
+
+func init() {
+	// See SEC 2 section 2.7.1
+	// curve parameters taken from:
+	// http://www.secg.org/collateral/sec2_final.pdf
+	theCurve.P = math.MustParseBig256("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F")
+	theCurve.N = math.MustParseBig256("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141")
+	theCurve.B = math.MustParseBig256("0x0000000000000000000000000000000000000000000000000000000000000007")
+	theCurve.Gx = math.MustParseBig256("0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798")
+	theCurve.Gy = math.MustParseBig256("0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8")
+	theCurve.BitSize = 256
+}
+
+// S256 returns a BitCurve which implements secp256k1.
+func S256() *BitCurve {
+	return theCurve
+}
+```
+
+并在[crypto.go](https://github.com/ethereum/go-ethereum/blob/master/crypto/crypto.go)中定义了如下变量用于限制范围，超过此范围的就视为非法私钥：
+
+```
+var (
+	secp256k1_N, _  = new(big.Int).SetString("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 16)
+	secp256k1_halfN = new(big.Int).Div(secp256k1_N, big.NewInt(2))
+)
+```
+
+不过回到笔者一开始的目的，使用``neon-js``中的私钥生成方法来创建一个NEO私钥，这货直接使用的是js中的``encrypt.getRandomValues``，其随机性以及对双重私钥(对应同一地址)的防御能力又有多少呢？答案看来得去追踪``NEO-CLI``自己的私钥生成算法了。如果没找错的话是[下面这段](https://github.com/neo-project/neo/blob/master/neo/Wallets/Wallet.cs)：
+
+```
+public WalletAccount CreateAccount()
+{
+    byte[] privateKey = new byte[32];
+    using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+    {
+        rng.GetBytes(privateKey);
+    }
+    WalletAccount account = CreateAccount(privateKey);
+    Array.Clear(privateKey, 0, privateKey.Length);
+    return account;
+}
+```
+
+仅通过C#自带的库生成，没找到范围限制，也就是跟``neon-js``的做法一样，把随机程度压力交给大佬了，这样来看不知是好消息还是坏消息，可以放心使用``neon-js``来创建私钥了，反正没比``neo``核心的创建方法差到哪里去。
+
+再提出个大胆的想法，如果集齐一万甚至更多的志愿者，每天也不挖矿，每人整个超级计算机就碰撞某个范围的ETH私钥(可以看作是难度巨大的挖矿)，协商如果谁遇到了巨额存款地址就平摊，哲学角度这就是在挑战区块链核心的信仰了。
