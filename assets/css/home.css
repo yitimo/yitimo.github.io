@@ -16,12 +16,27 @@ a:hover, a:active, a:checked {
         width: 100%;
     }
     .home-nav {
-        padding: 15px;
         background: #cd5c5c;
     }
     .home-content {
         flex: 1;
         background: #f6f6f6;
+    }
+    .avatar {
+        margin: 0 auto;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        height: 50px;
+    }
+    .avatar img {
+        width: 50px;
+        height: 50px;
+        background: none;
+    }
+    .avatar div {
+        padding: 15px;
+        flex: 1;
     }
 }
 
@@ -40,6 +55,17 @@ a:hover, a:active, a:checked {
     .home-content {
         flex: 1;
         background: #f6f6f6;
+    }
+    .avatar {
+        margin: 0 auto;
+        padding: 30px 0;
+        text-align: center;
+        background: #de6d6d;
+    }
+    .avatar img {
+        height: 50px;
+        width: 50px;
+        border-radius: 100px;
     }
 }
 
