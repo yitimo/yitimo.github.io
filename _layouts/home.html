@@ -13,16 +13,18 @@
 </head>
 <body>
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
-    <img src="/assets/images/background.jpg" alt="background of yitimo blog" id="background" />
-    <div id="background-mask"></div>
-    <div class="home-head flex">
-        <img src="/assets/images/yitimo.jpg" alt="avater of yitimo" class="avater" />
-        <div class="flex-1 info">
-            Yitimo's Blog
-        </div>
-    </div>
     <div class="home-body">
-        {{content}}
+        <div class="home-nav">
+            <div class="avatar">
+                <img src="/assets/images/yitimo.jpg" alt="avatar of yitimo" />
+                <div>
+                    Yitimo's Blog
+                </div>
+            </div>
+        </div>
+        <div class="home-content">
+            {{content}} 
+        </div>
     </div>
     {% include foot.html %}
     <script src="/assets/js/init.js"></script>
