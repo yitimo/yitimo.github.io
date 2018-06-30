@@ -8,23 +8,15 @@
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/home.min.css" />
     {% include seo.html %}
 </head>
 <body>
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
-    <img src="/assets/images/background.jpg" alt="background of yitimo blog" id="background" />
-    <div id="background-mask"></div>
-    <div class="home-head flex">
-        <img src="/assets/images/yitimo.jpg" alt="avater of yitimo" class="avater" />
-        <div class="flex-1 info">
-            Yitimo's Blog
+    <div class="home-body">
+        {% include nav.html %}
+        <div class="home-content">
+            {{content}} 
         </div>
     </div>
-    <div class="home-body">
-        {{content}}
-    </div>
-    {% include foot.html %}
-    <script src="/assets/js/init.js"></script>
 </body>
 </html>

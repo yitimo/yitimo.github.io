@@ -8,7 +8,6 @@
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
@@ -57,12 +56,34 @@
 
 </head>
 <body>
-    <img src="/assets/images/background.jpg" id="background" />
-    <div id="background-mask"></div>
-    <div class="article">
-        <h1>个人理解区块链及其产品</h1>
-        <div class="post-date">by <span>yitimo</span> at <span>23 January 2018</span></div>
-        <p>本文将从开发者视角谈谈个人近段时间研究区块链技术得到的收获与困惑。</p>
+    <h1 style="display: none;">个人理解区块链及其产品 | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="#">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <p>本文将从开发者视角谈谈个人近段时间研究区块链技术得到的收获与困惑。</p>
 
 <h2 id="字面理解区块链">字面理解区块链</h2>
 <p>从字面理解<code class="highlighter-rouge">BlockChain</code>一词，即是多个区块串成的链。其中链的存在需要用心去感受，类比数据接口中链表结构的<code class="highlighter-rouge">next</code>指针，这里则是替换称为上一个区块得到的<code class="highlighter-rouge">hash</code>，而比特币中矿工的所有工作都是为了得到这一<code class="highlighter-rouge">hash</code>以创建一个新区块连接到主链上。其中区块的存在用于存放去中心化的数据，比特币中就是传说中的<code class="highlighter-rouge">UTXO</code>，即包含输入(扣钱地址)、输出(加钱地址)的交易记录。</p>
@@ -165,33 +186,8 @@
 
 <p>所以，个人目前的结论是，非数字交易组成的区块链还有待创造，别的都是应用而已。去不去中心化都一样，DAPP本身没问题，但装作是条链就扯淡了。</p>
 
-        <div class="flex" style="margin: 30px 0;">
-            <div class="flex-1">
-                <a class="another-post" href="/jekyll/update/2018/01/20/yitimos-first-post.html">上一篇： Yitimo's first post on jekyll</a>
-                
-                <a class="another-post" href="/jekyll/update/2018/02/06/how-to-run-neo-node.html">下一篇： NEO全节点客户端的基本使用，节点的运行和共识达成</a>
             </div>
-            <a class="back" href="/">回到首页</a>
         </div>
     </div>
-    <div class="footer flex" style="overflow-x: auto;">
-    <div class="flex-1">
-        yitimo的其他站点: <br /><br />
-        <a target="blank" href="https://github.com/yitimo">GitHub</a>
-        <a target="blank" href="https://www.yitimo.com">个人网站</a>
-    </div>
-    <div class="flex-1">
-        站点同时部署在以下地址: <br /><br />
-        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
-        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
-        <a href="https://yitimo.github.io">yitimo.github.io</a>
-    </div>
-    <div class="flex-1">
-        联系我: <br /><br />
-        <a href="javascript:void(0)">admin@yitimo.com</a>
-        <a href="javascript:void(0)">yitimohu@gmail.com</a>
-    </div>
-</div>
-    <script src="/assets/js/init.js"></script>
 </body>
 </html>

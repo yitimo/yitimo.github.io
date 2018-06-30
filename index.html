@@ -3,15 +3,8 @@ layout: home
 ---
 
 {% for post in site.posts %}
-    {% assign posti = forloop.index | modulo: 3 %}
-    {% if posti == 1 %}
-    <div class="flex post-row">
-    {% endif %}
-    <a href="{{ post.url }}" class="flex-1 post-item">
-        {{ post.title }}
-        <div class="mini">{{ post.author }} | {{ post.date | date:'%e %B %Y' }}</div>
+    <a class="post-block" href="{{ post.url }}">
+        <div class="post-block-title">{{ post.title }}</div>
+        <div class="post-block-desc">{{ post.author }} | {{ post.date | date:'%e %B %Y' }}</div>
     </a>
-    {% if posti == 0 %}
-    </div>
-    {% endif %}
 {% endfor %}
