@@ -7,42 +7,16 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/global.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/home.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
     {% include seo.html %}
 </head>
 <body>
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
     <div class="home-body">
-        <div class="home-nav flex-y">
-            <div class="avatar">
-                <img src="/assets/images/yitimo.jpg" alt="avatar of yitimo" />
-                <div>
-                    Yitimo's Blog
-                </div>
-            </div>
-            <div class="home-nav-body">
-                <a class="home-nav-body-block" href="https://github.com/yitimo" target="_blank">GitHub</a>
-                <a class="home-nav-body-block" href="https://github.com/yitimo" target="_blank">个人网站</a>
-            </div>
-            <div class="home-nav-foot">
-                <div class="home-nav-foot-block">
-                    联系我: <br /><br />
-                    <a href="javascript:void(0)">admin@yitimo.com</a>
-                    <a href="javascript:void(0)">yitimohu@gmail.com</a>
-                </div>
-                <div class="home-nav-foot-block">
-                    此博客同时部署在: <br /><br />
-                    <a href="javascript:void(0)">Netlify</a>
-                    <a href="javascript:void(0)">Github Page</a>
-                </div>
-            </div>
-        </div>
+        {% include nav.html %}
         <div class="home-content">
             {{content}} 
         </div>
     </div>
-    {% include foot.html %}
-    <script src="/assets/js/init.js"></script>
 </body>
 </html>

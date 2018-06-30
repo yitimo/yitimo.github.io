@@ -8,18 +8,17 @@
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://localhost:4000" />
-<meta property="og:url" content="http://localhost:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://localhost:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -57,12 +56,34 @@
 
 </head>
 <body>
-    <img src="/assets/images/background.jpg" id="background" />
-    <div id="background-mask"></div>
-    <div class="article">
-        <h1>使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端</h1>
-        <div class="post-date">by <span>yitimo</span> at <span>26 February 2018</span></div>
-        <p>本文将搭建一个不具有任何功能的NEO轻钱包，所有的精力都仅集中于成功运行<code class="highlighter-rouge">neon-wallet-db</code>项目并搭配全节点的<code class="highlighter-rouge">neo-cli /rpc</code>接口为轻钱包客户端提供服务。
+    <h1 style="display: none;">使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端 | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="#">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <p>本文将搭建一个不具有任何功能的NEO轻钱包，所有的精力都仅集中于成功运行<code class="highlighter-rouge">neon-wallet-db</code>项目并搭配全节点的<code class="highlighter-rouge">neo-cli /rpc</code>接口为轻钱包客户端提供服务。
 首先需要准备几个项目：</p>
 <ol>
   <li><a href="https://github.com/CityOfZion/neon-wallet-db">neon-wallet-db</a></li>
@@ -198,33 +219,8 @@ for i in range(0,5) :
 
 <p>至于如何进行轻钱包开发，也就是用轻钱包做到交易转账、合约调用这些有实际意义的事情，还有很多篇幅可以讲 : )</p>
 
-        <div class="flex" style="margin: 30px 0;">
-            <div class="flex-1">
-                <a class="another-post" href="/jekyll/update/2018/02/06/how-to-run-neo-node.html">上一篇： NEO全节点客户端的基本使用，节点的运行和共识达成</a>
-                
-                <a class="another-post" href="/jekyll/update/2018/03/02/what-is-a-transaction-in-neo.html">下一篇： 个人理解NEO中的合约交易</a>
             </div>
-            <a class="back" href="/">回到首页</a>
         </div>
     </div>
-    <div class="footer flex" style="overflow-x: auto;">
-    <div class="flex-1">
-        yitimo的其他站点: <br /><br />
-        <a target="blank" href="https://github.com/yitimo">GitHub</a>
-        <a target="blank" href="https://www.yitimo.com">个人网站</a>
-    </div>
-    <div class="flex-1">
-        站点同时部署在以下地址: <br /><br />
-        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
-        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
-        <a href="https://yitimo.github.io">yitimo.github.io</a>
-    </div>
-    <div class="flex-1">
-        联系我: <br /><br />
-        <a href="javascript:void(0)">admin@yitimo.com</a>
-        <a href="javascript:void(0)">yitimohu@gmail.com</a>
-    </div>
-</div>
-    <script src="/assets/js/init.js"></script>
 </body>
 </html>

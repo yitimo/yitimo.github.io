@@ -8,18 +8,17 @@
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/post.css" />
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://localhost:4000" />
-<meta property="og:url" content="http://localhost:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://localhost:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -57,12 +56,34 @@
 
 </head>
 <body>
-    <img src="/assets/images/background.jpg" id="background" />
-    <div id="background-mask"></div>
-    <div class="article">
-        <h1>个人理解NEO中的合约交易</h1>
-        <div class="post-date">by <span>yitimo</span> at <span> 2 March 2018</span></div>
-        <p>本文将使用一个简单的web客户端，配合<code class="highlighter-rouge">neon-js</code>完成多系列交易（transaction）操作，说白也就是手动实现两种交易类型——InvocationTransaction和ContractTransaction。以此来帮助理解NEO中的用户、智能合约以及两者的交互。</p>
+    <h1 style="display: none;">个人理解NEO中的合约交易 | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="#">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <p>本文将使用一个简单的web客户端，配合<code class="highlighter-rouge">neon-js</code>完成多系列交易（transaction）操作，说白也就是手动实现两种交易类型——InvocationTransaction和ContractTransaction。以此来帮助理解NEO中的用户、智能合约以及两者的交互。</p>
 
 <p>本文将完成以下操作：</p>
 
@@ -246,33 +267,8 @@
 
 <p>本文应该还能回答一个问题，一个笔者找遍全世界找不到答案的问题——参与ico用NEO换代币这个操作可以说是很简单了，但是ico进去的NEO到底怎么取出来呢？</p>
 
-        <div class="flex" style="margin: 30px 0;">
-            <div class="flex-1">
-                <a class="another-post" href="/jekyll/update/2018/02/26/how-to-connect-neon-js-to-private-net.html">上一篇： 使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端</a>
-                
-                <a class="another-post" href="/jekyll/update/2018/03/02/read-blockdata-on-neo.html">下一篇： NEO区块数据解析</a>
             </div>
-            <a class="back" href="/">回到首页</a>
         </div>
     </div>
-    <div class="footer flex" style="overflow-x: auto;">
-    <div class="flex-1">
-        yitimo的其他站点: <br /><br />
-        <a target="blank" href="https://github.com/yitimo">GitHub</a>
-        <a target="blank" href="https://www.yitimo.com">个人网站</a>
-    </div>
-    <div class="flex-1">
-        站点同时部署在以下地址: <br /><br />
-        <a href="https://blog.yitimo.com">blog.yitimo.com</a>
-        <a href="https://yitiblog.netlify.com">yitiblog.netlify.com</a>
-        <a href="https://yitimo.github.io">yitimo.github.io</a>
-    </div>
-    <div class="flex-1">
-        联系我: <br /><br />
-        <a href="javascript:void(0)">admin@yitimo.com</a>
-        <a href="javascript:void(0)">yitimohu@gmail.com</a>
-    </div>
-</div>
-    <script src="/assets/js/init.js"></script>
 </body>
 </html>
