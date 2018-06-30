@@ -51,16 +51,44 @@ a:hover, a:active, a:checked {
         width: 20%;
         min-width: 200px;
         background: #cd5c5c;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        flex-flow: column;
+        padding: 0 16px;
+    }
+    .home-nav-body {
+        flex: 1;
     }
     .home-content {
         flex: 1;
         background: #f6f6f6;
+    }
+    .home-nav-foot {
+        margin: 0 auto;
+        padding: 30px 0;
+        text-align: center;
+        background: #de6d6d;
+        width: 100%;
+    }
+    .home-nav-foot-block {
+        text-align: left;
+    }
+    .home-nav-foot-block a {
+        padding: 16px 32px;
+        color: #f3f3f3;
+        transition: 0.2s;
+    }
+    .home-nav-foot-block a:hover {
+        color: #ffffff;
+        background: #cd5c5c;
     }
     .avatar {
         margin: 0 auto;
         padding: 30px 0;
         text-align: center;
         background: #de6d6d;
+        width: 100%;
     }
     .avatar img {
         height: 50px;
