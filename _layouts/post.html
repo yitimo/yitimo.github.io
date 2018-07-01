@@ -18,7 +18,24 @@
             <div class="article">
                 {{content}}
             </div>
+            <div class="article-pager">
+                {% if page.previous %}
+                <a class="article-pager-block" href="{{page.previous.url}}">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">{{page.previous.title}}</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                {% endif %}
+                {% if page.next %}
+                <a class="article-pager-block" href="{{page.next.url}}">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">{{page.next.title}}</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                {% endif %}
+            </div>
         </div>
+        {% include foot.html %}
     </div>
 </body>
 </html>
