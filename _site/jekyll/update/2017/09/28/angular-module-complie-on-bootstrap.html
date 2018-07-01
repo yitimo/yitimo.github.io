@@ -60,6 +60,7 @@
 </div>
         <div class="home-content">
             <div class="article">
+                <h1>从源码理解angular编译AppModule的过程</h1>
                 <p>承接<a href="/jekyll/update/2017/09/25/how-angular-bootstrap-in-jit.html">上文</a>。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 <code class="highlighter-rouge">PlatformRef</code> ，以及执行平台引用提供的方法编译根模块 <code class="highlighter-rouge">AppModule</code> 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。</p>
 
 <h2 id="编译的起点">编译的起点</h2>

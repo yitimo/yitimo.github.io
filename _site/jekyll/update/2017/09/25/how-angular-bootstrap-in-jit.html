@@ -60,6 +60,7 @@
 </div>
         <div class="home-content">
             <div class="article">
+                <h1>从源码理解angular项目在JIT模式下的启动过程</h1>
                 <p>通常一个angular项目会有一个个模块(Module)来管理各自的业务，并且必须有一个根模块(AppModule)作为应用的入口模块，整个应用都围绕AppModule展开。可以这么说，AppModule是一个angular项目的起点。</p>
 
 <p>不过单从angular的启动过程来说，AppModule就是其工作的终点。整个angular框架的启动过程都是为了使AppModule可以工作而展开的。本文算是笔者单就阅读angular源码中的启动过程相关部分的总结，angular源码博大精深，有任何笔者理解不够或错误的地方还望包涵并指正。</p>
