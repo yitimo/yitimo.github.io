@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Android中使用CoordinatorLayout進行佈局 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body>
+    <h1 style="display: none;">Android中使用CoordinatorLayout進行佈局 | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="/">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <h1>Android中使用CoordinatorLayout進行佈局</h1>
+                <p>本文主要为整理 Android 中<code class="highlighter-rouge">CoordinatorLayout</code>的内置行为的使用。注意<code class="highlighter-rouge">CoordinatorLayout</code>的所有这些行为都得用在<code class="highlighter-rouge">Activity</code>的根布局中，也就是<code class="highlighter-rouge">Fragment</code>用不了。</p>
+
+<h2 id="基本结构">基本结构</h2>
+
+<p>基於默認行爲的CoordinatorLayout至少要由5部分組成：</p>
+
+<ol>
+  <li><code class="highlighter-rouge">CoornaditorLayout</code>標簽本身</li>
+  <li><code class="highlighter-rouge">AppBarLayout</code>代表了實現滾動效果部分，即滾動主體(列表等)滾動時會做出需要的特效的部分</li>
+  <li><code class="highlighter-rouge">CollapsingToolbarLayout</code> 字面意思即將摺叠部分的佈局，也就是之後滾動時要消失或是固定的佈局，直接放在<code class="highlighter-rouge">AppBarLayout</code>裏面</li>
+  <li><code class="highlighter-rouge">Toolbar</code>放在<code class="highlighter-rouge">CollapsingToolbarLayout</code>裏面，可以配置未摺叠時和摺叠后的行爲，直白的就是未摺叠時的大標題，摺叠后變成了左上角的小標題，這個就是靠<code class="highlighter-rouge">Toolbar</code></li>
+  <li>滾動主體本身，可以是個列表，也可以直接是個<code class="highlighter-rouge">NestedScrollView</code>，(不可以是<code class="highlighter-rouge">ScrollView</code>，這是個坑)，指定一個行爲后就可以與前4個部分進行響應了，默認行爲就用<code class="highlighter-rouge">appbar_scrolling_view_behavior</code>，也可以自定義行爲</li>
+</ol>
+
+<p>CoordinatorLayout AppBarLayout 與滾動主題 這三部分是固定的標簽，一般都是如下形式:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="指定你的Activity"&gt;
+    &lt;android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"&gt;
+        &lt;!-- 具體特效佈局 --&gt;
+    &lt;/android.support.design.widget.AppBarLayout&gt;
+
+    &lt;android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"&gt;
+        &lt;LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"&gt;
+            &lt;!-- 滾動主體佈局 --&gt;
+        &lt;/LinearLayout&gt;
+    &lt;/android.support.v4.widget.NestedScrollView&gt;
+&lt;/android.support.design.widget.CoordinatorLayout&gt;
+</code></pre></div></div>
+
+<h2 id="collapsingtoolbarlayout">CollapsingToolbarLayout</h2>
+
+<p>此佈局估計是導致<code class="highlighter-rouge">CoornaditorLayout</code>易使人困惑的萬惡之源，相對的<code class="highlighter-rouge">Toolbar</code>其實是個可有可無的標簽，是用來錦上添花的。
+<code class="highlighter-rouge">CollapsingToolbarLayout</code>中最重要的屬性是<code class="highlighter-rouge">layout_scrollFlags</code>和<code class="highlighter-rouge">contentScrim</code>，前者直接決定這個佈局要如何相應滾動，後者決定標簽滾動至頂部以上(消失)時會漸變至設定的顔色，<code class="highlighter-rouge">layout_scrollFlags</code>有以下幾個值可以設定：</p>
+
+<ol>
+  <li>不設置值 可以保持固定，不會隨滾動而消失了，可以理解爲： 未到頂部時跟隨滾動，到頂部后就固定在頂部。所以是個好東西，可以用來裝<code class="highlighter-rouge">TabLayout</code>之類的導航標簽。</li>
+  <li><code class="highlighter-rouge">scroll</code> 字面意思，就是正常滾動 其他值都要配合<code class="highlighter-rouge">scroll</code>来发挥效果</li>
+  <li><code class="highlighter-rouge">exitUntilCollapsed|scroll</code> 這兩者一起並配上 <code class="highlighter-rouge">contentScrim</code>，上滑時標簽會上滑至看不見(<code class="highlighter-rouge">scroll</code>的效果)，且還會漸變至設定的顔色(<code class="highlighter-rouge">contentScrim</code>的效果)</li>
+  <li><code class="highlighter-rouge">enterAlways|scroll</code> 上滑時效果跟<code class="highlighter-rouge">scroll</code>一樣，但由于<code class="highlighter-rouge">enterAlways</code>只要下滑就會再次出現，會受<code class="highlighter-rouge">contentScrim</code>影響，下滑時保持設定的顔色</li>
+</ol>
+
+<p>由于<code class="highlighter-rouge">CollapsingToolbarLayout</code>只能设置一种滚动方式，所以可以在一个<code class="highlighter-rouge">AppBarLayout</code>中添加多个，分别给不同的滚动方式，来实现想要的效果。不过要注意多个<code class="highlighter-rouge">CollapsingToolbarLayout</code>的排布顺序，其为线性从上往下排布，不同位置不同<code class="highlighter-rouge">layout_scrollFlags</code>都会有不同的表现结果，需要合理安排。</p>
+
+<h2 id="toolbar">ToolBar</h2>
+
+<p><code class="highlighter-rouge">ToolBar</code>作为<code class="highlighter-rouge">CollapsingToolbarLayout</code>的子标签使用，可以响应折叠时与未折叠时两种状态。需要配置<code class="highlighter-rouge">layout_collapseMode</code>的值：</p>
+
+<ol>
+  <li><code class="highlighter-rouge">pin</code>会固定位置</li>
+  <li><code class="highlighter-rouge">parallax</code>会跟随滚动</li>
+</ol>
+
+<p>一般可以实现的效果就是，<code class="highlighter-rouge">ToolBar</code>中放置一个返回按钮，同时在<code class="highlighter-rouge">CollapsingToolbarLayout</code>中设置<code class="highlighter-rouge">title</code>的值，这样就能做到：未折叠时显示大标题，折叠后大标题缩小至左上角返回按钮的旁边。</p>
+
+            </div>
+            <div class="article-pager">
+                
+                <a class="article-pager-block" href="/jekyll/update/2018/08/06/android-round-corner-layout.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">Android中使用帶圓角佈局</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+            </div>
+        </div>
+        <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    </div>
+</body>
+</html>

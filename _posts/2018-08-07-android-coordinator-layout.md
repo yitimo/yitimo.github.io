@@ -11,6 +11,10 @@ keywords:
 description: Usage of coordinator layout.
 ---
 
+本文主要为整理 Android 中``CoordinatorLayout``的内置行为的使用。注意``CoordinatorLayout``的所有这些行为都得用在``Activity``的根布局中，也就是``Fragment``用不了。
+
+## 基本结构
+
 基於默認行爲的CoordinatorLayout至少要由5部分組成：
 
 1. ``CoornaditorLayout``標簽本身
@@ -55,9 +59,17 @@ CoordinatorLayout AppBarLayout 與滾動主題 這三部分是固定的標簽，
 ``CollapsingToolbarLayout``中最重要的屬性是``layout_scrollFlags``和``contentScrim``，前者直接決定這個佈局要如何相應滾動，後者決定標簽滾動至頂部以上(消失)時會漸變至設定的顔色，``layout_scrollFlags``有以下幾個值可以設定：
 
 1. 不設置值 可以保持固定，不會隨滾動而消失了，可以理解爲： 未到頂部時跟隨滾動，到頂部后就固定在頂部。所以是個好東西，可以用來裝``TabLayout``之類的導航標簽。
-2. ``scroll`` 字面意思，就是正常滾動
-3. ``enterAlways`` 單獨使用時與直接不加``layout_scrollFlags``一樣
-4. ``enterAlwaysCollapsed`` 單獨使用時與直接不加``layout_scrollFlags``一樣
-5. ``snap`` 單獨使用時與直接不加``layout_scrollFlags``一樣
-6. ``exitUntilCollapsed|scroll`` 這兩者一起並配上 ``contentScrim``，上滑時標簽會上滑至看不見(``scroll``的效果)，且還會漸變至設定的顔色(``contentScrim``的效果)
-7. ``enterAlways|scroll`` 上滑時效果跟``scroll``一樣，但只要下滑就會出現``enterAlways``，會受``contentScrim``影響，下滑時保持設定的顔色
+2. ``scroll`` 字面意思，就是正常滾動 其他值都要配合``scroll``来发挥效果
+3. ``exitUntilCollapsed|scroll`` 這兩者一起並配上 ``contentScrim``，上滑時標簽會上滑至看不見(``scroll``的效果)，且還會漸變至設定的顔色(``contentScrim``的效果)
+4. ``enterAlways|scroll`` 上滑時效果跟``scroll``一樣，但由于``enterAlways``只要下滑就會再次出現，會受``contentScrim``影響，下滑時保持設定的顔色
+
+由于``CollapsingToolbarLayout``只能设置一种滚动方式，所以可以在一个``AppBarLayout``中添加多个，分别给不同的滚动方式，来实现想要的效果。不过要注意多个``CollapsingToolbarLayout``的排布顺序，其为线性从上往下排布，不同位置不同``layout_scrollFlags``都会有不同的表现结果，需要合理安排。
+
+## ToolBar
+
+``ToolBar``作为``CollapsingToolbarLayout``的子标签使用，可以响应折叠时与未折叠时两种状态。需要配置``layout_collapseMode``的值：
+
+1. ``pin``会固定位置
+2. ``parallax``会跟随滚动
+
+一般可以实现的效果就是，``ToolBar``中放置一个返回按钮，同时在``CollapsingToolbarLayout``中设置``title``的值，这样就能做到：未折叠时显示大标题，折叠后大标题缩小至左上角返回按钮的旁边。
