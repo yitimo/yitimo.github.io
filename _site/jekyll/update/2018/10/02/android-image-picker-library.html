@@ -107,41 +107,41 @@
 
 <p>图片选择器需要准备一个结构体，来放置一些图片渲染的回调方法：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var setOrigin: ((context: Context, src: File, width: Int, height: Int, callback: (Bitmap) -&gt; Unit) -&gt; Unit)? = null
-var setCommon: ((context: Context, imageView: ImageView, src: File) -&gt; Unit)? = null
-var setThumb: ((context: Context, imageView: ImageView, src: File, size: Int, fade: Int, holderRes: Int) -&gt; Unit)? = null
-var pauseGlide: ((context: Context) -&gt; Unit)? = null
-var resumeGlide: ((context: Context) -&gt; Unit)? = null
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="py">setOrigin</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="n">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">setCommon</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="n">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">setThumb</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="n">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">fade</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">holderRes</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">pauseGlide</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">resumeGlide</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
 </code></pre></div></div>
 
 <p>其中<code class="highlighter-rouge">setOrigin</code>用于设置原图图片，<code class="highlighter-rouge">setCommon</code>用于直接设置图片作为通用方法，<code class="highlighter-rouge">setThumb</code>用于设置封面图，<code class="highlighter-rouge">pauseGlide</code>与<code class="highlighter-rouge">resumeGlide</code>方法用于帮助在页面滚动时暂停和继续<code class="highlighter-rouge">Glide</code>的渲染工作以避免此类卡顿情况。</p>
 
 <p>最终应用中必须在某处(比如<code class="highlighter-rouge">BaseApplication</code>)执行一个代码片段，来将<code class="highlighter-rouge">Glide</code>配置给图片选择工具：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ymager.setOrigin = fun (context: Context, src: File, width: Int, height: Int, callback: (Bitmap) -&gt; Unit) {
-    GlideApp.with(context).asBitmap().load(src).override(width, height).fitCenter().into(object: SimpleTarget&lt;Bitmap&gt;() {
-        override fun onResourceReady(resource: Bitmap, transition: Transition&lt;in Bitmap&gt;?) {
-            callback(resource)
-        }
-    })
-}
-Ymager.setCommon = fun (context: Context, imageView: ImageView, src: File) {
-    GlideApp.with(context).load(src).into(imageView)
-}
-Ymager.setThumb = fun (context: Context, imageView: ImageView, src: File, size: Int, fade: Int, holderRes: Int) {
-    GlideApp.with(context)
-            .load(src)
-            .error(holderRes)
-            .transition(DrawableTransitionOptions.withCrossFade(fade))
-            .override(size, size)
-            .into(imageView)
-}
-Ymager.pauseGlide = fun (context: Context) {
-    GlideApp.with(context).pauseRequests()
-}
-Ymager.resumeGlide = fun (context: Context) {
-    GlideApp.with(context).resumeRequests()
-}
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Ymager</span><span class="p">.</span><span class="n">setOrigin</span> <span class="p">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="n">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">asBitmap</span><span class="p">().</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="k">override</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">).</span><span class="n">fitCenter</span><span class="p">().</span><span class="n">into</span><span class="p">(</span><span class="k">object</span><span class="p">:</span> <span class="n">SimpleTarget</span><span class="p">&lt;</span><span class="n">Bitmap</span><span class="p">&gt;()</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="n">onResourceReady</span><span class="p">(</span><span class="n">resource</span><span class="p">:</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">transition</span><span class="p">:</span> <span class="n">Transition</span><span class="p">&lt;</span><span class="k">in</span> <span class="n">Bitmap</span><span class="p">&gt;?)</span> <span class="p">{</span>
+            <span class="n">callback</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+<span class="n">Ymager</span><span class="p">.</span><span class="n">setCommon</span> <span class="p">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="n">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="n">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">Ymager</span><span class="p">.</span><span class="n">setThumb</span> <span class="p">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="n">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">File</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">fade</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">holderRes</span><span class="p">:</span> <span class="n">Int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">holderRes</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">transition</span><span class="p">(</span><span class="n">DrawableTransitionOptions</span><span class="p">.</span><span class="n">withCrossFade</span><span class="p">(</span><span class="n">fade</span><span class="p">))</span>
+            <span class="p">.</span><span class="k">override</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">Ymager</span><span class="p">.</span><span class="n">pauseGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pauseRequests</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">Ymager</span><span class="p">.</span><span class="n">resumeGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">resumeRequests</span><span class="p">()</span>
+<span class="p">}</span>
 </code></pre></div></div>
 
 <p>对于笔者的这个图片选择器来说，应用中配置的方法内容很固定，每个渲染方法各自用于选择器中的一处需要渲染图片的地方，包括列表图片、相册封面以及原图。</p>

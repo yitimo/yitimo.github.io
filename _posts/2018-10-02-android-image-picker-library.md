@@ -53,7 +53,7 @@ Android中图片的处理是个危险操作，很容易浪费性能甚至导致�
 
 图片选择器需要准备一个结构体，来放置一些图片渲染的回调方法：
 
-```
+``` kotlin
 var setOrigin: ((context: Context, src: File, width: Int, height: Int, callback: (Bitmap) -> Unit) -> Unit)? = null
 var setCommon: ((context: Context, imageView: ImageView, src: File) -> Unit)? = null
 var setThumb: ((context: Context, imageView: ImageView, src: File, size: Int, fade: Int, holderRes: Int) -> Unit)? = null
@@ -65,7 +65,7 @@ var resumeGlide: ((context: Context) -> Unit)? = null
 
 最终应用中必须在某处(比如``BaseApplication``)执行一个代码片段，来将``Glide``配置给图片选择工具：
 
-```
+``` kotlin
 Ymager.setOrigin = fun (context: Context, src: File, width: Int, height: Int, callback: (Bitmap) -> Unit) {
     GlideApp.with(context).asBitmap().load(src).override(width, height).fitCenter().into(object: SimpleTarget<Bitmap>() {
         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
