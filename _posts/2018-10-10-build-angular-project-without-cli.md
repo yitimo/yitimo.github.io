@@ -14,7 +14,7 @@ description: 不使用cli搭建angular项目
 
 本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖``@angular/cli``，纯手工配置``webpack``来实现。即花费巨大力气完成``@angular/cli``中的如下命令：
 
-```
+``` shell
 ng new myApp
 ng build --prod
 ```
@@ -23,7 +23,7 @@ ng build --prod
 
 初始化项目使用``yarn init``(或``npm init``)完成，最终得到包含单个``package.json``的项目。像这样：
 
-```
+``` shell
 mkdir myApp && cd myApp
 yarn init
 // 一路回车或细心输入配置
@@ -31,7 +31,7 @@ yarn init
 
 得到类似如下内容的``package.json``文件：
 
-```
+``` json
 {
   "name": "my-app",
   "version": "1.0.0",
@@ -42,13 +42,12 @@ yarn init
 
 为了防止第一步太过简单，顺便我们再往里面添加一波依赖：
 
-```
+``` shell
 yarn add @angular/core @angular/common @angular/platform-browser @angular/platform-browser-dynamic @angular/compiler rxjs zone.js core-js
 
 yarn add --dev @angular/compiler-cli webpack webpack-cli webpack-dev-server typescript@2.9.2
 
-yarn add --dev html-webpack-plugin
-to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack @angular-devkit/build-optimizer uglifyjs-webpack-plugin mini-css-extract-plugin node-sass rimraf http-server
+yarn add --dev html-webpack-plugin to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack @angular-devkit/build-optimizer uglifyjs-webpack-plugin mini-css-extract-plugin node-sass rimraf http-server
 ```
 
 * 第一波依赖是angular相关的几个依赖，已经足够最简单运行了
@@ -57,7 +56,7 @@ to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack 
 
 再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个``package.json``文件的项目，内容像这样：
 
-```
+``` json
 {
     "name": "my-app",
     "version": "1.0.0",
@@ -96,14 +95,14 @@ to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack 
 
 **polyfills.ts：**
 
-```
+``` typescript
 import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
 ```
 
 **main.ts：**
 
-```
+``` typescript
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { enableProdMode } from '@angular/core';
 import { AppModule } from './app/app.module';
@@ -119,7 +118,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 
 **index.html：**
 
-```
+``` html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,7 +137,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 
 **app.module.ts：**
 
-```
+``` typescript
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -157,7 +156,7 @@ export class AppModule { }
 
 **app.component.ts：**
 
-```
+``` typescript
 import { Component } from '@angular/core';
 
 @Component({
@@ -170,13 +169,13 @@ export class AppComponent { }
 
 **app.component.html：**
 
-```
+``` html
 <h2>Hello !!!</h2>
 ```
 
 **app.component.css：**
 
-```
+``` css
 h2 {
     color: #CD5C5C;
 }
@@ -184,7 +183,7 @@ h2 {
 
 **app.component.scss：**
 
-```
+``` css
 h2 {
     font-size: 32px;
 }
@@ -192,7 +191,7 @@ h2 {
 
 其中报错是因为未配置``tsconfig.json``，编辑器报了``es7``装饰器新特性的警告，所以在项目根目录新建一个``tsconfig.json``：
 
-```
+``` json
 {
     "compilerOptions": {
         "target": "es5",
@@ -235,7 +234,7 @@ h2 {
 
 最终一个完整的webpack配置像这样：
 
-```
+``` javascript
 const path = require('path');
 
 const DefinePlugin = require('webpack/lib/DefinePlugin');
@@ -382,6 +381,6 @@ module.exports = {
 至此纯手工最简单的angular项目就完成了。对这个小项目做几个总结：
 
 1. 其中的配置只针对``prod + AOT``模式，即不是``JIT``模式
-2. 对于开发环境可以再新增一个``webpack.config.dev.js``来配置生产环境下的webpack规则，并搭配``webpack-dev-server``使用。对于生产环境就像文中这样先``yarn prod``，然后扔到服务器上。
+2. 对于开发环境可以再新增一个``webpack.config.dev.js``来配置生产环境下的webpack规则，并搭配``webpack-dev-server``使用(本文未完成这一步)。对于生产环境就像文中这样先``yarn prod``，然后扔到服务器上。
 3. ``@ngtools/webpack``与``MiniCssExtractPlugin``不兼容，所以注意配置``exclude``规则。
 4. ``tsconfig.json``中的``"module": "esnext"``这一配置相比``"module": "commonjs"``能减少不少体积。
