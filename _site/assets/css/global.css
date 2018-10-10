@@ -817,6 +817,11 @@ a:hover, a:active, a:checked {
 .article code {
     font-weight: 500;
 }
+.article a {
+    color: #0099ff;
+    text-decoration: underline;
+    cursor: pointer;
+}
 /* code part */
 .article .language-javascript code .kd,.language-javascript  code .k {
     color: #0000ff;
@@ -828,5 +833,18 @@ a:hover, a:active, a:checked {
     color: #09885a;
 }
 .article .language-javascript code .c1,.language-javascript  code .cm {
+    color: #008000;
+}
+
+.article .language-kotlin code .kd,.language-kotlin  code .k {
+    color: #0000ff;
+}
+.article .language-kotlin code .s1 {
+    color: #a31515;
+}
+.article .language-kotlin code .mi {
+    color: #09885a;
+}
+.article .language-kotlin code .c1,.language-kotlin  code .cm {
     color: #008000;
 }
