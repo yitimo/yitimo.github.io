@@ -51,7 +51,7 @@ yarn add --dev html-webpack-plugin to-string-loader css-loader sass-loader raw-l
 ```
 
 * 第一波依赖是angular相关的几个依赖，已经足够最简单运行了
-* 第二波是大哥webpack还有干爹typescript。其中typescript必须指定2版本外(目前最新已经到3以上了)。
+* 第二波是大哥webpack还有干爹typescript。其中typescript必须指定2版本(目前最新已经到3以上了)。
 * 第三波是webpack家族的一些loader和plugin，以及``rimraf``用于删除生成的文件，``http-server``用于运行小服务器来访问生成的资源。
 
 再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个``package.json``文件的项目，内容像这样：
