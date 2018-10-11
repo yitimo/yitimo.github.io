@@ -15,7 +15,7 @@ description: 不使用cli搭建angular项目
 本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖``@angular/cli``，纯手工配置``webpack``来实现。即花费巨大力气完成``@angular/cli``中的如下命令：
 
 ``` shell
-ng new myApp
+ng new angulectron
 ng build --prod
 ```
 
@@ -24,7 +24,7 @@ ng build --prod
 初始化项目使用``yarn init``(或``npm init``)完成，最终得到包含单个``package.json``的项目。像这样：
 
 ``` shell
-mkdir myApp && cd myApp
+mkdir angulectron && cd angulectron
 yarn init
 // 一路回车或细心输入配置
 ```
@@ -33,7 +33,7 @@ yarn init
 
 ``` json
 {
-  "name": "my-app",
+  "name": "angulectron",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT"
@@ -58,10 +58,10 @@ yarn add --dev html-webpack-plugin to-string-loader css-loader sass-loader raw-l
 
 ``` json
 {
-    "name": "my-app",
+    "name": "angulectron",
     "version": "1.0.0",
-    "main": "index.js",
-    "license": "MIT",
+    "description": "Starter for electron app with angular(v6+)",
+    "main": "main.js",
     "scripts": {
         "http": "http-server ./wwwroot",
         "prod": "rimraf wwwroot && yarn webpack -- --config ./webpack.config.js --open --progress --profile --content-base src/",
@@ -69,20 +69,66 @@ yarn add --dev html-webpack-plugin to-string-loader css-loader sass-loader raw-l
         "webpack": "node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js",
         "webpack-dev-server": "node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/yitimo/angulectron.git"
+    },
+    "keywords": [
+        "angular",
+        "electron"
+    ],
+    "author": "yitimo <admin@yitimo.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/yitimo/angulectron/issues"
+    },
+    "homepage": "https://github.com/yitimo/angulectron#readme",
+    "devDependencies": {
+        "@angular-devkit/build-optimizer": "^0.8.4",
+        "@angular/cli": "^6.2.4",
+        "@angular/compiler-cli": "^6.1.9",
+        "@angular/language-service": "^6.1.9",
+        "@ngtools/webpack": "^6.2.4",
+        "@types/hammerjs": "^2.0.36",
+        "@types/node": "^10.11.5",
+        "@types/uglify-js": "^3.0.3",
+        "@types/webpack": "^4.4.14",
+        "codelyzer": "^4.5.0",
+        "copy-webpack-plugin": "^4.5.2",
+        "css-loader": "^1.0.0",
+        "file-loader": "^2.0.0",
+        "html-loader": "^0.5.5",
+        "html-webpack-plugin": "^3.2.0",
+        "http-server": "^0.11.1",
+        "mini-css-extract-plugin": "^0.4.2",
+        "node-sass": "^4.9.3",
+        "raw-loader": "^0.5.1",
+        "rimraf": "^2.6.2",
+        "sass-loader": "^7.1.0",
+        "script-ext-html-webpack-plugin": "^2.0.1",
+        "style-loader": "^0.23.0",
+        "to-string-loader": "^1.1.5",
+        "ts-loader": "^5.2.1",
+        "tslint": "^5.11.0",
+        "typescript": "^2.7.2",
+        "webpack": "^4.19.0",
+        "webpack-cli": "^3.1.0",
+        "webpack-dev-server": "^3.1.8",
+        "webpack-inline-manifest-plugin": "^4.0.1"
+    },
     "dependencies": {
+        "@angular/animations": "^6.1.9",
         "@angular/common": "^6.1.9",
         "@angular/compiler": "^6.1.9",
         "@angular/core": "^6.1.9",
+        "@angular/forms": "^6.1.9",
         "@angular/platform-browser": "^6.1.9",
         "@angular/platform-browser-dynamic": "^6.1.9",
+        "@angular/platform-server": "^6.1.9",
+        "@angular/router": "^6.1.9",
+        "core-js": "^2.5.7",
         "rxjs": "^6.3.3",
         "zone.js": "^0.8.26"
-    },
-    "devDependencies": {
-        "@angular/compiler-cli": "^6.1.9",
-        "typescript": "2.9.2",
-        "webpack": "^4.20.2",
-        "webpack-dev-server": "^3.1.9"
     }
 }
 ```
@@ -128,7 +174,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);
     <title>My App</title>
 </head>
 <body>
-    <my-app>Loading...</my-app>
+    <angulectron>Loading...</angulectron>
     <% if (isDevServer) { %><script src="/webpack-dev-server.js"></script><% } %>
 </body>
 </html>
@@ -160,7 +206,7 @@ export class AppModule { }
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'my-app',
+    selector: 'angulectron',
     templateUrl: 'app.component.html',
     styleUrls: ['app.component.css', 'app.component.scss']
 })

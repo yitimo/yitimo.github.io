@@ -63,7 +63,7 @@
                 <h1>不使用cli搭建angular项目</h1>
                 <p>本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖<code class="highlighter-rouge">@angular/cli</code>，纯手工配置<code class="highlighter-rouge">webpack</code>来实现。即花费巨大力气完成<code class="highlighter-rouge">@angular/cli</code>中的如下命令：</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng new myApp
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng new angulectron
 ng build <span class="nt">--prod</span>
 </code></pre></div></div>
 
@@ -71,7 +71,7 @@ ng build <span class="nt">--prod</span>
 
 <p>初始化项目使用<code class="highlighter-rouge">yarn init</code>(或<code class="highlighter-rouge">npm init</code>)完成，最终得到包含单个<code class="highlighter-rouge">package.json</code>的项目。像这样：</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>myApp <span class="o">&amp;&amp;</span> <span class="nb">cd </span>myApp
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>angulectron <span class="o">&amp;&amp;</span> <span class="nb">cd </span>angulectron
 yarn init
 // 一路回车或细心输入配置
 </code></pre></div></div>
@@ -79,7 +79,7 @@ yarn init
 <p>得到类似如下内容的<code class="highlighter-rouge">package.json</code>文件：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-app"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"index.js"</span><span class="p">,</span><span class="w">
   </span><span class="s2">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="w">
@@ -104,10 +104,10 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <p>再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个<code class="highlighter-rouge">package.json</code>文件的项目，内容像这样：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-app"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"index.js"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Starter for electron app with angular(v6+)"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main.js"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"http"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http-server ./wwwroot"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"prod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rimraf wwwroot &amp;&amp; yarn webpack -- --config ./webpack.config.js --open --progress --profile --content-base src/"</span><span class="p">,</span><span class="w">
@@ -115,20 +115,66 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
         </span><span class="s2">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"webpack-dev-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js"</span><span class="w">
     </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"repository"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git+https://github.com/yitimo/angulectron.git"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"keywords"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"angular"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"electron"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yitimo &lt;admin@yitimo.com&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"bugs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/yitimo/angulectron/issues"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="s2">"homepage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/yitimo/angulectron#readme"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"@angular-devkit/build-optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.8.4"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.2.4"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/compiler-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/language-service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@ngtools/webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.2.4"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@types/hammerjs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.36"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@types/node"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^10.11.5"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@types/uglify-js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.0.3"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@types/webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.4.14"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"codelyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.5.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"copy-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.5.2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"css-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.0.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"file-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"html-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.5.5"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"html-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.2.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"http-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.11.1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"mini-css-extract-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.4.2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"node-sass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.9.3"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"raw-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.5.1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"rimraf"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.6.2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"sass-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^7.1.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"script-ext-html-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"style-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.23.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"to-string-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.1.5"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"ts-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.2.1"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"tslint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.11.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"typescript"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.7.2"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.19.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"webpack-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.0"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"webpack-dev-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.8"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"webpack-inline-manifest-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.0.1"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
     </span><span class="s2">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"@angular/animations"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"@angular/common"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"@angular/compiler"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"@angular/core"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/forms"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"@angular/platform-browser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"@angular/platform-browser-dynamic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/platform-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"@angular/router"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"core-js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.5.7"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"rxjs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.3.3"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"zone.js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.8.26"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"@angular/compiler-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"typescript"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.9.2"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.20.2"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"webpack-dev-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.9"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
@@ -171,7 +217,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
     <span class="nt">&lt;title&gt;</span>My App<span class="nt">&lt;/title&gt;</span>
 <span class="nt">&lt;/head&gt;</span>
 <span class="nt">&lt;body&gt;</span>
-    <span class="nt">&lt;my-app&gt;</span>Loading...<span class="nt">&lt;/my-app&gt;</span>
+    <span class="nt">&lt;angulectron&gt;</span>Loading...<span class="nt">&lt;/angulectron&gt;</span>
     <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="err">(</span><span class="na">isDevServer</span><span class="err">)</span> <span class="err">{</span> <span class="err">%</span><span class="nt">&gt;&lt;script </span><span class="na">src=</span><span class="s">"/webpack-dev-server.js"</span><span class="nt">&gt;&lt;/script&gt;&lt;</span><span class="err">%</span> <span class="err">}</span> <span class="err">%</span><span class="nt">&gt;</span>
 <span class="nt">&lt;/body&gt;</span>
 <span class="nt">&lt;/html&gt;</span>
@@ -201,7 +247,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
 
 <span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
-    <span class="na">selector</span><span class="p">:</span> <span class="s1">'my-app'</span><span class="p">,</span>
+    <span class="na">selector</span><span class="p">:</span> <span class="s1">'angulectron'</span><span class="p">,</span>
     <span class="na">templateUrl</span><span class="p">:</span> <span class="s1">'app.component.html'</span><span class="p">,</span>
     <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="s1">'app.component.css'</span><span class="p">,</span> <span class="s1">'app.component.scss'</span><span class="p">]</span>
 <span class="p">})</span>
