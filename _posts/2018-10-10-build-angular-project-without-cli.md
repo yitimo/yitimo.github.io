@@ -384,3 +384,8 @@ module.exports = {
 2. 对于开发环境可以再新增一个``webpack.config.dev.js``来配置生产环境下的webpack规则，并搭配``webpack-dev-server``使用(本文未完成这一步)。对于生产环境就像文中这样先``yarn prod``，然后扔到服务器上。
 3. ``@ngtools/webpack``与``MiniCssExtractPlugin``不兼容，所以注意配置``exclude``规则。
 4. ``tsconfig.json``中的``"module": "esnext"``这一配置相比``"module": "commonjs"``能减少不少体积。
+
+## 相关链接
+
+* [angular-starter](https://github.com/gdi2290/angular-starter) 一个教科书级复杂的angular启动项目，非常适合进阶观摩学习
+* [angulectron](https://github.com/yitimo/angulectron) 本文示例项目地址，之后会整合electron并继续完善。
