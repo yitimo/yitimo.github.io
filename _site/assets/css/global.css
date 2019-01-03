@@ -878,6 +878,16 @@ a:hover, a:active, a:checked {
     color: #0000ff;
 }
 
+.article .language-xml code .na {
+    color: #800000;
+}
+.article .language-xml code .nt {
+    color: #ff0000;
+}
+.article .language-xml code .s {
+    color: #0000ff;
+}
+
 .article .language-css code .nt {
     color: #800000;
 }
