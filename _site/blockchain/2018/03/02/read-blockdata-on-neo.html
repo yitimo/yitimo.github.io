@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEO区块数据解析 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body>
+    <h1 style="display: none;">NEO区块数据解析 | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="/">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <h1>NEO区块数据解析</h1>
+                <p>本文将通过NEO节点提供的<code class="highlighter-rouge">/rpc</code>接口中的<code class="highlighter-rouge">getblock</code>接口获取NEO测试网上的包含了各种类型的交易的区块数据并进行解析。</p>
+
+<p><code class="highlighter-rouge">getblock</code>接口支持两个参数，第一个是区块的哈希或者高度，第二个是用来指明返回哈希数据还是json数据。那么问题的关键就是哈希数据跟json数据之间的区别，NEO区块链上存储的是序列化过的哈希数据，而想要用户能看得懂区块数据就必须反序列化区块数据。</p>
+
+<p>比如直接获取NEO主网的创世区块得到的两种结果如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>000000000000000000000000000000000000000000000000000000000000000000000000f41bc036e39b0d6b0579c851c6fde83af802fa4e57bec0bc3365eae3abf43f8065fc8857000000001dac2b7c0000000059e75d652b5d3827bf04c165bbe9ef95cca4bf55010001510400001dac2b7c00000000400000455b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e882a1227d2c7b226c616e67223a22656e222c226e616d65223a22416e745368617265227d5d0000c16ff28623000000da1745e9b549bd0bfa1a569971c77eba30cd5a4b00000000400001445b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e5b881227d2c7b226c616e67223a22656e222c226e616d65223a22416e74436f696e227d5d0000c16ff286230008009f7fd096d37ed2c0e3f7f0cfc924beef4ffceb680000000001000000019b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc50000c16ff28623005fa99d93303775fe50ca119c327759313eccfa1c01000151
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "hash": "0xd42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf",
+    "size": 401,
+    "version": 0,
+    "previousblockhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "merkleroot": "0x803ff4abe3ea6533bcc0be574efa02f83ae8fdc651c879056b0d9be336c01bf4",
+    "time": 1468595301,
+    "index": 0,
+    "nonce": "000000007c2bac1d",
+    "nextconsensus": "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
+    "script": { "invocation": "", "verification": "51" },
+    "tx": [
+        {
+            "txid": "0xfb5bd72b2d6792d75dc2f1084ffa9e9f70ca85543c717a6b13d9959b452a57d6",
+            "size": 10, "type": "MinerTransaction",
+            "version": 0, "attributes": [], "vin": [], "vout": [],
+            "sys_fee": "0", "net_fee": "0", "scripts": [], "nonce": 2083236893
+        },
+        {
+            "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+            "size": 107,
+            "type": "RegisterTransaction",
+            "version": 0, "attributes": [], "vin": [], "vout": [], "sys_fee": "0", "net_fee": "0", "scripts": [],
+            "asset": {
+                "type": "GoverningToken",
+                "name": [
+                    {
+                        "lang": "zh-CN",
+                        "name": "小蚁股"
+                    },
+                    {
+                        "lang": "en",
+                        "name": "AntShare"
+                    }
+                ],
+                "amount": "100000000",
+                "precision": 0,
+                "owner": "00",
+                "admin": "Abf2qMs1pzQb8kYk9RuxtUb9jtRKJVuBJt"
+            }
+        },
+        {
+            "txid": "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+            "size": 106,
+            "type": "RegisterTransaction",
+            "version": 0, "attributes": [], "vin": [], "vout": [], "sys_fee": "0", "net_fee": "0", "scripts": [],
+            "asset": {
+                "type": "UtilityToken",
+                "name": [
+                    {
+                        "lang": "zh-CN",
+                        "name": "小蚁币"
+                    },
+                    {
+                        "lang": "en",
+                        "name": "AntCoin"
+                    }
+                ],
+                "amount": "100000000",
+                "precision": 8,
+                "owner": "00",
+                "admin": "AWKECj9RD8rS8RPcpCgYVjk1DeYyHwxZm3"
+            }
+        },
+        {
+            "txid": "0x3631f66024ca6f5b033d7e0809eb993443374830025af904fb51b0334f127cda",
+            "size": 69, "type": "IssueTransaction", "version": 0, "attributes": [], "vin": [],
+            "vout": [
+                {
+                    "n": 0,
+                    "asset": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+                    "value": "100000000",
+                    "address": "AQVh2pG732YvtNaxEGkQUei3YA4cvo7d2i"
+                }
+            ],
+            "sys_fee": "0", "net_fee": "0",
+            "scripts": [ { "invocation": "", "verification": "51" } ]
+        }
+    ],
+    "confirmations": 2598067,
+    "nextblockhash": "0xd782db8a38b0eea0d7394e0f007c61c71798867578c77c387c08113903946cc9"
+}
+</code></pre></div></div>
+
+<p>这两个结果包含的数据是一样的，可以互相序列化与反序列化。区块数据库中保存的是序列化后的结果。</p>
+
+<p><em>待完成。。。</em></p>
+
+
+            </div>
+            <div class="article-pager">
+                
+                <a class="article-pager-block" href="/blockchain/2018/02/26/how-to-connect-neon-js-to-private-net.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/blockchain/2018/04/18/is-each-ethereum-address-shared-by-private-keys.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">是否可能两个ETH私钥对应同一个地址</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </div>
+        <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    </div>
+</body>
+</html>
