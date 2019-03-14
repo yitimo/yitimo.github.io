@@ -3,7 +3,7 @@ layout: post
 title:  个人理解NEO中的合约交易
 date:   2018-03-02 15:12:23 +0800
 author: yitimo
-categories: jekyll update
+categories: BlockChain
 tags: ["blockchain", "NEO", "SmartContract"]
 keywords:
 - blockchain,

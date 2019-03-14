@@ -3,7 +3,7 @@ layout: post
 title:  从源码理解angular编译AppModule的过程
 date:   2017-09-28 17:35:00 +0800
 author: yitimo
-categories: jekyll update
+categories: Angular
 tags: ["angular"]
 keywords:
 - angular,

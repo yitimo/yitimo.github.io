@@ -3,7 +3,7 @@ layout: post
 title:  从源码看 angular/material2 中 dialog模块 的实现
 date:   2017-10-16 11:02:00 +0800
 author: yitimo
-categories: jekyll update
+categories: Angular
 tags: ["angular"]
 keywords:
 - angular,

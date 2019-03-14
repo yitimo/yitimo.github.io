@@ -3,7 +3,7 @@ layout: post
 title:  "Yitimo's first post on jekyll"
 date:   2018-01-20 13:45:23 +0800
 author: "yitimo"
-categories: jekyll update
+categories: Others
 tags: ["test"]
 ---
 

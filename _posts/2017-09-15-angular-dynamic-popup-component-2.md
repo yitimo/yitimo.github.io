@@ -3,7 +3,7 @@ layout: post
 title:  动态创建angular组件实现popup弹窗(下)
 date:   2017-09-15 10:41:00 +0800
 author: yitimo
-categories: jekyll update
+categories: Angular
 tags: ["angular"]
 keywords:
 - angular,

@@ -3,7 +3,7 @@ layout: post
 title:  是否可能两个ETH私钥对应同一个地址
 date:   2018-04-18 18:16:13 +0800
 author: yitimo
-categories: jekyll update
+categories: BlockChain
 tags: ["blockchain", "crypto"]
 keywords:
 - blockchain,

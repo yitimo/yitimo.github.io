@@ -3,7 +3,7 @@ layout: post
 title:  NEO全节点客户端的基本使用，节点的运行和共识达成
 date:   2018-02-06 11:46:23 +0800
 author: yitimo
-categories: jekyll update
+categories: BlockChain
 tags: ["blockchain", "NEO"]
 keywords:
 - blockchain,
