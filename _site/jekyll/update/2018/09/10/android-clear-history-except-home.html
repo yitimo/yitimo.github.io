@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Android中移除除了首页的历史Activity | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body>
+    <h1 style="display: none;">Android中移除除了首页的历史Activity | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="/">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <h1>Android中移除除了首页的历史Activity</h1>
+                <p>对于Android中Activity栈的操作提及比较多的是在<code class="highlighter-rouge">Intent</code>中使用这几个<code class="highlighter-rouge">Flag</code>:</p>
+
+<ul>
+  <li>Intent.FLAG_ACTIVITY_CLEAR_TASK</li>
+  <li>Intent.FLAG_ACTIVITY_CLEAR_TOP</li>
+  <li>Intent.FLAG_ACTIVITY_NEW_TASK</li>
+</ul>
+
+<p>其中一个使用情景是，当用户的登录状态过期后，需要清除历史纪录直接重定向到登录页，也就是当前打开页面为<code class="highlighter-rouge">A -&gt; B -&gt; C</code>时，发现登录已过期需要跳转到<code class="highlighter-rouge">D</code>，就需要:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>val intent = Intent(Context, D)
+intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+</code></pre></div></div>
+<p>这样跳转到<code class="highlighter-rouge">D</code>后整个应用只会留下<code class="highlighter-rouge">D</code>页面。</p>
+
+<p>但是靠这几个Flag做不到一件事，就是本文标题所描述的，<strong>如何从<code class="highlighter-rouge">A -&gt; B -&gt; C</code>想要跳转到<code class="highlighter-rouge">D</code>时得到<code class="highlighter-rouge">A -&gt; D</code>这样的页面栈</strong>，即在跳转到新页面时移除除了首页外的其他页面，得到从新页面返回时直接是回到首页的效果。</p>
+
+<p>此需求的使用场景之一就是在购物下单流程中，用户选择完商品并下单后，原先的商品或购物车页面已经不再需要，甚至如果不清除掉这些页面，当用户从订单页返回时又会回到下单前的状态，已经完成购买的商品，数量都还留在页面里。</p>
+
+<p>最终对笔者起到帮助的只有<a href="https://stackoverflow.com/questions/38879150/clear-activity-stack-except-first-activity">这个链接</a>。</p>
+
+<p>上面的链接让笔者最终决定使用的做法是：当从<code class="highlighter-rouge">C</code>跳转到<code class="highlighter-rouge">D</code>时，添加参数<code class="highlighter-rouge">putExtra("clear_top", true)</code>，并在<code class="highlighter-rouge">D</code>的<code class="highlighter-rouge">onBackPressed()</code>中判断此参数，若为<code class="highlighter-rouge">true</code>则使用上文提及的方式清除所有页面并跳转到首页，否则正常执行返回流程。此方法没有使用上文提及的几个<code class="highlighter-rouge">Flag</code>，或者说笔者没发现这几个<code class="highlighter-rouge">Flag</code>有达到此效果的能力。</p>
+
+            </div>
+            <div class="article-pager">
+                
+                <a class="article-pager-block" href="/jekyll/update/2018/08/07/android-coordinator-layout.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">Android中使用CoordinatorLayout進行佈局</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/jekyll/update/2018/10/02/android-image-picker-library.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">Android 编写一个图片选择器</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </div>
+        <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    </div>
+</body>
+</html>

@@ -697,6 +697,12 @@ a:hover, a:active, a:checked {
     font-size: 15px;
     line-height: 1.5;
 }
+.article .highlighter-rouge *, code.highlighter-rouge {
+    user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -webkit-user-select: text;
+}
 .article h1 {
     margin: 64px auto;
     width: 70%;
@@ -768,7 +774,7 @@ a:hover, a:active, a:checked {
 .article div.highlighter-rouge {
     margin: 15px 0;
     padding: 10px 15px;
-    background: rgba(255, 255, 255, 0.8);
+    background: #f3f3f3;
     color: #000000;
     border-radius: 4px;
     white-space: nowrap;
@@ -817,6 +823,17 @@ a:hover, a:active, a:checked {
 .article code {
     font-weight: 500;
 }
+.article a {
+    color: #0099ff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.article .language-shell.highlighter-rouge {
+    background: #4f4f4f;
+    color: #ffffff;
+}
+
 /* code part */
 .article .language-javascript code .kd,.language-javascript  code .k {
     color: #0000ff;
@@ -828,5 +845,68 @@ a:hover, a:active, a:checked {
     color: #09885a;
 }
 .article .language-javascript code .c1,.language-javascript  code .cm {
+    color: #008000;
+}
+
+.article .language-json code .s2 {
+    color: #a31515;
+}
+.article .language-json code .kc {
+    color: #0000ff;
+}
+
+.article .language-typescript code .kd,.language-typescript  code .k {
+    color: #0000ff;
+}
+.article .language-typescript code .s1 {
+    color: #a31515;
+}
+.article .language-typescript code .mi {
+    color: #09885a;
+}
+.article .language-typescript code .c1,.language-typescript  code .cm {
+    color: #008000;
+}
+
+.article .language-html code .na {
+    color: #800000;
+}
+.article .language-html code .nt {
+    color: #ff0000;
+}
+.article .language-html code .s {
+    color: #0000ff;
+}
+
+.article .language-xml code .na {
+    color: #800000;
+}
+.article .language-xml code .nt {
+    color: #ff0000;
+}
+.article .language-xml code .s {
+    color: #0000ff;
+}
+
+.article .language-css code .nt {
+    color: #800000;
+}
+.article .language-css code .nl {
+    color: #ff0000;
+}
+.article .language-css code .m {
+    color: #0451a5;
+}
+
+.article .language-kotlin code .kd,.language-kotlin  code .k {
+    color: #0000ff;
+}
+.article .language-kotlin code .s1 {
+    color: #a31515;
+}
+.article .language-kotlin code .mi {
+    color: #09885a;
+}
+.article .language-kotlin code .c1,.language-kotlin  code .cm {
     color: #008000;
 }
