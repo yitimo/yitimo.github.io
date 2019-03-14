@@ -3,7 +3,7 @@ layout: post
 title:  个人理解区块链及其产品
 date:   2018-01-23 09:02:23 +0800
 author: yitimo
-categories: BlockChain
+categories: blockchain
 tags: ["blockchain"]
 keywords:
 - blockchain,

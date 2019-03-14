@@ -3,7 +3,7 @@ layout: post
 title:  Android中移除除了首页的历史Activity
 date:   2018-09-10 09:18:31 +0800
 author: yitimo
-categories: Android
+categories: android
 tags: ["android", "activity stack"]
 keywords:
 - android,

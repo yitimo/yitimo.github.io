@@ -3,7 +3,7 @@ layout: post
 title:  Android中使用帶圓角佈局
 date:   2018-08-06 09:08:31 +0800
 author: yitimo
-categories: Android
+categories: android
 tags: ["android", "round corner"]
 keywords:
 - android,

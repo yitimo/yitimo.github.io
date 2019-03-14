@@ -3,7 +3,7 @@ layout: post
 title:  Android图片裁剪工具封装
 date:   2019-01-03 15:19:31 +0800
 author: yitimo
-categories: Android
+categories: android
 tags: ["Android", "kotlin", "photo cutter"]
 keywords:
 - Android,

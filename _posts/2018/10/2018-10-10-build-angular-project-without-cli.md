@@ -3,7 +3,7 @@ layout: post
 title:  不使用cli搭建angular项目
 date:   2018-10-10 15:53:31 +0800
 author: yitimo
-categories: Angular
+categories: angular
 tags: ["angular", "webpack", "typescript"]
 keywords:
 - angular,

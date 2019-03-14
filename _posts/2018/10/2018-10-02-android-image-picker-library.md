@@ -3,7 +3,7 @@ layout: post
 title:  Android 编写一个图片选择器
 date:   2018-10-02 08:37:31 +0800
 author: yitimo
-categories: Android
+categories: android
 tags: ["android", "image picker"]
 keywords:
 - android,

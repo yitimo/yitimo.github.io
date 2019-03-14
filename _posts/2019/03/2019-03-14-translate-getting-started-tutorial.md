@@ -3,7 +3,7 @@ layout: post
 title:  【翻译】Getting Started Tutorial
 date:   2019-03-14 11:11:13 +0800
 author: yitimo
-categories: ChromeExtension
+categories: chrome-extension
 tags: ["chrome extension", "translation"]
 keywords:
 - chrome extension,

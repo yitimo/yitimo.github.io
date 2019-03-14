@@ -3,7 +3,7 @@ layout: post
 title:  【翻译】What are extensions?
 date:   2019-03-14 09:58:13 +0800
 author: yitimo
-categories: ChromeExtension
+categories: chrome-extension
 tags: ["chrome extension", "translation"]
 keywords:
 - chrome extension,

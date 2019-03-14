@@ -3,7 +3,7 @@ layout: post
 title:  使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端
 date:   2018-02-26 18:14:23 +0800
 author: yitimo
-categories: BlockChain
+categories: blockchain
 tags: ["blockchain", "NEO"]
 keywords:
 - blockchain,
