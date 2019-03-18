@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  【翻译】第一章：bash基础 - Learning the bash shell
-date:   2019-03-18 15:12:13 +0800
+date:   2019-03-18 18:09:13 +0800
 author: yitimo
 categories: bash-shell
 tags: ["bash shell", "translation"]
