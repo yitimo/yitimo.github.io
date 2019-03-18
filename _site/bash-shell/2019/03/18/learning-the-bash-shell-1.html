@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】第一章：bash基础 - Learning the bash shell | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.min.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body>
+    <h1 style="display: none;">【翻译】第一章：bash基础 - Learning the bash shell | yitimo的个人博客</h1>
+    <div class="home-body">
+        <div class="nav">
+    <a class="nav-avatar" href="/">
+        <img src="/assets/images/yitimo.jpg" alt="nav-avatar of yitimo" />
+        <div>
+            Yitimo's Blog
+        </div>
+    </a>
+    <div class="nav-body">
+        <a class="nav-body-block" href="https://github.com/yitimo" target="_blank">
+            <img src="/assets/images/GitHub.svg" alt="Github" title="Github" />
+        </a>
+    </div>
+    <div class="nav-foot">
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">联系我:</div>
+            <a href="mailto:admin@yitimo.com">个人邮箱</a><a href="mailto:yitimohu@gmail.com">Gmail</a>
+        </div>
+        <div class="nav-foot-block">
+            <div class="nav-foot-block-title">此博客同时部署在:</div>
+            <a href="https://yitiblog.netlify.com/" target="_blank">Netlify</a><a href="https://yitimo.github.io/" target="_blank">Github Page</a>
+        </div>
+    </div>
+</div>
+        <div class="home-content">
+            <div class="article">
+                <h1>【翻译】第一章：bash基础 - Learning the bash shell</h1>
+                <p>七十年代早期，从UNIX系统诞生开始，它就变得越来越流行了。这段时间它已经发展出了不同的分枝版本，比如Ultrix，AIX，Xenix，SunOS以及Linux。从小型计算机和主机开始，它转移向了桌面工作站甚至是工作或家庭使用的个人电脑。不再局限于学术和计算机专业的大学和研究机构，UNIX也在许多商业、学校和家庭中使用了。随着时间推移，还有更多人会开始于UNIX接触。</p>
+
+<p>你可能在学校、办公室、家里使用过UNIX来运行你的应用程序，打印文档或者阅读电子邮件。但是你有没有想过当你输入指令并按下回车时它都做了什么处理？</p>
+
+<p>当你输入一个命令后，多个层级的事情将会发生，但我们只会考虑顶层，也就是shell。通常来说，shell就是任何用户之于UNIX操作系统的接口，比如，任何程序都由用户来输入，并翻译成程序能理解的语言，然后由操作系统再反馈回用户。图1-1展示了用户、shell和操作系统之间的关系：</p>
+
+<p><img src="/assets/images/201903/ch01-01.png" alt="Figure 1-1. The shell is a layer around the UNIX operating system" /></p>
+
+<p>有许多种用户接口，而bash是已知的基于字符输入的最常用的一种。这些接口接收用户输入的文字命令行，通常也产生文字输出。还有其他用户接口，包括越来越通用的图形用户接口，支持显示各种图形(而不仅仅是文字)输出，支持鼠标或其他触控设备的输入(比如一些银行语音机器)。</p>
+
+<h2 id="shell是什么">shell是什么</h2>
+
+<p>shell的工作是将用户输入的命令行翻译成计算机指令。比如说，下面这行命令：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sort</span> <span class="nt">-n</span> phonelist <span class="o">&gt;</span> phonelist.sorted
+</code></pre></div></div>
+
+<p>其意思是，<strong>按数字顺序排序文件phonelist中的每一行，结果输出到phonelist.sorted中</strong>，shell做的事情如下：</p>
+
+<ol>
+  <li>拆分命令为<code class="highlighter-rouge">sort</code>、<code class="highlighter-rouge">-n</code>、<code class="highlighter-rouge">phonelist</code>、<code class="highlighter-rouge">&gt;</code>、<code class="highlighter-rouge">phonelist.sorted</code>这几个片段，称为<code class="highlighter-rouge">words</code>。</li>
+  <li>查明<code class="highlighter-rouge">words</code>的目的，<code class="highlighter-rouge">sort</code>是个命令，<code class="highlighter-rouge">-n</code>和<code class="highlighter-rouge">phonelist</code>是参数，<code class="highlighter-rouge">&gt;</code>和<code class="highlighter-rouge">phonelist.sorted</code>则是IO指令。</li>
+  <li>根据<code class="highlighter-rouge">&gt; phonelist.sorted (输出到文件phonelist. sorted)</code>来设置IO以及一些标准的内置命令。</li>
+  <li>在一个文件中找到<code class="highlighter-rouge">sort</code>命令，并传入<code class="highlighter-rouge">-n</code>和<code class="highlighter-rouge">phonelist</code>来运行它。</li>
+</ol>
+
+<p>当然，上述每一步都还包含一些子步骤，子步骤各自还可能包含一些操作系统层面的命令。</p>
+
+<p>要记住shell本身并不是UNIX——仅仅是它的用户接口。UNIX是第一个将用户接口独立于操作系统的操作系统之一。</p>
+
+<h2 id="本书范围">本书范围</h2>
+
+<p>本书你将学习到bash，是最新且强大的UNIX的shell之一。有两种方式来使用bash：作为用户接口以及作为编程环境。本章和下一章将涵盖交互使用，这两张可以给到你完整的背景知识来自信和高效地进行bash的日常使用。</p>
+
+<p>当你使用了shell一段时间，你将毫无疑问的意识到想要更改一些你的环境独特的特性，以及定制一些自动化任务，第三章将会介绍这方面的一些方法。</p>
+
+<p>第三章同时还会为shell编程做准备。第4到6章会着重讲到这方面。你不需要有任何编程经验来理解这些章节以及学习shell编程。第7、8两章会更详细的描述shell的IO和进程处理能力。而第9章将探讨几种调试技术。</p>
+
+<p>通过本书你将学习到许多bash知识，同时还有UNIX的实用能力和UNIX操作系统通常的工作方式细节。让你可以即使没有编程经验也能编程shell编程的演奏家。同时，我们会避免过深的介绍UNIX内核细节，来做到你不需要是UNIX内核的专家也能有效的使用shell，同时我们也不会驻留在极少数底层系统编程相关的shell特性上。</p>
+
+<h2 id="unix-shell历史">UNIX shell历史</h2>
+
+<p>shell脱离于UNIX操作系统本身帮助了shell的随着UNIX演变历史而茁壮成长，尽管只有极少数shell得到了广泛使用。</p>
+
+<p>第一个主流的shell是Bourne shell，名字来源于其发明者Steven Bourne。它被包含在UNIX的第一个流行起来的版本，版本7，开始于1979年。Bourne shell在系统中就是<code class="highlighter-rouge">sh</code>。尽管UNIX已经产生了许多变化，Bourne shell仍然是一直流行未改变的的。一些UNIX的工具集和管理员特性都依赖于它。</p>
+
+<p>第一个广泛使用的替代的shell就是C shell，或叫做csh。由Bill Joy在the University of California at Berkeley所写，作为Berkeley Software Distribution (BSD)版本的UNIX的一部分，在7版本发布几年后。</p>
+
+<p>C shell取名自它本身的命令语法与C语言相似，这使UNIX程序员更容易去学习。它支持许多操作系统特性，比如任务控制(第八章讲到)，这在当时是BSD UNIX独有的，但现在大多数其他版本也都有了。它同时还有一些重要特性(比如别名，第三章讲到)，来使其更容易使用。</p>
+
+<p>近几年还有许多其他shell都流行起来了。最值得一提的就是Korn shell，它是收录了sh和csh特性并含有自己特性的商业版本。ksh在许多方面都与bash相似。都包含有大量方便工作的特性。bash的优势是它是免费的。附录A胡讲到更多有关ksh的信息。</p>
+
+<h2 id="bourne-again-shell">Bourne Again Shell</h2>
+
+<p><em>待完成</em></p>
+
+
+            </div>
+            <div class="article-pager">
+                
+                <a class="article-pager-block" href="/bash-shell/2019/03/18/learning-the-bash-shell-0.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">【翻译】序 - Learning the bash shell</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+            </div>
+        </div>
+        <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    </div>
+</body>
+</html>
