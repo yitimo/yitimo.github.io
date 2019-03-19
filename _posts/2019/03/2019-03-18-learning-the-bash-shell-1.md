@@ -64,5 +64,37 @@ C shell取名自它本身的命令语法与C语言相似，这使UNIX程序员�
 
 ## Bourne Again Shell
 
+bash名字来源于再次致敬Steve Bourne的shell，为了用于GNU项目而被创建。GNU项目由Free Software Foundation的Richard Stallman开启，目的是为了创建UNIX兼容的操作系统，并且将所有商业工具集替换为免费版本。GNU不仅象征着免费软件工具集，还有新的发布概念：the copyleft(版权所有)。版权所有的软件可以是免费发行的，只要没有进一步发行的限制(比如说，源码必须是免费可获取的)。
+
+bash，预期是成为GNU系统的标准shell，正式诞生于Sunday, January 10, 1988。Brian Fox编写了bash的原始版本，和readline，以及继续强化shell直到1993年。早在1989年他就加入了Chet Ramey，负责许多bug修复和许多有用特性的维护。Chet Ramey现在是bash的官方维护者并持续强化它。
+
+为了遵守GNU原则，从0.99开始的所有bash版本都可以从FSF免费获取。bash已经找到了方式在每个UNIX主版本之上，并迅速成为最受欢迎的Bourne shell派生shell。它是Linux的标准shell，并在免费UNIX操作系统以及苹果OS X中广泛使用。
+
+1995年Chet Ramey开始在新的发行版本2.0上工作(首次发布于December 23, 1996)。bash 2.0添加了一系列新特性，并使shell采纳更多标准。bash 3.0强化了前一版本，并收入了一些特性和标准的采纳。
+
+本书描述了bash 3.0。对于以前版本的bash也是适用的，任何当前版本新增的特性，或不同的地方都会指出。
+
+## bash特性
+
+尽管Bourne shell仍被认为是标准shell，bash已经越来越流行了。除了其与Bourne shell相近之外，它还包含了C shell和 Korn shell的特性，还有自己独有的特性。
+
+bash的命令行编辑模式首先就吸引了人们。有了命令行编辑，回到和修改之前的命令比C shell的history mechanism更简单了，而Bourne shell压根做不到这些。bash的另一个受欢迎的主要特性是工作控制(job control)。如第八章所描述的，工作控制让你可以同时停止、开始和暂停任意数量的命令。这一特性主要借鉴自C shell。
+
+bash剩余的主要优势主要对shell的定制和shell编程有意义。它有许多用于定制的新选项和变量。它的编程特性明显包含了函数定义，更多的控制结构，整型计算，更高级的IO控制等等。
+
+## 获取bash
+
+你现在可能没有在使用bash，你的系统管理员可能给你设置了各种shell作为系统的标准shell。甚至你可能还没意识到你的系统中存在不止一种shell。
+
+查明你正在使用哪种shell很简单。登录你的系统并输入``echo $SHELL``。你可能会看到的响应比如``sh, csh, ksh, 或者 bash``。
+
+如果你没有在使用bash而你想要使用，你首先要确定系统中是否存在bash。只需要输入``bash``。如果马上切换到了一些信息带上一个``$``符号，则表示一切正常。输入``exit``可以回到你原来的shell。
+
+如果你得到了``not founc``这样的信息，你的系统可能并没有安装bash。告诉你的系统管理员或其他专业人员。也有可能你安装了多个版本的bash在你不知道的路径下，你可以在第十一章了解到如何取得你的bash版本。
+
+当你知道了你的系统中存在bash，你可以在其他shell的任何地方输入``bash``来切换。当然，更好的是让你登录时就默认使用bash。你可能会自己来安装。
+
 *待完成*
+
+
 
