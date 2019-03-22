@@ -2,6 +2,8 @@ const path = require("path");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
     mode: "production",
@@ -10,8 +12,8 @@ module.exports = {
     },
     output: {
         filename: "[name].[hash].bundle.js",
-        path: path.resolve(__dirname, "..", "assets/js"),
-        publicPath: "/assets/js/"
+        path: path.resolve(__dirname, "..", "assets/scripts"),
+        publicPath: "/assets/scripts/"
     },
     devtool: "source-map",
     resolve: {
@@ -48,12 +50,18 @@ module.exports = {
                 }, {
                     loader: "sass-loader",
                     options: {
-                        sourceMap: false,
-                        includePaths: [
-                            require('path').resolve(__dirname, "..", "node_modules")
-                        ]
+                        sourceMap: false
                     }
                 }]
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
+                    "css-loader"
+                ]
             }
         ]
     },
@@ -78,7 +86,10 @@ module.exports = {
                     reuseExistingChunk: true
                 }
             }
-        }
+        },
+        minimizer: [
+            new OptimizeCSSAssetsPlugin({})
+        ]
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -90,6 +101,9 @@ module.exports = {
         }),
         new ScriptExtHtmlWebpackPlugin({
             defaultAttribute: 'defer'
+        }),
+        new MiniCssExtractPlugin({
+            filename: "../styles/global.css"
         })
     ]
 };

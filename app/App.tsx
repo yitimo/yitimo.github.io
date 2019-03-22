@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+import './global.css';
 import './App.scss';
 
 export class App extends React.Component {
