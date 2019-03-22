@@ -23,8 +23,10 @@ github_username:  yitimo
 
 markdown: kramdown
 
-exclude: [desc.md]
+exclude: [desc.md, node_modules, Gemfile, Gemfile.lock, package.json, yarn-error.log, yarn.lock, app, README.md]
 
 plugins: [jekyll-seo-tag, jekyll-sitemap, jekyll-paginate]
+
+host: 0.0.0.0
 # gems:
 #     - jekyll-minifier

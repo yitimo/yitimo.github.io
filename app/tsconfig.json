@@ -1,0 +1,17 @@
+{
+    "include": [
+        "./"
+    ],
+    "compileOnSave": true,
+    "compilerOptions": {
+        "outDir": "../ts_dist",
+        "declaration": false,
+        "sourceMap": false,
+        "jsx": "react",
+        "types": [
+            "react",
+            "react-dom",
+            "node-sass"
+        ]
+    }
+}
