@@ -1,6 +1,7 @@
 const path = require("path");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
 module.exports = {
     mode: "production",
@@ -83,8 +84,12 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: "../../_includes/nav.html",
             template: "./app/index.html",
+            async: "all",
             chunks: "all",
             minify: true
+        }),
+        new ScriptExtHtmlWebpackPlugin({
+            defaultAttribute: 'defer'
         })
     ]
 };
