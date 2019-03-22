@@ -9,10 +9,6 @@
         "sourceMap": false,
         "jsx": "react",
         "target": "es5",
-        "types": [
-            "react",
-            "react-dom",
-            "node-sass"
-        ]
+        "typeRoots": ["node_modules/@types", "./global.d.ts"]
     }
 }

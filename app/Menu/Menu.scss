@@ -1,0 +1,33 @@
+.nav-menu {
+    a {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        color: #E4E7EC;
+        transition: 0.2s;
+        cursor: pointer;
+        display: block;
+        font-size: 15px;
+    }
+    > a:hover, > a.active {
+        color: #FFFFFF;
+        background: #de6d6d;
+    }
+    > div {
+        background: #de7a6d;
+    }
+    
+    > div > a:hover {
+        color: #FFFFFF;
+        background: #de876d;
+    }
+    .icon {
+        width: 24px;
+        height: 24px;
+        float: right;
+        display: block;
+    }
+    @media screen and (max-width: 767px) {
+        display: none;
+    }
+}

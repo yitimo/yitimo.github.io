@@ -1,21 +1,12 @@
-
-.nav-foot > * {
-    padding: 15px;
-    color: #E4E7EC;
-    transition: 0.2s;
-    cursor: pointer;
-    display: block;
-    font-size: 15px;
-}
-.nav-foot > *:hover {
-    color: #FFFFFF;
-    background: #de6d6d;
-}
-.nav-foot > * > .icon {
-    width: 24px;
-    height: 24px;
-    float: right;
-    display: block;
+.nav {
+    width: 400px;
+    background: #cd5c5c;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 #nav-publish-popup, #nav-concact-popup {
@@ -36,16 +27,6 @@
 }
 
 @media screen and (min-width: 1200px) {
-    .nav {
-        width: 400px;
-        background: #cd5c5c;
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: flex;
-        flex-flow: column;
-        height: 100%;
-        overflow: hidden;
-    }
     .nav-body {
         padding-right: 16px;
         flex: 1;
@@ -64,52 +45,11 @@
     .nav-body-block:hover {
         background: #de6d6d;
     }
-    .nav-foot-block {
-        text-align: center;
-    }
-    .nav-foot-block-title {
-        opacity: 0.7;
-        text-align: left;
-        padding: 24px 16px 16px 16px;
-    }
-    .nav-foot-block a {
-        width: 200px;
-        height: 64px;
-        line-height: 64px;
-        text-align: center;
-        color: #fafafa;
-        transition: 0.2s;
-        display: inline-block;
-    }
-    .nav-foot-block a:hover {
-        color: #ffffff;
-        background: #de6d6d;
-    }
-    .nav-avatar {
-        transition: 0.2s;
-        height: auto;
-        padding: 16px;
-        text-align: center;
-        background: #cd5c5c;
-        width: 100%;
-    }
-    .nav-avatar img {
-        height: 50px;
-        width: 50px;
-        border-radius: 100px;
-    }
 }
 
 @media screen and (max-width: 1200px) and (min-width: 1000px) {
     .nav {
         width: 300px;
-        background: #cd5c5c;
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: flex;
-        flex-flow: column;
-        height: 100%;
-        overflow: hidden;
     }
     .nav-body {
         padding-right: 16px;
@@ -130,34 +70,12 @@
     .nav-body-block:hover {
         background: #de6d6d;
     }
-    .nav-avatar {
-        transition: 0.2s;
-        height: 120px;
-        padding: 16px;
-        text-align: center;
-        background: #cd5c5c;
-        width: 100%;
-    }
-    .nav-avatar:hover {
-        background: #de6d6d;
-    }
-    .nav-avatar img {
-        height: 50px;
-        width: 50px;
-        border-radius: 100px;
-    }
+    
 }
 
 @media screen and (max-width: 1000px) and (min-width: 768px) {
     .nav {
         width: 200px;
-        background: #cd5c5c;
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: flex;
-        flex-flow: column;
-        height: 100%;
-        overflow: hidden;
     }
     .nav-body {
         padding-right: 16px;
@@ -177,53 +95,18 @@
     .nav-body-block:hover {
         background: #de6d6d;
     }
-    .nav-avatar {
-        transition: 0.2s;
-        height: 120px;
-        padding: 16px;
-        text-align: center;
-        background: #cd5c5c;
-        width: 100%;
-    }
-    .nav-avatar:hover {
-        background: #de6d6d;
-    }
-    .nav-avatar img {
-        height: 50px;
-        width: 50px;
-        border-radius: 100px;
-    }
+    
 }
 
 @media screen and (max-width: 767px) {
     .nav {
         background: #cd5c5c;
         padding-top: 50px;
-    }
-    .nav-avatar {
-        transition: 0.2s;
-        text-align: center;
-        position: fixed;
-        top: 0;left: 0;
+        display: block;
         width: 100%;
-        height: 50px;
-        z-index: 10;
-        line-height: 50px;
-        background: #cd5c5c;
+        height: auto;
     }
-    .nav-avatar:active {
-        background: #de6d6d;
-    }
-    .nav-avatar img {
-        width: 32px;
-        height: 32px;
-        border-radius: 100px;
-        background: none;
-        margin-bottom: -8px;
-    }
-    .nav-avatar div {
-        display: inline;
-    }
+    
     .nav-body-block {
         width: 25%;
         padding: 8px;
