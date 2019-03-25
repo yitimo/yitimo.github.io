@@ -30,6 +30,9 @@ a:hover, a:active, a:checked {
     text-decoration: none;
 }
 
+.post-block.hidden {
+    display: none !important;
+}
 
 @media screen and (min-width: 1200px) {
     .home-body {
@@ -450,11 +453,11 @@ a:hover, a:active, a:checked {
     min-width: 200px;
 }.article h2 {
     margin-bottom: 10px;
-    margin-top: 15px;
+    margin-top: 60px;
 }
 .article h3, .article h4, .article h5, .article h6 {
     margin-bottom: 5px;
-    margin-top: 10px;
+    margin-top: 30px;
 }
 .article ul, .article ol {
     font-weight: 600;
@@ -543,6 +546,7 @@ a:hover, a:active, a:checked {
     overflow: auto;
     border-spacing: 0;
     border-collapse: collapse;
+    color: #FFFFFF;
 }
 .article tr {
     border-top: 1px solid #c6cbd1;

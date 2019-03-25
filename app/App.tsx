@@ -11,7 +11,10 @@ import './App.scss';
 export class App extends React.Component {
     private menus: MenuProps[] = [{
         name: "关于我",
-        link: "https://www.bilibili.com"
+        children: [{
+            name: "个人简历",
+            link: "/hidden/2019/03/25/yitimo-curriculum-vitae.html"
+        }]
     }, {
         name: "联系我",
         children: [{

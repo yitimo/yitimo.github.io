@@ -3,7 +3,7 @@ layout: home
 ---
 
 {% for post in site.posts %}
-    <a class="post-block" href="{{ post.url }}">
+    <a class="post-block {{post.categories}}" href="{{ post.url }}">
         <div class="post-block-title">{{ post.title }}</div>
         <div class="post-block-desc">{{ post.author }} | {{ post.date | date:'%e %B %Y' }}</div>
     </a>

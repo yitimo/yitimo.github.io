@@ -189,7 +189,10 @@ var App = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.menus = [{
                 name: "关于我",
-                link: "https://www.bilibili.com"
+                children: [{
+                        name: "个人简历",
+                        link: "/hidden/2019/03/25/yitimo-curriculum-vitae.html"
+                    }]
             }, {
                 name: "联系我",
                 children: [{
@@ -473,4 +476,4 @@ exports.push([module.i, ".nav {\n  width: 400px;\n  background: #cd5c5c;\n  disp
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=app.d44c7259df487044667c.bundle.js.map
+//# sourceMappingURL=app.9b65e5e3d8fcc8c88873.bundle.js.map
