@@ -3,16 +3,12 @@ html, body, div, li, label, p, hr {
     box-sizing: border-box;
 }
 html, body {
-    background: #fafafa;
+    background: #FFFF8D11;
     color: #ffffff;
     height: 100%;width: 100%;
 }
 * {
     box-sizing: border-box;
-    user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
     word-break: break-all;
 }
 *:focus,*:checked,*:active {
@@ -32,6 +28,10 @@ a:hover, a:active, a:checked {
 
 .post-block.hidden {
     display: none !important;
+}
+
+.home-body {
+    font-family: Consolas, "Courier New", monospace;
 }
 
 @media screen and (min-width: 1200px) {
@@ -145,7 +145,6 @@ a:hover, a:active, a:checked {
         display: -webkit-box;
         display: -webkit-flex;
         display: flex;
-        background: #fafafa;
         height: 100%;
     }
     .home-content {
@@ -251,7 +250,6 @@ a:hover, a:active, a:checked {
         display: -webkit-box;
         display: -webkit-flex;
         display: flex;
-        background: #fafafa;
         height: 100%;
     }
     .home-content {
@@ -353,9 +351,6 @@ a:hover, a:active, a:checked {
 }
 
 @media screen and (max-width: 767px) {
-    .home-content {
-        background: #fafafa;
-    }
     .post-block {
         color: #4f4f4f;
         transition: 0.2s;
@@ -435,7 +430,7 @@ a:hover, a:active, a:checked {
 
 .article {
     color: #4f4f4f;
-    max-width: 960px;margin: 0 auto;
+    max-width: 727px;margin: 0 auto;
     padding: 15px;
     font-size: 15px;
     line-height: 1.5;
@@ -461,7 +456,13 @@ a:hover, a:active, a:checked {
 }
 .article ul, .article ol {
     font-weight: 600;
-    border-left: 3px solid rgba(255, 255, 255, 0.7);
+    
+}
+.article hr {
+    margin: 30px 0;
+    border-color: #00000033;
+    border-width: 1px;
+    border-top: none;
 }
 .article ul ul {
     border-left: none;
@@ -479,7 +480,6 @@ a:hover, a:active, a:checked {
     padding: 5px 0;
 }
 .article p {
-    text-indent: 2em;
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -492,12 +492,16 @@ a:hover, a:active, a:checked {
     overflow-x: auto;
 }
 .article code.highlighter-rouge {
-    background: rgba(250, 250, 210, 0.8);
-    color: #000000;
+    background: rgba(250,250,210,.8);
+    color: #000;
     border-radius: 2px;
-    padding: 3px;
-    margin-left: 3px;
-    margin-right: 3px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 15px;
+    display: inline-block;
+    width: auto;
+    padding: 0 3px;
+    margin: 0 3px;
 }
 .article .highlighter-rouge::selection {
     background: rgba(50, 50, 50, 0.7);

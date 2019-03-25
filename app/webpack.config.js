@@ -11,7 +11,7 @@ module.exports = {
         "app": "./app/App.tsx"
     },
     output: {
-        filename: "[name].[hash].bundle.js",
+        filename: "[name].bundle.js",
         path: path.resolve(__dirname, "..", "assets/scripts"),
         publicPath: "/assets/scripts/"
     },

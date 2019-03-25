@@ -7,6 +7,10 @@
     flex-flow: column;
     height: 100%;
     overflow: hidden;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 
 #nav-publish-popup, #nav-concact-popup {
