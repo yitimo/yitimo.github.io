@@ -25,9 +25,9 @@ categories: hidden
 
 ## 教育背景
 
- 学校名 | 学历 | 时间
- - | - | -
- 宁波工程学院 | 本科 | 2013年9月-2017年7月
+ 学校名 | 专业 | 学历 | 时间
+ - | - | - | -
+ 宁波工程学院 | 计算机网络工程 | 本科 | 2013年9月-2017年7月
 
 ## 项目经历
 
@@ -118,9 +118,9 @@ categories: hidden
 
 * 我的 [SegmentFault](https://segmentfault.com/u/yitimo) & [StackOverflow](https://stackoverflow.com/users/7560698/yitim)
 
-* 我的 [博客园](http://www.cnblogs.com/yitim/)(*暂停更新*)
+* 我的 [博客园](http://www.cnblogs.com/yitim/)
 
-* 我的 [简书](https://www.jianshu.com/u/0b9eef2456ec)(*暂停更新*)
+* 我的 [简书](https://www.jianshu.com/u/0b9eef2456ec)
 
 ## 短期计划
 
