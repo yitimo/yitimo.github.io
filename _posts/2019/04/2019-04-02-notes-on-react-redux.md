@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  react+redux笔记
-date:   2019-04-01 09:45:13 +0800
+date:   2019-04-02 16:12:13 +0800
 author: yitimo
 categories: react
 tags: ["react"]
@@ -15,6 +15,7 @@ description: react+redux笔记，react系列上手过程中对其渐进式的理
 * * 编写的组件可以是一个``es6/typescript``的``class``，也可以直接是个返回标签的函数。
 * * 组件通过props接收父级传入的值，通过state维护自己内部的值。
 * * 父级传入的props更改时会触发：``componentWillReceiveProps`` -> ``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``componentDidUpdate``，最终更新界面值。
+* * 内部``state``更改时会触发：``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``componentDidUpdate``，最终更新界面值。
 * * 组件本身通过``setState``更新``state``，以更新界面值。
 * * react本身封装好了标签的一些事件(``onClick``等)，也可以通过``ref``获取真实DOM的引用(``componentDidMount``中可访问到)。
 
@@ -110,4 +111,19 @@ connect后续两个参数之后再深究，其中第三个可以自定义状态�
 
 ---
 
+* redux-thunk 异步的redux
+* * 可接收函数作为action，也就是先dispatch这个action发起异步操作。
+* * 在此函数中通过第一个参数(dispatch)调用其他``action``，以完成异步action效果。
 
+---
+
+* redux-saga 异步的redux
+* * 在单独的saga模块中监听组件发起的action。
+* * 接收到组件action后执行异步方法，执行完成后再发起action到reducer。
+* * reducer接收到saga发起的action后返回新state到组件。
+
+1. 组件dispatch一个``ActionA``
+2. saga监听到``ActionA``
+3. 执行异步逻辑
+4. put一个``ActionB``到reducer
+5. reducer返回新状态到组件
