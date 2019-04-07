@@ -53,12 +53,12 @@
   </li>
   <li>
     <ul>
-      <li>父级传入的props更改时会触发：<code class="highlighter-rouge">componentWillReceiveProps</code> -&gt; <code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+      <li>父级传入的props更改时会触发：<code class="highlighter-rouge">componentWillReceiveProps</code> -&gt; <code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">render</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>内部<code class="highlighter-rouge">state</code>更改时会触发：<code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+      <li>内部<code class="highlighter-rouge">state</code>更改时会触发：<code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">render</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
     </ul>
   </li>
   <li>
@@ -262,6 +262,16 @@
       <li>reducer接收到saga发起的action后返回新state到组件。</li>
     </ul>
   </li>
+  <li>
+    <ul>
+      <li>saga对action的监听不影响reducer直接处理这个action，可以同时触发。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>个人感觉像redux专用的小<code class="highlighter-rouge">rx</code>。</li>
+    </ul>
+  </li>
 </ul>
 
 <ol>
@@ -281,6 +291,12 @@
                     <span class="article-pager-block-tag">更新的</span>
                 </a>
                 
+                
+                <a class="article-pager-block" href="/react/2019/04/07/dynamic-antd-theme.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">动态切换antd主题色配置</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
                 
             </div>
         </div>

@@ -14,8 +14,8 @@ description: react+redux笔记，react系列上手过程中对其渐进式的理
 * react本身做的事情大体是根据编写好的组件渲染出真实的DOM。
 * * 编写的组件可以是一个``es6/typescript``的``class``，也可以直接是个返回标签的函数。
 * * 组件通过props接收父级传入的值，通过state维护自己内部的值。
-* * 父级传入的props更改时会触发：``componentWillReceiveProps`` -> ``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``componentDidUpdate``，最终更新界面值。
-* * 内部``state``更改时会触发：``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``componentDidUpdate``，最终更新界面值。
+* * 父级传入的props更改时会触发：``componentWillReceiveProps`` -> ``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``render`` -> ``componentDidUpdate``，最终更新界面值。
+* * 内部``state``更改时会触发：``shouldComponentUpdate`` -> ``componentWillUpdate`` -> ``render`` -> ``componentDidUpdate``，最终更新界面值。
 * * 组件本身通过``setState``更新``state``，以更新界面值。
 * * react本身封装好了标签的一些事件(``onClick``等)，也可以通过``ref``获取真实DOM的引用(``componentDidMount``中可访问到)。
 
@@ -121,6 +121,8 @@ connect后续两个参数之后再深究，其中第三个可以自定义状态�
 * * 在单独的saga模块中监听组件发起的action。
 * * 接收到组件action后执行异步方法，执行完成后再发起action到reducer。
 * * reducer接收到saga发起的action后返回新state到组件。
+* * saga对action的监听不影响reducer直接处理这个action，可以同时触发。
+* * 个人感觉像redux专用的小``rx``。
 
 1. 组件dispatch一个``ActionA``
 2. saga监听到``ActionA``
