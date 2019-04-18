@@ -54,7 +54,8 @@ class App extends Component{
 * react-redux帮助react整合redux到自己的组件体系中。
 * * 直接解决的问题就是不用层层传入``props``来访问``store``了。
 * * 顶层包裹``Provider``组件并传入``store``来使用。
-* * 需要访问store的组件用``connect``来将状态注入到``props``中。
+* * ``Provider``组件做的事是用``Context``维护一份store。
+* * 需要访问store的组件用``connect``来将状态和``action``注入到``props``中。
 
 ---
 
