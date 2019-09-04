@@ -10,7 +10,7 @@
 /******/ 		var moduleId, chunkId, i = 0, resolves = [];
 /******/ 		for(;i < chunkIds.length; i++) {
 /******/ 			chunkId = chunkIds[i];
-/******/ 			if(installedChunks[chunkId]) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(installedChunks, chunkId) && installedChunks[chunkId]) {
 /******/ 				resolves.push(installedChunks[chunkId][0]);
 /******/ 			}
 /******/ 			installedChunks[chunkId] = 0;
@@ -46,6 +46,7 @@
 /******/ 				result = __webpack_require__(__webpack_require__.s = deferredModule[0]);
 /******/ 			}
 /******/ 		}
+/******/
 /******/ 		return result;
 /******/ 	}
 /******/
@@ -178,11 +179,11 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
 var ReactDOM = __webpack_require__(6);
-var Avatar_1 = __webpack_require__(11);
-var Cube_1 = __webpack_require__(15);
-var Menu_1 = __webpack_require__(16);
+var Avatar_1 = __webpack_require__(10);
+var Cube_1 = __webpack_require__(14);
+var Menu_1 = __webpack_require__(15);
+__webpack_require__(18);
 __webpack_require__(19);
-__webpack_require__(20);
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
     function App() {
@@ -233,8 +234,7 @@ ReactDOM.render(React.createElement(App, null), document.getElementById("blog-na
 /* 7 */,
 /* 8 */,
 /* 9 */,
-/* 10 */,
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -254,7 +254,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-__webpack_require__(12);
+__webpack_require__(11);
 var Avatar = /** @class */ (function (_super) {
     __extends(Avatar, _super);
     function Avatar() {
@@ -271,11 +271,11 @@ exports.Avatar = Avatar;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(13);
+var content = __webpack_require__(12);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -296,18 +296,18 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(1)(false);
 // Module
-exports.push([module.i, ".nav-avatar {\n  transition: 0.2s;\n  height: auto;\n  padding: 16px;\n  text-align: center;\n  background: #cd5c5c;\n  width: 100%; }\n\n.nav-avatar img {\n  height: 50px;\n  width: 50px;\n  border-radius: 100px; }\n\n@media screen and (max-width: 1199px) and (min-width: 1000px) {\n  .nav-avatar:hover {\n    background: #de6d6d; } }\n\n@media screen and (max-width: 767px) {\n  .nav-avatar {\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 50px;\n    z-index: 10;\n    padding: 0;\n    line-height: 50px;\n    background: #cd5c5c; }\n  .nav-avatar img {\n    width: 32px;\n    height: 32px;\n    background: none;\n    margin-bottom: -8px; }\n  .nav-avatar div {\n    display: inline;\n    margin-left: 5px; } }\n", ""]);
+exports.push([module.i, ".nav-avatar{transition:0.2s;height:auto;padding:16px;text-align:center;background:#cd5c5c;width:100%}.nav-avatar img{height:50px;width:50px;border-radius:100px}@media screen and (max-width: 1199px) and (min-width: 1000px){.nav-avatar:hover{background:#de6d6d}}@media screen and (max-width: 767px){.nav-avatar{position:fixed;top:0;left:0;width:100%;height:50px;z-index:10;padding:0;line-height:50px;background:#cd5c5c}.nav-avatar img{width:32px;height:32px;background:none;margin-bottom:-8px}.nav-avatar div{display:inline;margin-left:5px}}\n", ""]);
 
 
 
 /***/ }),
-/* 14 */,
-/* 15 */
+/* 13 */,
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -342,7 +342,7 @@ exports.Cube = Cube;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -362,7 +362,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(0);
-__webpack_require__(17);
+__webpack_require__(16);
 var Menu = /** @class */ (function (_super) {
     __extends(Menu, _super);
     function Menu(props) {
@@ -399,11 +399,11 @@ exports.Menu = Menu;
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(18);
+var content = __webpack_require__(17);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -422,29 +422,29 @@ var update = __webpack_require__(2)(content, options);
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)(false);
+// Module
+exports.push([module.i, ".nav-menu a{display:block;width:100%;padding:15px;color:#E4E7EC;transition:0.2s;cursor:pointer;display:block;font-size:15px}.nav-menu>a:hover,.nav-menu>a.active{color:#FFFFFF;background:#de6d6d}.nav-menu>div{background:#de7a6d}.nav-menu>div>a:hover{color:#FFFFFF;background:#de876d}.nav-menu .icon{width:24px;height:24px;float:right;display:block}@media screen and (max-width: 767px){.nav-menu{display:none}}\n", ""]);
+
+
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)(false);
-// Module
-exports.push([module.i, ".nav-menu a {\n  display: block;\n  width: 100%;\n  padding: 15px;\n  color: #E4E7EC;\n  transition: 0.2s;\n  cursor: pointer;\n  display: block;\n  font-size: 15px; }\n\n.nav-menu > a:hover, .nav-menu > a.active {\n  color: #FFFFFF;\n  background: #de6d6d; }\n\n.nav-menu > div {\n  background: #de7a6d; }\n\n.nav-menu > div > a:hover {\n  color: #FFFFFF;\n  background: #de876d; }\n\n.nav-menu .icon {\n  width: 24px;\n  height: 24px;\n  float: right;\n  display: block; }\n\n@media screen and (max-width: 767px) {\n  .nav-menu {\n    display: none; } }\n", ""]);
-
-
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
 
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(21);
+var content = __webpack_require__(20);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -465,12 +465,12 @@ if(content.locals) module.exports = content.locals;
 if(false) {}
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(1)(false);
 // Module
-exports.push([module.i, ".nav {\n  width: 400px;\n  background: #cd5c5c;\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: flex;\n  flex-flow: column;\n  height: 100%;\n  overflow: hidden;\n  user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  -webkit-user-select: none; }\n\n#nav-publish-popup, #nav-concact-popup {\n  position: absolute;\n  width: 120px;\n  height: auto;\n  background: #de6d6d;\n  z-index: 1; }\n\n#nav-publish-popup a, #nav-concact-popup a {\n  padding: 15px;\n  color: #E4E7EC;\n  transition: 0.2s;\n  cursor: pointer;\n  display: block;\n  font-size: 15px; }\n\n@media screen and (min-width: 1200px) {\n  .nav-body {\n    padding-right: 16px;\n    flex: 1; }\n  .nav-body-block {\n    padding: 12px;\n    display: inline-block;\n    border-radius: 4px;\n    transition: 0.2s;\n    text-align: center;\n    margin: 16px 0 0 16px; }\n  .nav-body-block img {\n    height: 70px;\n    width: 70px; }\n  .nav-body-block:hover {\n    background: #de6d6d; } }\n\n@media screen and (max-width: 1200px) and (min-width: 1000px) {\n  .nav {\n    width: 300px; }\n  .nav-body {\n    padding-right: 16px;\n    flex: 1; }\n  .nav-body-block {\n    display: inline-block;\n    border-radius: 4px;\n    transition: 0.2s;\n    text-align: center;\n    padding: 8px;\n    margin: 8px 0 0 8px; }\n  .nav-body-block img {\n    width: 50px;\n    height: 50px; }\n  .nav-body-block:hover {\n    background: #de6d6d; } }\n\n@media screen and (max-width: 1000px) and (min-width: 768px) {\n  .nav {\n    width: 200px; }\n  .nav-body {\n    padding-right: 16px;\n    flex: 1; }\n  .nav-body-block {\n    padding: 8px;\n    display: inline-block;\n    border-radius: 4px;\n    transition: 0.2s;\n    text-align: center;\n    margin: 16px 0 0 16px; }\n  .nav-body-block img {\n    height: 40px;\n    width: 40px; }\n  .nav-body-block:hover {\n    background: #de6d6d; } }\n\n@media screen and (max-width: 767px) {\n  .nav {\n    background: #cd5c5c;\n    padding-top: 50px;\n    display: block;\n    width: 100%;\n    height: auto; }\n  .nav-body-block {\n    width: 25%;\n    padding: 8px;\n    display: inline-block;\n    transition: 0.2s;\n    text-align: center; }\n  .nav-body-block img {\n    width: 32px;\n    height: 32px; }\n  .nav-body-block:active {\n    background: #de6d6d; }\n  .nav-foot {\n    display: none; } }\n", ""]);
+exports.push([module.i, ".nav{width:400px;background:#cd5c5c;display:-webkit-box;display:-webkit-flex;display:flex;flex-flow:column;height:100%;overflow:hidden;user-select:none;-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none}#nav-publish-popup,#nav-concact-popup{position:absolute;width:120px;height:auto;background:#de6d6d;z-index:1}#nav-publish-popup a,#nav-concact-popup a{padding:15px;color:#E4E7EC;transition:0.2s;cursor:pointer;display:block;font-size:15px}@media screen and (min-width: 1200px){.nav-body{padding-right:16px;flex:1}.nav-body-block{padding:12px;display:inline-block;border-radius:4px;transition:0.2s;text-align:center;margin:16px 0 0 16px}.nav-body-block img{height:70px;width:70px}.nav-body-block:hover{background:#de6d6d}}@media screen and (max-width: 1200px) and (min-width: 1000px){.nav{width:300px}.nav-body{padding-right:16px;flex:1}.nav-body-block{display:inline-block;border-radius:4px;transition:0.2s;text-align:center;padding:8px;margin:8px 0 0 8px}.nav-body-block img{width:50px;height:50px}.nav-body-block:hover{background:#de6d6d}}@media screen and (max-width: 1000px) and (min-width: 768px){.nav{width:200px}.nav-body{padding-right:16px;flex:1}.nav-body-block{padding:8px;display:inline-block;border-radius:4px;transition:0.2s;text-align:center;margin:16px 0 0 16px}.nav-body-block img{height:40px;width:40px}.nav-body-block:hover{background:#de6d6d}}@media screen and (max-width: 767px){.nav{background:#cd5c5c;padding-top:50px;display:block;width:100%;height:auto}.nav-body-block{width:25%;padding:8px;display:inline-block;transition:0.2s;text-align:center}.nav-body-block img{width:32px;height:32px}.nav-body-block:active{background:#de6d6d}.nav-foot{display:none}}\n", ""]);
 
 
 

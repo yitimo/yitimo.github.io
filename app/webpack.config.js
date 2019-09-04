@@ -18,7 +18,7 @@ module.exports = {
     devtool: "source-map",
     resolve: {
         extensions: [
-            ".tsx", ".jsx", ".ts", ".js", ".json"
+            ".tsx", ".jsx", ".ts", ".js",
         ]
     },
     module: {
@@ -93,8 +93,15 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            filename: "../../_includes/nav.html",
-            template: "./app/index.html",
+            filename: "../../_layouts/home.html",
+            template: "./app/index.home.html",
+            async: "all",
+            chunks: "all",
+            minify: true
+        }),
+        new HtmlWebpackPlugin({
+            filename: "../../_layouts/post.html",
+            template: "./app/index.post.html",
             async: "all",
             chunks: "all",
             minify: true
