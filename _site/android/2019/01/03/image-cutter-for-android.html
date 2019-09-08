@@ -148,7 +148,7 @@
             <span class="n">inDrag</span> <span class="p">=</span> <span class="k">true</span>
         <span class="p">}</span>
     <span class="p">}</span>
-    <span class="k">return</span><span class="n">@setOnTouchListener</span> <span class="k">false</span>
+    <span class="k">return</span><span class="nd">@setOnTouchListener</span> <span class="k">false</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -161,7 +161,7 @@
 
 <p>边界检查实现如下：</p>
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">fun</span> <span class="n">resolvePositionCheck</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">fun</span> <span class="nf">resolvePositionCheck</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">val</span> <span class="py">center</span> <span class="p">=</span> <span class="n">originIV</span><span class="p">.</span><span class="n">center</span> <span class="o">?:</span> <span class="k">return</span>
     <span class="kd">val</span> <span class="py">x</span><span class="p">:</span> <span class="n">Float</span>
     <span class="kd">val</span> <span class="py">y</span><span class="p">:</span> <span class="n">Float</span>
@@ -273,7 +273,7 @@
 <p>图片的旋转只需设置<code class="highlighter-rouge">SubsamplingScaleImageView</code>的<code class="highlighter-rouge">orientation</code>即可，麻烦的是不同旋转角度下原图的宽高要区分处理，也就是说，0度和180度下原图的宽就是宽，高就是高，但90度和270度下原图的宽是高而高是宽。这在上文边界保护和下文执行裁剪时都要加以区分处理。</p>
 
 <p>执行裁剪作为一个方法提供给外界调用，实现如下：</p>
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="n">shutter</span><span class="p">():</span> <span class="n">Bitmap</span><span class="p">?</span> <span class="p">{</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">shutter</span><span class="p">():</span> <span class="nc">Bitmap</span><span class="p">?</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">resultBitmap</span><span class="o">?.</span><span class="n">isRecycled</span> <span class="p">==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">resultBitmap</span><span class="o">?.</span><span class="n">recycle</span><span class="p">()</span>
     <span class="p">}</span>

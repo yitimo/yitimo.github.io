@@ -52,10 +52,10 @@
 <p>插件都从它们的<code class="highlighter-rouge">manifest</code>起步，创建<code class="highlighter-rouge">manifest.json</code>包含以下内容，或直接<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/manifest.json">下载</a>：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -66,14 +66,14 @@
 <p>尽管现在插件安装好了，它还没有任何指令。现在添加一个<code class="highlighter-rouge">background</code>属性，并创建相应文件(<code class="highlighter-rouge">background.js</code>)：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
-        </span><span class="s2">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -91,15 +91,15 @@
 <p>包括<code class="highlighter-rouge">storage</code>在内的大多数API都必须在manifest的permissions属性中声明过，像这样：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
-    </span><span class="s2">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
-        </span><span class="s2">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -129,18 +129,18 @@
 <p>现在在manifest的page_action属性中声明这个文件作为弹出页面：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
-    </span><span class="s2">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
-        </span><span class="s2">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"page_action"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"default_popup"</span><span class="p">:</span><span class="w"> </span><span class="s2">"popup.html"</span><span class="w">
+    </span><span class="nl">"page_action"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"default_popup"</span><span class="p">:</span><span class="w"> </span><span class="s2">"popup.html"</span><span class="w">
     </span><span class="p">},</span><span class="w">
-    </span><span class="s2">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -179,13 +179,13 @@
 <p>现在在后台脚本中添加新功能：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">chrome</span><span class="p">.</span><span class="nx">runtime</span><span class="p">.</span><span class="nx">onInstalled</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="s1">'#3aa757'</span><span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'The color is green.'</span><span class="p">);</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#3aa757</span><span class="dl">'</span><span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">The color is green.</span><span class="dl">'</span><span class="p">);</span>
     <span class="p">});</span>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">onPageChanged</span><span class="p">.</span><span class="nx">removeRules</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">onPageChanged</span><span class="p">.</span><span class="nx">addRules</span><span class="p">([{</span>
                 <span class="na">conditions</span><span class="p">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">PageStateMatcher</span><span class="p">({</span>
-                <span class="na">pageUrl</span><span class="p">:</span> <span class="p">{</span><span class="na">hostEquals</span><span class="p">:</span> <span class="s1">'developer.chrome.com'</span><span class="p">},</span>
+                <span class="na">pageUrl</span><span class="p">:</span> <span class="p">{</span><span class="na">hostEquals</span><span class="p">:</span> <span class="dl">'</span><span class="s1">developer.chrome.com</span><span class="dl">'</span><span class="p">},</span>
             <span class="p">})</span>
             <span class="p">],</span>
                 <span class="na">actions</span><span class="p">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">ShowPageAction</span><span class="p">()]</span>
@@ -197,9 +197,9 @@
 <p>现在插件将需要<code class="highlighter-rouge">declarativeContent</code>权限：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
     </span><span class="err">...</span><span class="w">
-    </span><span class="s2">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"declarativeContent"</span><span class="p">,</span><span class="w"> </span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"declarativeContent"</span><span class="p">,</span><span class="w"> </span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
     </span><span class="err">...</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
@@ -208,11 +208,11 @@
 
 <p>弹出页面的最后一步是添加按钮颜色。创建页面脚本<code class="highlighter-rouge">popup.js</code>：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'changeColor'</span><span class="p">);</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
 
-<span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="s1">'color'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">color</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">changeColor</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">color</span><span class="p">;</span>
-    <span class="nx">changeColor</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">'value'</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+    <span class="nx">changeColor</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div></div>
 
@@ -234,14 +234,14 @@
 
 <p>插件现在知道了弹出层要当用户在<code class="highlighter-rouge">developer.chrome.com</code>站内时可用，并显示一个有颜色的按钮，但还需要进一步的用户交互。更新<code class="highlighter-rouge">popup.js</code>：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'changeColor'</span><span class="p">);</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
 <span class="p">...</span>
 <span class="nx">changeColor</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="na">active</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="na">currentWindow</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span>
         <span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span>
-        <span class="p">{</span><span class="na">code</span><span class="p">:</span> <span class="s1">'document.body.style.backgroundColor = "'</span> <span class="o">+</span> <span class="nx">color</span> <span class="o">+</span> <span class="s1">'";'</span><span class="p">});</span>
+        <span class="p">{</span><span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">document.body.style.backgroundColor = "</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">color</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">";</span><span class="dl">'</span><span class="p">});</span>
     <span class="p">});</span>
 <span class="p">};</span>
 </code></pre></div></div>
@@ -284,25 +284,25 @@
 <p>并在manifest中配置这个选项页面：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
     </span><span class="err">...</span><span class="w">
-    </span><span class="s2">"options_page"</span><span class="p">:</span><span class="w"> </span><span class="s2">"options.html"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"options_page"</span><span class="p">:</span><span class="w"> </span><span class="s2">"options.html"</span><span class="p">,</span><span class="w">
     </span><span class="err">...</span><span class="w">
-    </span><span class="s2">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
 <p>重载插件并点击<code class="highlighter-rouge">详细信息</code>，点击<code class="highlighter-rouge">扩展程序选项</code>即可看到这个页面。现在添加<code class="highlighter-rouge">options.js</code>包含如下内容：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'buttonDiv'</span><span class="p">);</span>
-<span class="kd">const</span> <span class="nx">kButtonColors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'#3aa757'</span><span class="p">,</span> <span class="s1">'#e8453c'</span><span class="p">,</span> <span class="s1">'#f9bb2d'</span><span class="p">,</span> <span class="s1">'#4688f1'</span><span class="p">];</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">buttonDiv</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">kButtonColors</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">#3aa757</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#e8453c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#f9bb2d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#4688f1</span><span class="dl">'</span><span class="p">];</span>
 <span class="kd">function</span> <span class="nx">constructOptions</span><span class="p">(</span><span class="nx">kButtonColors</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">kButtonColors</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'button'</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">button</span><span class="dl">'</span><span class="p">);</span>
     <span class="nx">button</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
-    <span class="nx">button</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="nx">item</span><span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'color is '</span> <span class="o">+</span> <span class="nx">item</span><span class="p">);</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">color is </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">item</span><span class="p">);</span>
         <span class="p">})</span>
     <span class="p">});</span>
     <span class="nx">page</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">button</span><span class="p">);</span>

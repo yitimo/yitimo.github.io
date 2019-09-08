@@ -86,37 +86,37 @@
 <p>上面这就是传说中的去中心化应用(DAPP)，字面理解就是去除中心化(以规则公开的机器人为中心)的应用。</p>
 
 <p>从源码看以太坊中一个交易(类比UTXO)是这样的：</p>
-<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 以太坊区块中的交易</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">Transaction</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// 交易数据</span><span class="x">
-	</span><span class="n">data</span><span class="x"> </span><span class="n">txdata</span><span class="x">
-	</span><span class="c">// 缓存　不关心</span><span class="x">
-	</span><span class="n">hash</span><span class="x"> </span><span class="n">atomic</span><span class="o">.</span><span class="n">Value</span><span class="x">
-	</span><span class="n">size</span><span class="x"> </span><span class="n">atomic</span><span class="o">.</span><span class="n">Value</span><span class="x">
-	</span><span class="n">from</span><span class="x"> </span><span class="n">atomic</span><span class="o">.</span><span class="n">Value</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span><span class="c">// 以太坊交易的数据</span><span class="x">
-</span><span class="k">type</span><span class="x"> </span><span class="n">txdata</span><span class="x"> </span><span class="k">struct</span><span class="x"> </span><span class="p">{</span><span class="x">
-	</span><span class="c">// 账户签名，估计代表了谁发起的交易</span><span class="x">
-	</span><span class="n">AccountNonce</span><span class="x"> </span><span class="kt">uint64</span><span class="x">          </span><span class="s">`json:"nonce"    gencodec:"required"`</span><span class="x">
-	</span><span class="c">// Gas 价格</span><span class="x">
-	</span><span class="n">Price</span><span class="x">        </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x">        </span><span class="s">`json:"gasPrice" gencodec:"required"`</span><span class="x">
-	</span><span class="c">// Gas　上限</span><span class="x">
-	</span><span class="n">GasLimit</span><span class="x">     </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x">        </span><span class="s">`json:"gas"      gencodec:"required"`</span><span class="x">
-	</span><span class="c">// 交易给谁, 为空则为合约创建，也就是说这个交易把钱给了合约账户</span><span class="x">
-	</span><span class="n">Recipient</span><span class="x">    </span><span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">Address</span><span class="x"> </span><span class="s">`json:"to"       rlp:"nil"`</span><span class="x"> </span><span class="c">// nil means contract creation</span><span class="x">
-	</span><span class="c">// 交易数量</span><span class="x">
-	</span><span class="n">Amount</span><span class="x">       </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x">        </span><span class="s">`json:"value"    gencodec:"required"`</span><span class="x">
-	</span><span class="c">// 估计就是合约代码啊之类的</span><span class="x">
-	</span><span class="n">Payload</span><span class="x">      </span><span class="p">[]</span><span class="kt">byte</span><span class="x">          </span><span class="s">`json:"input"    gencodec:"required"`</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 以太坊区块中的交易</span>
+<span class="k">type</span> <span class="n">Transaction</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="c">// 交易数据</span>
+	<span class="n">data</span> <span class="n">txdata</span>
+	<span class="c">// 缓存　不关心</span>
+	<span class="n">hash</span> <span class="n">atomic</span><span class="o">.</span><span class="n">Value</span>
+	<span class="n">size</span> <span class="n">atomic</span><span class="o">.</span><span class="n">Value</span>
+	<span class="n">from</span> <span class="n">atomic</span><span class="o">.</span><span class="n">Value</span>
+<span class="p">}</span>
+<span class="c">// 以太坊交易的数据</span>
+<span class="k">type</span> <span class="n">txdata</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="c">// 账户签名，估计代表了谁发起的交易</span>
+	<span class="n">AccountNonce</span> <span class="kt">uint64</span>          <span class="s">`json:"nonce"    gencodec:"required"`</span>
+	<span class="c">// Gas 价格</span>
+	<span class="n">Price</span>        <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span>        <span class="s">`json:"gasPrice" gencodec:"required"`</span>
+	<span class="c">// Gas　上限</span>
+	<span class="n">GasLimit</span>     <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span>        <span class="s">`json:"gas"      gencodec:"required"`</span>
+	<span class="c">// 交易给谁, 为空则为合约创建，也就是说这个交易把钱给了合约账户</span>
+	<span class="n">Recipient</span>    <span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">Address</span> <span class="s">`json:"to"       rlp:"nil"`</span> <span class="c">// nil means contract creation</span>
+	<span class="c">// 交易数量</span>
+	<span class="n">Amount</span>       <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span>        <span class="s">`json:"value"    gencodec:"required"`</span>
+	<span class="c">// 估计就是合约代码啊之类的</span>
+	<span class="n">Payload</span>      <span class="p">[]</span><span class="kt">byte</span>          <span class="s">`json:"input"    gencodec:"required"`</span>
 
-	</span><span class="c">// 以下不关心</span><span class="x">
-	</span><span class="n">V</span><span class="x"> </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x"> </span><span class="s">`json:"v" gencodec:"required"`</span><span class="x">
-	</span><span class="n">R</span><span class="x"> </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x"> </span><span class="s">`json:"r" gencodec:"required"`</span><span class="x">
-	</span><span class="n">S</span><span class="x"> </span><span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span><span class="x"> </span><span class="s">`json:"s" gencodec:"required"`</span><span class="x">
-	</span><span class="n">Hash</span><span class="x"> </span><span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">Hash</span><span class="x"> </span><span class="s">`json:"hash" rlp:"-"`</span><span class="x">
-</span><span class="p">}</span><span class="x">
-</span></code></pre></div></div>
+	<span class="c">// 以下不关心</span>
+	<span class="n">V</span> <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span> <span class="s">`json:"v" gencodec:"required"`</span>
+	<span class="n">R</span> <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span> <span class="s">`json:"r" gencodec:"required"`</span>
+	<span class="n">S</span> <span class="o">*</span><span class="n">big</span><span class="o">.</span><span class="n">Int</span> <span class="s">`json:"s" gencodec:"required"`</span>
+	<span class="n">Hash</span> <span class="o">*</span><span class="n">common</span><span class="o">.</span><span class="n">Hash</span> <span class="s">`json:"hash" rlp:"-"`</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>可见以太坊相比比特币确实至少在交易上就多了些东西，不过一切都还是明朗清晰的，仍然能厚脸皮说一句以太坊也很简单。当然其在区块和链本身的逻辑上相比比特币也复杂化了一些。</p>
 

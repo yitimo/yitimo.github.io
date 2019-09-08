@@ -69,11 +69,11 @@
 
 <p>然后记得在应用中引入<code class="highlighter-rouge">global.less</code>，比如<code class="highlighter-rouge">index.js</code>中：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="s1">'react'</span><span class="p">;</span>
-<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="s1">'react-dom'</span><span class="p">;</span>
-<span class="k">import</span> <span class="s1">'./styles/global.less'</span><span class="p">;</span>
-<span class="k">import</span> <span class="nx">App</span> <span class="k">from</span> <span class="s1">'./App'</span><span class="p">;</span>
-<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">'root'</span><span class="p">));</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="dl">'</span><span class="s1">./styles/global.less</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">App</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./App</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
 </code></pre></div></div>
 
 <h2 id="webpack配置">webpack配置</h2>
@@ -81,13 +81,13 @@
 <p>在webpack配置中需要新增一个plugin即一开始安装的<code class="highlighter-rouge">antd-theme-webpack-plugin</code>。在<code class="highlighter-rouge">HtmlWebpackPlugin</code>之后添加这个插件：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">AntDesignThemePlugin</span><span class="p">({</span>
-    <span class="na">indexFileName</span><span class="p">:</span> <span class="s1">'index.html'</span><span class="p">,</span>
-    <span class="na">antDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'../node_modules/antd'</span><span class="p">),</span>
-    <span class="na">stylesDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'../src/styles'</span><span class="p">),</span>
-    <span class="na">varFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'../src/styles/_var.less'</span><span class="p">),</span>
-    <span class="na">mainLessFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'../src/styles/global.less'</span><span class="p">),</span>
+    <span class="na">indexFileName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">index.html</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">antDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../node_modules/antd</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">stylesDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">varFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles/_var.less</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">mainLessFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles/global.less</span><span class="dl">'</span><span class="p">),</span>
     <span class="na">themeVariables</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s1">'@primary-color'</span>
+        <span class="dl">'</span><span class="s1">@primary-color</span><span class="dl">'</span>
     <span class="p">],</span>
 <span class="p">}),</span>
 </code></pre></div></div>
@@ -101,7 +101,7 @@
 <p>配置中的<code class="highlighter-rouge">indexFileName</code>字段为<code class="highlighter-rouge">index.html</code>，实际上当项目的<code class="highlighter-rouge">index.html</code>位置变化时，都必须指定正确的路径，此配置的作用是由插件来自动注入全局less到<code class="highlighter-rouge">index.html</code>，如果找不到或者为指定这个字段，则需要手动往项目的<code class="highlighter-rouge">index.html</code>中添加这样的配置：</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet/less"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href=</span><span class="s">"color.less"</span> <span class="nt">/&gt;</span>
-<span class="nt">&lt;script&gt;</span><span class="nb">window</span><span class="p">.</span><span class="nx">less</span> <span class="o">=</span> <span class="p">{</span> <span class="na">async</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="na">env</span><span class="p">:</span> <span class="s1">'production'</span><span class="p">,</span> <span class="na">javascriptEnabled</span><span class="p">:</span> <span class="kc">true</span> <span class="p">};</span><span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span><span class="nb">window</span><span class="p">.</span><span class="nx">less</span> <span class="o">=</span> <span class="p">{</span> <span class="na">async</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="na">env</span><span class="p">:</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">,</span> <span class="na">javascriptEnabled</span><span class="p">:</span> <span class="kc">true</span> <span class="p">};</span><span class="nt">&lt;/script&gt;</span>
 <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"assets/less.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
 </code></pre></div></div>
 

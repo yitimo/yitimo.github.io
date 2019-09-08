@@ -109,7 +109,7 @@
 <p>如果<code class="highlighter-rouge">tabs.query</code>方法是同步的，做法可能是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE DOESN'T WORK</span>
-<span class="kd">var</span> <span class="nx">tab</span> <span class="o">=</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="s1">'active'</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span> <span class="c1">//WRONG!!!</span>
+<span class="kd">var</span> <span class="nx">tab</span> <span class="o">=</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span> <span class="c1">//WRONG!!!</span>
 <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span><span class="nx">newUrl</span><span class="p">});</span>
 <span class="nx">someOtherFunction</span><span class="p">();</span>
 </code></pre></div></div>
@@ -117,7 +117,7 @@
 <p>上面的代码会失败因为<code class="highlighter-rouge">query()</code>是一个异步方法，正确的做法是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE WORKS</span>
-<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="s1">'active'</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span> <span class="nx">newUrl</span><span class="p">});</span>
 <span class="p">});</span>
 <span class="nx">someOtherFunction</span><span class="p">();</span>

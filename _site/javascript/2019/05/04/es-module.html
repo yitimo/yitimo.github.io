@@ -92,23 +92,23 @@
 <span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
     <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">' '</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
 <span class="p">}</span>
 
 <span class="kd">function</span> <span class="nx">addZero</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">src</span> <span class="o">===</span> <span class="s1">'number'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">src</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">number</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">src</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
     <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="nx">src</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">?</span> <span class="p">(</span><span class="s1">'0'</span> <span class="o">+</span> <span class="nx">src</span><span class="p">)</span> <span class="p">:</span> <span class="nx">src</span>
+    <span class="k">return</span> <span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="nx">src</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">?</span> <span class="p">(</span><span class="dl">'</span><span class="s1">0</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">src</span><span class="p">)</span> <span class="p">:</span> <span class="nx">src</span>
 <span class="p">}</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">now</span> <span class="p">}</span>
@@ -118,17 +118,17 @@
 <p>然后我们在webpack.config.js中这样配置：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
-<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'path'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">mode</span><span class="p">:</span> <span class="s1">'development'</span><span class="p">,</span>
-    <span class="na">devtool</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">calendar</span><span class="p">:</span> <span class="s1">'./calendar/index.js'</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
     <span class="p">},</span>
     <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">filename</span><span class="p">:</span> <span class="s1">'[name].js'</span><span class="p">,</span>
-        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'wwwroot'</span><span class="p">),</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
     <span class="p">},</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -140,11 +140,11 @@
     <span class="c1">// ...</span>
     <span class="c1">// 闭包方式return出module.exports</span>
 <span class="p">})({</span>
-    <span class="s2">"./calendar/index.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
         <span class="c1">// 从__webpack_require__中访问utils模块</span>
     <span class="p">}),</span>
-    <span class="s2">"./calendar/utils.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
     <span class="p">})</span>
 <span class="p">})</span>
@@ -169,19 +169,19 @@
 <p>上文示例是在编写一个实际应用，也就是说我们的项目源码只需要在一个立即执行函数中直接运行就完成了自己的任务。但是当要编写一个第三方库时，我们无法保证其他项目也一定会使用commonjs来引入这个库，此时就需要配置<code class="highlighter-rouge">libraryTarget</code>来指定模块如何导出为一个库，其中umd方式为通用方式，即能兼容不同的模块规范，现在我们配置这个属性看看：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
-<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'path'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">mode</span><span class="p">:</span> <span class="s1">'development'</span><span class="p">,</span>
-    <span class="na">devtool</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">calendar</span><span class="p">:</span> <span class="s1">'./calendar/index.js'</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
     <span class="p">},</span>
     <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">filename</span><span class="p">:</span> <span class="s1">'[name].js'</span><span class="p">,</span>
-        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'wwwroot'</span><span class="p">),</span>
-        <span class="na">library</span><span class="p">:</span> <span class="s1">'libCalendar'</span><span class="p">,</span> <span class="c1">// +</span>
-        <span class="na">libraryTarget</span><span class="p">:</span> <span class="s1">'umd'</span><span class="p">,</span> <span class="c1">// +</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">library</span><span class="p">:</span> <span class="dl">'</span><span class="s1">libCalendar</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// +</span>
+        <span class="na">libraryTarget</span><span class="p">:</span> <span class="dl">'</span><span class="s1">umd</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// +</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
@@ -191,14 +191,14 @@
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
 <span class="p">(</span><span class="kd">function</span> <span class="nx">webpackUniversalModuleDefinition</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">factory</span><span class="p">)</span> <span class="p">{</span>
-	<span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="s1">'object'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">===</span> <span class="s1">'object'</span><span class="p">)</span>
+	<span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span>
 		<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
-	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">define</span> <span class="o">===</span> <span class="s1">'function'</span> <span class="o">&amp;&amp;</span> <span class="nx">define</span><span class="p">.</span><span class="nx">amd</span><span class="p">)</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">define</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">define</span><span class="p">.</span><span class="nx">amd</span><span class="p">)</span>
 		<span class="nx">define</span><span class="p">([],</span> <span class="nx">factory</span><span class="p">);</span>
-	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="s1">'object'</span><span class="p">)</span>
-		<span class="nx">exports</span><span class="p">[</span><span class="s2">"libCalendar"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span>
+		<span class="nx">exports</span><span class="p">[</span><span class="dl">"</span><span class="s2">libCalendar</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
 	<span class="k">else</span>
-		<span class="nx">root</span><span class="p">[</span><span class="s2">"libCalendar"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
+		<span class="nx">root</span><span class="p">[</span><span class="dl">"</span><span class="s2">libCalendar</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
 <span class="p">})(</span><span class="nb">window</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="err">上文编译输出的立即执行函数</span>
 <span class="p">})</span>
@@ -213,20 +213,20 @@
 <p>接下来我们改用es6模块来编写calendar库：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
-<span class="k">import</span> <span class="nx">addZero</span> <span class="k">from</span> <span class="s1">'./utils'</span>
+<span class="k">import</span> <span class="nx">addZero</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./utils</span><span class="dl">'</span>
 
 <span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
     <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">' '</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
 <span class="p">}</span>
 
@@ -236,8 +236,8 @@
 <p>移除上文webpack.config.js中添加的两行配置：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
-<span class="nx">library</span><span class="p">:</span> <span class="s1">'libCalendar'</span><span class="p">,</span> <span class="c1">// -</span>
-<span class="nx">libraryTarget</span><span class="p">:</span> <span class="s1">'umd'</span><span class="p">,</span> <span class="c1">// -</span>
+<span class="nx">library</span><span class="p">:</span> <span class="dl">'</span><span class="s1">libCalendar</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// -</span>
+<span class="nx">libraryTarget</span><span class="p">:</span> <span class="dl">'</span><span class="s1">umd</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// -</span>
 <span class="c1">// ...</span>
 </code></pre></div></div>
 
@@ -248,11 +248,11 @@
     <span class="c1">// ...</span>
     <span class="c1">// 闭包方式return module.exports</span>
 <span class="p">})({</span>
-    <span class="s2">"./calendar/index.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// 从__webpack_require__访问utils模块</span>
         <span class="c1">// 从__webpack_exports__导出default</span>
     <span class="p">}),</span>
-    <span class="s2">"./calendar/utils.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// 从__webpack_exports__导出default</span>
     <span class="p">})</span>
 <span class="p">})</span>
@@ -278,12 +278,12 @@
 
 <hr />
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">B</span> <span class="k">as</span> <span class="nx">defaultB</span><span class="p">,</span> <span class="p">{</span> <span class="nx">B</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'...'</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">B</span> <span class="k">as</span> <span class="nx">defaultB</span><span class="p">,</span> <span class="p">{</span> <span class="nx">B</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">...</span><span class="dl">'</span>
 </code></pre></div></div>
 
 <p>会编译为：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'...'</span><span class="p">)</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">...</span><span class="dl">'</span><span class="p">)</span>
 <span class="kd">const</span> <span class="nx">defaultB</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="k">default</span>
 <span class="kd">const</span> <span class="nx">B</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">B</span>
 </code></pre></div></div>
@@ -296,19 +296,19 @@
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
 <span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-    <span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="kr">await</span> <span class="k">import</span><span class="p">(</span><span class="s1">'./utils'</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="k">await</span> <span class="k">import</span><span class="p">(</span><span class="dl">'</span><span class="s1">./utils</span><span class="dl">'</span><span class="p">)</span>
     <span class="kd">const</span> <span class="nx">addZero</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">addZero</span>
     <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
     <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
-        <span class="s1">'-'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">' '</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
-        <span class="s1">':'</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
         <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
 <span class="p">}</span>
 
@@ -322,7 +322,7 @@
 <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 提供一个叫requireEnsure的函数，用于根据chunk id创建一个script标签，动态插入到document.head中</span>
 <span class="p">})({</span>
-    <span class="s2">"./calendar/index.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
         <span class="c1">// 调用__webpack_require__执行requireEnsure的函数函数以懒加载utils模块</span>
     <span class="p">})</span>
@@ -330,8 +330,8 @@
 </code></pre></div></div>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/0.js&gt;</span>
-<span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="s2">"webpackJsonp"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">window</span><span class="p">[</span><span class="s2">"webpackJsonp"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">push</span><span class="p">([[</span><span class="mi">0</span><span class="p">],{</span>
-    <span class="s2">"./calendar/utils.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="dl">"</span><span class="s2">webpackJsonp</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">window</span><span class="p">[</span><span class="dl">"</span><span class="s2">webpackJsonp</span><span class="dl">"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">push</span><span class="p">([[</span><span class="mi">0</span><span class="p">],{</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
     <span class="p">})</span>
 <span class="p">}]);</span>
@@ -344,25 +344,25 @@
 <p>在webpack配置中，我们可以手动拆分依赖，做到node_modules和src中的代码分离，甚至分离css chunk，这样可以防止出现某个js文件过大，最终做到性能优化。
 接下来我们手动造一个比较大的依赖，看看webpack如何处理它。给webpack添加如下配置：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'path'</span><span class="p">)</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">mode</span><span class="p">:</span> <span class="s1">'development'</span><span class="p">,</span>
-    <span class="na">devtool</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">calendar</span><span class="p">:</span> <span class="s1">'./calendar/index.js'</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
     <span class="p">},</span>
     <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">filename</span><span class="p">:</span> <span class="s1">'[name].js'</span><span class="p">,</span>
-        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'wwwroot'</span><span class="p">),</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
     <span class="p">},</span>
     <span class="na">optimization</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">splitChunks</span><span class="p">:</span> <span class="p">{</span>
             <span class="na">cacheGroups</span><span class="p">:</span> <span class="p">{</span>
                 <span class="na">vendor</span><span class="p">:</span> <span class="p">{</span> <span class="c1">// 即utils下的依赖会被拆分到vendor模块下作为chunk被使用</span>
                     <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">[\\/]</span><span class="sr">utils</span><span class="se">[\\/]</span><span class="sr">/</span><span class="p">,</span>
-                    <span class="na">name</span><span class="p">:</span> <span class="s1">'vendor'</span><span class="p">,</span>
-                    <span class="na">chunks</span><span class="p">:</span> <span class="s1">'all'</span>
+                    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">vendor</span><span class="dl">'</span><span class="p">,</span>
+                    <span class="na">chunks</span><span class="p">:</span> <span class="dl">'</span><span class="s1">all</span><span class="dl">'</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">},</span>
@@ -394,26 +394,26 @@
 <p>接下来轮到TypeScript了，可以将其认为是es6的高级语法糖，有自己的编译器(tsc)，通过配置定制编译规则，比如编译至es5+commonjs模块。
 修改webpack添加ts支持(还需要<code class="highlighter-rouge">npm i --save-dev typescript ts-loader</code>来一发):</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'path'</span><span class="p">)</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">mode</span><span class="p">:</span> <span class="s1">'development'</span><span class="p">,</span>
-    <span class="na">devtool</span><span class="p">:</span> <span class="s1">'none'</span><span class="p">,</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">calendar</span><span class="p">:</span> <span class="s1">'./calendar/index.ts'</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.ts</span><span class="dl">'</span>
     <span class="p">},</span>
     <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">filename</span><span class="p">:</span> <span class="s1">'[name].js'</span><span class="p">,</span>
-        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">'wwwroot'</span><span class="p">),</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
     <span class="p">},</span>
     <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="s1">'.ts'</span><span class="p">,</span> <span class="s1">'.js'</span><span class="p">,</span> <span class="s1">'.json'</span><span class="p">]</span>
+        <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">.ts</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.json</span><span class="dl">'</span><span class="p">]</span>
     <span class="p">},</span>
     <span class="na">module</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">rules</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">ts$/</span><span class="p">,</span>
-                <span class="na">loader</span><span class="p">:</span> <span class="s1">'ts-loader'</span>
+                <span class="na">loader</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ts-loader</span><span class="dl">'</span>
             <span class="p">}</span>
         <span class="p">]</span>
     <span class="p">}</span>
@@ -427,11 +427,11 @@
     <span class="c1">// ...</span>
     <span class="c1">// 闭包方式return出module.exports</span>
 <span class="p">})({</span>
-    <span class="s2">"./calendar/index.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
         <span class="c1">// 从__webpack_require__中访问utils模块</span>
     <span class="p">}),</span>
-    <span class="s2">"./calendar/utils.js"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// ...</span>
     <span class="p">})</span>
 <span class="p">})</span>

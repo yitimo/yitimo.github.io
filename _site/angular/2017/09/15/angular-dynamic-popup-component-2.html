@@ -70,8 +70,8 @@
 <h3 id="弹窗服务">弹窗服务</h3>
 <p>弹窗服务的职责是提供一个叫做open的方法，用来创建出组件并显示，还得对创建好的组件进行良好的控制:</p>
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">ApplicationRef</span><span class="p">,</span> <span class="nx">ComponentFactoryResolver</span><span class="p">,</span>
-    <span class="nx">ComponentRef</span><span class="p">,</span> <span class="nx">EmbeddedViewRef</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">ComponentType</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./popup.ref'</span><span class="p">;</span>
+    <span class="nx">ComponentRef</span><span class="p">,</span> <span class="nx">EmbeddedViewRef</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">ComponentType</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./popup.ref</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
 <span class="k">export</span> <span class="kd">class</span> <span class="nx">DialogService</span> <span class="p">{</span>
@@ -106,11 +106,11 @@
 </code></pre></div></div>
 <h3 id="弹窗的引用对象">弹窗的引用对象</h3>
 <p>上面服务中的open方法实际上把创建组件的细节通过new一个YupRef即弹窗引用来实现，这是因为考虑到服务本身是单例，如果仅使用open方法直接创建多个弹窗，在使用时会丢失除了最后一个弹窗外的控制能力，笔者这里采用的办法是将创建的弹窗封装成一个类即YupRef:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">ComponentRef</span><span class="p">,</span> <span class="nx">InjectionToken</span><span class="p">,</span> <span class="nx">ReflectiveInjector</span><span class="p">,</span> <span class="nx">ComponentFactory</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'rxjs/Observable'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'rxjs/Subject'</span><span class="p">;</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">ComponentRef</span><span class="p">,</span> <span class="nx">InjectionToken</span><span class="p">,</span> <span class="nx">ReflectiveInjector</span><span class="p">,</span> <span class="nx">ComponentFactory</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">rxjs/Observable</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Subject</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">rxjs/Subject</span><span class="dl">'</span><span class="p">;</span>
 <span class="c1">// 用于注入自定义数据到创建的组件中</span>
-<span class="k">export</span> <span class="kd">const</span> <span class="nx">YUP_DATA</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">'YUPPopupData'</span><span class="p">);</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">YUP_DATA</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">'</span><span class="s1">YUPPopupData</span><span class="dl">'</span><span class="p">);</span>
 
 <span class="k">export</span> <span class="kd">class</span> <span class="nx">YupRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="c1">// 弹窗关闭的订阅</span>
@@ -148,9 +148,9 @@
 <p>这样一来每次调用open方法后都能得到一个YupRef对象，提供了关闭方法以及对关闭事件的订阅方法。</p>
 <h3 id="预制弹窗组件">预制弹窗组件</h3>
 <p>弹窗服务中的open方法需要两个参数，第二个是传入的自定义数据，第一个就是需要创建的组件了，现在我们创建出几个预制组件，以dialog.component为例:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Injector</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">YUP_DATA</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'../popup.ref'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">mask</span><span class="p">,</span> <span class="nx">dialog</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'../animations'</span><span class="p">;</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span><span class="p">,</span> <span class="nx">Injector</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">YUP_DATA</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../popup.ref</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">mask</span><span class="p">,</span> <span class="nx">dialog</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../animations</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
     <span class="na">template</span><span class="p">:</span> <span class="s2">`
@@ -182,15 +182,15 @@
     <span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">YUP_DATA</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">YupRef</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="s1">'init'</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">init</span><span class="dl">'</span><span class="p">;</span>
         <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="s1">'on'</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">on</span><span class="dl">'</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">}</span>
-    <span class="kr">public</span> <span class="nx">close</span><span class="p">(</span><span class="na">comfirm</span><span class="p">:</span> <span class="kr">boolean</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="s1">'off'</span><span class="p">;</span>
+    <span class="kr">public</span> <span class="nx">close</span><span class="p">(</span><span class="na">comfirm</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">off</span><span class="dl">'</span><span class="p">;</span>
         <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span>  <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="s1">'init'</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">init</span><span class="dl">'</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="nx">comfirm</span><span class="p">);</span>
         <span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
     <span class="p">}</span>
@@ -209,17 +209,17 @@
     <span class="nx">msg</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">ok</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">no</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
-    <span class="nx">mask</span><span class="p">?:</span> <span class="kr">boolean</span>
+    <span class="nx">mask</span><span class="p">?:</span> <span class="nx">boolean</span>
 <span class="p">})</span> <span class="p">{</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 <p>额外需要提一点是虽然这样创建的组件没有被一开始就添加到页面中，仍然需要在所属模块的declaration中声明，并且还得在entryComponent中声明过，否则angular就会通过报错的方式让你这么做，就像下面这个弹窗模块的定义这样:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/core'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">CommonModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/common'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">AlertComponent</span><span class="p">,</span> <span class="nx">ToastComponent</span><span class="p">,</span> <span class="nx">LoadComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./templates'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">DialogService</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./service'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">NoopAnimationsModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser/animations'</span><span class="p">;</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">CommonModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">AlertComponent</span><span class="p">,</span> <span class="nx">ToastComponent</span><span class="p">,</span> <span class="nx">LoadComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./templates</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">DialogService</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./service</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">NoopAnimationsModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/platform-browser/animations</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
     <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">AlertComponent</span><span class="p">,</span> <span class="nx">ToastComponent</span><span class="p">,</span> <span class="nx">LoadComponent</span><span class="p">],</span>
@@ -231,9 +231,9 @@
 <span class="k">export</span> <span class="kd">class</span> <span class="nx">YupModule</span> <span class="p">{}</span>
 </code></pre></div></div>
 <p>而此弹窗模块真正需要导出的东西有4个，都列在index.ts中:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="p">{</span> <span class="nx">YupModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./module'</span><span class="p">;</span> <span class="c1">// 需要在AppModule中引入</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">DialogService</span> <span class="k">as</span> <span class="nx">Yup</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./service'</span><span class="p">;</span> <span class="c1">// 用于发起弹窗</span>
-<span class="k">export</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">YUP_DATA</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./popup.ref'</span><span class="p">;</span> <span class="c1">// 用于创建自定义弹窗时提供控制</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="p">{</span> <span class="nx">YupModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./module</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 需要在AppModule中引入</span>
+<span class="k">export</span> <span class="p">{</span> <span class="nx">DialogService</span> <span class="k">as</span> <span class="nx">Yup</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./service</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 用于发起弹窗</span>
+<span class="k">export</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">YUP_DATA</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./popup.ref</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 用于创建自定义弹窗时提供控制</span>
 </code></pre></div></div>
 <h3 id="使用方法">使用方法</h3>
 <p>最终在外界的使用方式如下:</p>
@@ -242,17 +242,17 @@
 <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
 <span class="kr">public</span> <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">dialog</span><span class="p">({</span><span class="na">msg</span><span class="p">:</span> <span class="s1">'弹不弹?'</span><span class="p">,</span> <span class="na">title</span><span class="p">:</span> <span class="s1">'我弹'</span><span class="p">,</span> <span class="na">ok</span><span class="p">:</span> <span class="s1">'弹弹'</span><span class="p">,</span> <span class="na">no</span><span class="p">:</span> <span class="s1">'别弹了'</span><span class="p">,</span> <span class="na">mask</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">dialog</span><span class="p">({</span><span class="na">msg</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹不弹?</span><span class="dl">'</span><span class="p">,</span> <span class="na">title</span><span class="p">:</span> <span class="dl">'</span><span class="s1">我弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">ok</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">no</span><span class="p">:</span> <span class="dl">'</span><span class="s1">别弹了</span><span class="dl">'</span><span class="p">,</span> <span class="na">mask</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'点击了确定'</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了确定</span><span class="dl">'</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'点击了取消'</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了取消</span><span class="dl">'</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
 <span class="p">}</span>
 </code></pre></div></div>
 <p>当不想使用预制的弹窗组件时，大可以自行创建好一个组件，然后使用open方法:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">CustomComponent</span><span class="p">,</span> <span class="s1">'我是自定义数据'</span><span class="p">).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">CustomComponent</span><span class="p">,</span> <span class="dl">'</span><span class="s1">我是自定义数据</span><span class="dl">'</span><span class="p">).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`我已经被关闭了，不过我能携带出来数据: 【</span><span class="p">${</span><span class="nx">res</span><span class="p">}</span><span class="s2">】`</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div></div>

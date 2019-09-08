@@ -286,9 +286,9 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
     <span class="nl">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.(</span><span class="sr">ts|tsx</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span>
-    <span class="nx">loader</span><span class="p">:</span> <span class="s2">"awesome-typescript-loader"</span><span class="p">,</span>
+    <span class="nx">loader</span><span class="p">:</span> <span class="dl">"</span><span class="s2">awesome-typescript-loader</span><span class="dl">"</span><span class="p">,</span>
     <span class="nx">options</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nl">configFileName</span><span class="p">:</span> <span class="s2">"modoc/tsconfig.json"</span> <span class="c1">// 如果需要指定tsconfig位置则在此配置</span>
+        <span class="nl">configFileName</span><span class="p">:</span> <span class="dl">"</span><span class="s2">modoc/tsconfig.json</span><span class="dl">"</span> <span class="c1">// 如果需要指定tsconfig位置则在此配置</span>
     <span class="p">}</span>
 <span class="p">},</span>
 <span class="p">{</span>
@@ -296,9 +296,9 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
     <span class="na">use</span><span class="p">:</span> <span class="p">[</span>
         <span class="nx">MiniCssExtractPlugin</span><span class="p">.</span><span class="nx">loader</span><span class="p">,</span> <span class="c1">// 配合css单独分包</span>
         <span class="p">{</span>
-            <span class="na">loader</span><span class="p">:</span> <span class="s2">"css-loader"</span>
+            <span class="na">loader</span><span class="p">:</span> <span class="dl">"</span><span class="s2">css-loader</span><span class="dl">"</span>
         <span class="p">},</span> <span class="p">{</span>
-            <span class="na">loader</span><span class="p">:</span> <span class="s2">"less-loader"</span><span class="p">,</span>
+            <span class="na">loader</span><span class="p">:</span> <span class="dl">"</span><span class="s2">less-loader</span><span class="dl">"</span><span class="p">,</span>
             <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
                 <span class="na">javascriptEnabled</span><span class="p">:</span> <span class="kc">true</span>
             <span class="p">}</span>
@@ -306,7 +306,7 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
 <span class="p">},</span>
 <span class="p">{</span>
     <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">woff</span><span class="se">(</span><span class="sr">$|</span><span class="se">\?)</span><span class="sr">|</span><span class="se">\.</span><span class="sr">woff2</span><span class="se">(</span><span class="sr">$|</span><span class="se">\?)</span><span class="sr">|</span><span class="se">\.</span><span class="sr">ttf</span><span class="se">(</span><span class="sr">$|</span><span class="se">\?)</span><span class="sr">|</span><span class="se">\.</span><span class="sr">eot</span><span class="se">(</span><span class="sr">$|</span><span class="se">\?)</span><span class="sr">|</span><span class="se">\.</span><span class="sr">svg</span><span class="se">(</span><span class="sr">$|</span><span class="se">\?)</span><span class="sr">/</span><span class="p">,</span>
-    <span class="na">use</span><span class="p">:</span> <span class="s2">"url-loader"</span> <span class="c1">// 加载css中的资源文件</span>
+    <span class="na">use</span><span class="p">:</span> <span class="dl">"</span><span class="s2">url-loader</span><span class="dl">"</span> <span class="c1">// 加载css中的资源文件</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -315,13 +315,13 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
     <span class="nl">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">js$/</span><span class="p">,</span>
     <span class="nx">use</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nl">loader</span><span class="p">:</span> <span class="s1">'babel-loader'</span><span class="p">,</span>
+        <span class="nl">loader</span><span class="p">:</span> <span class="dl">'</span><span class="s1">babel-loader</span><span class="dl">'</span><span class="p">,</span>
         <span class="nx">options</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nl">presets</span><span class="p">:</span> <span class="p">[</span><span class="s1">'@babel/preset-env'</span><span class="p">],</span>
-            <span class="nx">plugins</span><span class="p">:</span> <span class="p">[</span><span class="s1">'@babel/plugin-syntax-dynamic-import'</span><span class="p">]</span>
+            <span class="nl">presets</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">@babel/preset-env</span><span class="dl">'</span><span class="p">],</span>
+            <span class="nx">plugins</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">@babel/plugin-syntax-dynamic-import</span><span class="dl">'</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">},</span>
-    <span class="nx">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s2">"../node_modules/monaco-editor"</span><span class="p">)]</span> <span class="c1">// 只处理monaco-editor</span>
+    <span class="nx">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">"</span><span class="s2">../node_modules/monaco-editor</span><span class="dl">"</span><span class="p">)]</span> <span class="c1">// 只处理monaco-editor</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -330,20 +330,20 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
 <p>plugins配置可以让webpack的打包规则更灵活，比较简单的配置只需要下面这几个plugin：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">CopyWebpackPlugin</span><span class="p">([</span>
-    <span class="p">{</span> <span class="na">from</span><span class="p">:</span> <span class="s2">"modoc/assets"</span><span class="p">,</span> <span class="na">to</span><span class="p">:</span> <span class="s2">"assets"</span> <span class="p">}</span> <span class="c1">// 打包时复制资源文件</span>
+    <span class="p">{</span> <span class="na">from</span><span class="p">:</span> <span class="dl">"</span><span class="s2">modoc/assets</span><span class="dl">"</span><span class="p">,</span> <span class="na">to</span><span class="p">:</span> <span class="dl">"</span><span class="s2">assets</span><span class="dl">"</span> <span class="p">}</span> <span class="c1">// 打包时复制资源文件</span>
 <span class="p">]),</span>
 <span class="k">new</span> <span class="nx">HtmlWebpackPlugin</span><span class="p">({</span> <span class="c1">// 入口html配置</span>
-    <span class="na">filename</span><span class="p">:</span> <span class="s2">"index.html"</span><span class="p">,</span>
-    <span class="na">template</span><span class="p">:</span> <span class="s2">"modoc/index.html"</span><span class="p">,</span>
-    <span class="na">inject</span><span class="p">:</span> <span class="s2">"body"</span><span class="p">,</span>
-    <span class="na">chunks</span><span class="p">:</span> <span class="s2">"all"</span><span class="p">,</span>
+    <span class="na">filename</span><span class="p">:</span> <span class="dl">"</span><span class="s2">index.html</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">template</span><span class="p">:</span> <span class="dl">"</span><span class="s2">modoc/index.html</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">inject</span><span class="p">:</span> <span class="dl">"</span><span class="s2">body</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">chunks</span><span class="p">:</span> <span class="dl">"</span><span class="s2">all</span><span class="dl">"</span><span class="p">,</span>
     <span class="na">minify</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="na">xhtml</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="na">hash</span><span class="p">:</span> <span class="kc">true</span>
 <span class="p">}),</span>
 <span class="k">new</span> <span class="nx">MiniCssExtractPlugin</span><span class="p">({</span> <span class="c1">// css单独分包配置</span>
-    <span class="na">filename</span><span class="p">:</span> <span class="s1">'[name].[hash].css'</span><span class="p">,</span>
-    <span class="na">chunkFilename</span><span class="p">:</span> <span class="s1">'[name].[hash].chunk.css'</span><span class="p">,</span>
+    <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[hash].css</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[hash].chunk.css</span><span class="dl">'</span><span class="p">,</span>
 <span class="p">})</span>
 </code></pre></div></div>
 

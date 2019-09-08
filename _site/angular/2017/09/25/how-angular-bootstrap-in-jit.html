@@ -54,8 +54,8 @@
 <h3 id="启动过程的实现目标">启动过程的实现目标</h3>
 <p>首先不直接查看angular源代码，而是从实际项目的启动代码入手，一般的实际项目通过这样的代码启动:</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">platformBrowserDynamic</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'@angular/platform-browser-dynamic'</span><span class="p">;</span>
-<span class="k">import</span> <span class="p">{</span> <span class="nx">AppModule</span> <span class="p">}</span> <span class="k">from</span> <span class="s1">'./app'</span><span class="p">;</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">platformBrowserDynamic</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/platform-browser-dynamic</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">AppModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./app</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="nx">platformBrowserDynamic</span><span class="p">()</span>
     <span class="p">.</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">)</span>
@@ -75,7 +75,7 @@
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// JIT下创建 平台工厂</span>
 <span class="k">export</span> <span class="kd">const</span> <span class="nx">platformBrowserDynamic</span> <span class="o">=</span> <span class="nx">createPlatformFactory</span><span class="p">(</span>
-    <span class="nx">platformCoreDynamic</span><span class="p">,</span> <span class="s1">'browserDynamic'</span><span class="p">,</span> <span class="nx">INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS</span><span class="p">);</span>
+    <span class="nx">platformCoreDynamic</span><span class="p">,</span> <span class="dl">'</span><span class="s1">browserDynamic</span><span class="dl">'</span><span class="p">,</span> <span class="nx">INTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>可见 platformBrowserDynamic 本身是一个平台工厂，直接执行平台工厂就可以得到一个平台引用。</p>
@@ -98,7 +98,7 @@
 <p>进入父平台 platformCoreDynamic 的实现:</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 作为根平台工厂的父平台 这个也使用平台工厂创建，但其父平台为 核心平台</span>
-<span class="k">export</span> <span class="kd">const</span> <span class="nx">platformCoreDynamic</span> <span class="o">=</span> <span class="nx">createPlatformFactory</span><span class="p">(</span><span class="nx">platformCore</span><span class="p">,</span> <span class="s1">'coreDynamic'</span><span class="p">,</span> <span class="p">[</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">platformCoreDynamic</span> <span class="o">=</span> <span class="nx">createPlatformFactory</span><span class="p">(</span><span class="nx">platformCore</span><span class="p">,</span> <span class="dl">'</span><span class="s1">coreDynamic</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span>
   <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">COMPILER_OPTIONS</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="p">{},</span> <span class="na">multi</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span>
   <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">CompilerFactory</span><span class="p">,</span> <span class="na">useClass</span><span class="p">:</span> <span class="nx">JitCompilerFactory</span><span class="p">},</span>
 <span class="p">]);</span>
@@ -112,7 +112,7 @@
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 核心平台的服务商 比较厉害的就是 PlatformRef_</span>
 <span class="kd">const</span> <span class="nx">_CORE_PLATFORM_PROVIDERS</span><span class="p">:</span> <span class="nx">Provider</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">PLATFORM_ID</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="s1">'unknown'</span> <span class="p">},</span>   <span class="c1">// 用于设置缺省平台名</span>
+  <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">PLATFORM_ID</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unknown</span><span class="dl">'</span> <span class="p">},</span>   <span class="c1">// 用于设置缺省平台名</span>
   <span class="nx">PlatformRef_</span><span class="p">,</span> <span class="c1">// 核心模块引用</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">PlatformRef</span><span class="p">,</span> <span class="na">useExisting</span><span class="p">:</span> <span class="nx">PlatformRef_</span> <span class="p">},</span> <span class="c1">// 模块引用就是核心模块引用</span>
   <span class="p">{</span> <span class="na">provide</span><span class="p">:</span> <span class="nx">Reflector</span><span class="p">,</span> <span class="na">useFactory</span><span class="p">:</span> <span class="nx">_reflector</span><span class="p">,</span> <span class="na">deps</span><span class="p">:</span> <span class="p">[]</span> <span class="p">},</span> <span class="c1">// Reflect待研究</span>
@@ -121,7 +121,7 @@
 <span class="p">];</span>
 
 <span class="c1">// 核心工厂无父平台 就直接传null 命名为 core</span>
-<span class="k">export</span> <span class="kd">const</span> <span class="nx">platformCore</span> <span class="o">=</span> <span class="nx">createPlatformFactory</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s1">'core'</span><span class="p">,</span> <span class="nx">_CORE_PLATFORM_PROVIDERS</span><span class="p">);</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">platformCore</span> <span class="o">=</span> <span class="nx">createPlatformFactory</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="dl">'</span><span class="s1">core</span><span class="dl">'</span><span class="p">,</span> <span class="nx">_CORE_PLATFORM_PROVIDERS</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>亲戚关系就到爷爷这里为止了，现在进入 createPlatformFactory 看看平台工厂是怎么创建的(不是创建平台，而是创建工厂):</p>
@@ -150,10 +150,10 @@
 <span class="k">export</span> <span class="kd">function</span> <span class="nx">assertPlatform</span><span class="p">(</span><span class="na">requiredToken</span><span class="p">:</span> <span class="nx">any</span><span class="p">):</span> <span class="nx">PlatformRef</span> <span class="p">{</span>
   <span class="kd">const</span> <span class="nx">platform</span> <span class="o">=</span> <span class="nx">getPlatform</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">platform</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 确保平台被创建</span>
-    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'No platform exists!'</span><span class="p">);</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">No platform exists!</span><span class="dl">'</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">platform</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">requiredToken</span><span class="p">,</span> <span class="kc">null</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 这里是确保 marker 被注入</span>
-    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'A platform with a different configuration has been created. Please destroy it first.'</span><span class="p">);</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">A platform with a different configuration has been created. Please destroy it first.</span><span class="dl">'</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="k">return</span> <span class="nx">platform</span><span class="p">;</span>
 <span class="p">}</span>
@@ -165,7 +165,7 @@
 <span class="k">export</span> <span class="kd">function</span> <span class="nx">createPlatform</span><span class="p">(</span><span class="nx">injector</span><span class="p">:</span> <span class="nx">Injector</span><span class="p">):</span> <span class="nx">PlatformRef</span> <span class="p">{</span>
   <span class="c1">// 存在平台 &amp;&amp; 未销毁 &amp;&amp; 不允许多个平台</span>
   <span class="k">if</span> <span class="p">(</span><span class="nx">_platform</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">_platform</span><span class="p">.</span><span class="nx">destroyed</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">_platform</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">ALLOW_MULTIPLE_PLATFORMS</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span> <span class="p">{</span>
-    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'There can be only one platform. Destroy the previous one to create a new one.'</span><span class="p">);</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">There can be only one platform. Destroy the previous one to create a new one.</span><span class="dl">'</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="c1">// 得到这个平台引用</span>
   <span class="nx">_platform</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">PlatformRef</span><span class="p">);</span>
@@ -226,7 +226,7 @@
       <span class="kd">const</span> <span class="nx">moduleRef</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">InternalNgModuleRef</span><span class="o">&lt;</span><span class="nx">M</span><span class="o">&gt;&gt;</span><span class="nx">moduleFactory</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">ngZoneInjector</span><span class="p">);</span>
       <span class="kd">const</span> <span class="na">exceptionHandler</span><span class="p">:</span> <span class="nx">ErrorHandler</span> <span class="o">=</span> <span class="nx">moduleRef</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">ErrorHandler</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">exceptionHandler</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">'No ErrorHandler. Is platform module (BrowserModule) included?'</span><span class="p">);</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">No ErrorHandler. Is platform module (BrowserModule) included?</span><span class="dl">'</span><span class="p">);</span>
       <span class="p">}</span>
       <span class="nx">moduleRef</span><span class="p">.</span><span class="nx">onDestroy</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_modules</span><span class="p">,</span> <span class="nx">moduleRef</span><span class="p">));</span>
       <span class="nx">ngZone</span> <span class="o">!</span><span class="p">.</span><span class="nx">runOutsideAngular</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">ngZone</span> <span class="o">!</span><span class="p">.</span><span class="nx">onError</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">({</span><span class="na">next</span><span class="p">:</span> <span class="p">(</span><span class="na">error</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
