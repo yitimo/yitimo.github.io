@@ -2,14 +2,14 @@
 <html>
 <head>
     <title>{{page.title}} | {{site.description}}</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/assets/styles/global.css">
     {% include seo.html %}
-<link href="/assets/scripts/../styles/global.css" rel="stylesheet"></head>
+</head>
 <body>
     <h1 style="display: none;">{{ page.title }} | {{site.description}}</h1>
     <div class="home-body">
@@ -22,21 +22,22 @@
             <div class="article-pager">
                 {% if page.previous %}
                 <a class="article-pager-block" href="{{page.previous.url}}">
-                    <img src="/assets/images/prev.svg" alt="Older">
+                    <img src="/assets/images/prev.svg" alt="Older" />
                     <span class="article-pager-block-title">{{page.previous.title}}</span>
                     <span class="article-pager-block-tag">更新的</span>
                 </a>
                 {% endif %}
                 {% if page.next %}
                 <a class="article-pager-block" href="{{page.next.url}}">
-                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
                     <span class="article-pager-block-title">{{page.next.title}}</span>
                     <span class="article-pager-block-tag">更早的</span>
                 </a>
                 {% endif %}
             </div>
         </div>
-        {% include foot.html %}
+        {% include footer.html %}
+        {% include analysis.html %}
     </div>
-<script type="text/javascript" src="/assets/scripts/vendors~app.bundle.js" defer="defer"></script><script type="text/javascript" src="/assets/scripts/app.bundle.js" defer="defer"></script></body>
+</body>
 </html>

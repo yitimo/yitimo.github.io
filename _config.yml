@@ -27,6 +27,10 @@ exclude: [desc.md, node_modules, Gemfile, Gemfile.lock, package.json, yarn-error
 
 plugins: [jekyll-seo-tag, jekyll-sitemap, jekyll-paginate]
 
+sass:
+  style: compressed
+  sass_dir: _styles
+
 host: 0.0.0.0
 # gems:
 #     - jekyll-minifier

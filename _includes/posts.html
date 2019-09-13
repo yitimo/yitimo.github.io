@@ -1,7 +1,6 @@
-<ul class="posts">
 {% for post in site.posts %}
-    <a href="{{ post.url }}" class="">
-        <li>{{ post.title }}</li>
+    <a class="post-block {{post.categories}}" href="{{ post.url }}">
+        <div class="post-block-title">{{ post.title }}</div>
+        <div class="post-block-desc">{{ post.author }} | {{ post.date | date:'%e %B %Y' }}</div>
     </a>
 {% endfor %}
-</ul>

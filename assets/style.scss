@@ -1,0 +1,53 @@
+---
+---
+
+@import './variable.scss';
+@import './global.scss';
+@import './article.scss';
+
+.yitiblog {
+    position: relative;
+    min-height: 100%;
+    width: 100%;
+    max-width: $max-width;
+    margin:  0 auto;
+}
+.yitiblog-header-container {
+    height: 60px;
+    width: 100%;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: $color-font;
+    color: $color-default;
+}
+.yitiblog-header {
+    height: 100%;
+    width: 100%;
+    max-width: $max-width;
+    align-items: center;
+    margin: 0 auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    .avatar {
+        height: 40px;
+        width: 40px;
+        border-radius: 56px;
+        margin: 0 $space;
+        cursor: default;
+    }
+    .title {
+        font-size: 24px;
+        cursor: default;
+    }
+}
+
+@media (max-width: 1280px) {
+    .yitiblog, .yitiblog-header {
+        max-width: $max-width-md;
+    }
+}

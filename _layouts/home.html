@@ -2,22 +2,29 @@
 <html>
 <head>
     <title>{{site.title}} | {{site.description}}</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css">
     {% include seo.html %}
-<link href="/assets/scripts/../styles/global.css" rel="stylesheet"></head>
+</head>
 <body>
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
-    <div class="home-body">
-        <div id="blog-nav"></div>
-        <div class="home-content">
-            {{content}} 
-        </div>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                {% include header.html %}
+            </div>
+        </header>
+        <section class="yitiblog-content">
+            {{content}}
+        </section>
+        <footer class="yitiblog-footer">
+            {% include footer.html %}
+        </footer>
     </div>
-    {% include foot.html %}
-<script type="text/javascript" src="/assets/scripts/vendors~app.bundle.js" defer="defer"></script><script type="text/javascript" src="/assets/scripts/app.bundle.js" defer="defer"></script></body>
+    {% include analysis.html %}
+</body>
 </html>

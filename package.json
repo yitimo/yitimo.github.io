@@ -5,10 +5,8 @@
   "author": "yitimo <admin@yitimo.com>",
   "private": true,
   "scripts": {
-    "serve": "echo 'please open another shell and run yarn watch:nav to listen app changes!' && jekyll serve",
-    "build": "yarn build:nav && jekyll build",
-    "watch:nav": "yarn build:nav --watch --progress",
-    "build:nav": "rm -rf assets/scripts && yarn webpack --config app/webpack.config.js",
+    "serve": "jekyll serve",
+    "build": "jekyll build",
     "webpack": "node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js"
   },
   "devDependencies": {
