@@ -7,18 +7,18 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://0.0.0.0:4000" />
-<meta property="og:url" content="http://0.0.0.0:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://0.0.0.0:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -33,7 +33,479 @@
 
 </head>
 <body>
-    <h1 style="display: none;">不使用cli搭建angular项目 | yitimo的个人博客</h1>
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                <img src="/assets/images/yitimo.jpg" class="avatar" />
+<b class="title">再见二丁目</b>
+
+            </div>
+        </header>
+        <section class="yitiblog-content article">
+            <h1>不使用cli搭建angular项目</h1>
+            <p>本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖<code class="highlighter-rouge">@angular/cli</code>，纯手工配置<code class="highlighter-rouge">webpack</code>来实现。即花费巨大力气完成<code class="highlighter-rouge">@angular/cli</code>中的如下命令：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng new angulectron
+ng build <span class="nt">--prod</span>
+</code></pre></div></div>
+
+<h2 id="初始化">初始化</h2>
+
+<p>初始化项目使用<code class="highlighter-rouge">yarn init</code>(或<code class="highlighter-rouge">npm init</code>)完成，最终得到包含单个<code class="highlighter-rouge">package.json</code>的项目。像这样：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>angulectron <span class="o">&amp;&amp;</span> <span class="nb">cd </span>angulectron
+yarn init
+// 一路回车或细心输入配置
+</code></pre></div></div>
+
+<p>得到类似如下内容的<code class="highlighter-rouge">package.json</code>文件：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"index.js"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>为了防止第一步太过简单，顺便我们再往里面添加一波依赖：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yarn add @angular/core @angular/common @angular/platform-browser @angular/platform-browser-dynamic @angular/compiler rxjs zone.js core-js
+
+yarn add <span class="nt">--dev</span> @angular/compiler-cli webpack webpack-cli webpack-dev-server typescript@2.9.2
+
+yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack @angular-devkit/build-optimizer uglifyjs-webpack-plugin mini-css-extract-plugin node-sass rimraf http-server
+</code></pre></div></div>
+
+<ul>
+  <li>第一波依赖是angular相关的几个依赖，已经足够最简单运行了</li>
+  <li>第二波是大哥webpack还有干爹typescript。其中typescript必须指定2版本(目前最新已经到3以上了)。</li>
+  <li>第三波是webpack家族的一些loader和plugin，以及<code class="highlighter-rouge">rimraf</code>用于删除生成的文件，<code class="highlighter-rouge">http-server</code>用于运行小服务器来访问生成的资源。</li>
+</ul>
+
+<p>再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个<code class="highlighter-rouge">package.json</code>文件的项目，内容像这样：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Starter for electron app with angular(v6+)"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main.js"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"http"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http-server ./wwwroot"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"prod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rimraf wwwroot &amp;&amp; yarn webpack -- --config ./webpack.config.js --open --progress --profile --content-base src/"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"dev"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yarn webpack-dev-server -- --config ./webpack.config.dev.js --open --progress --profile --watch --content-base src/"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack-dev-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"repository"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"git+https://github.com/yitimo/angulectron.git"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"keywords"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"angular"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"electron"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">"yitimo &lt;admin@yitimo.com&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"bugs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/yitimo/angulectron/issues"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"homepage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/yitimo/angulectron#readme"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@angular-devkit/build-optimizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.8.4"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.2.4"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/compiler-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/language-service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@ngtools/webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.2.4"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@types/hammerjs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.36"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@types/node"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^10.11.5"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@types/uglify-js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.0.3"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@types/webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.4.14"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"codelyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.5.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"copy-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.5.2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"css-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.0.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"file-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"html-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.5.5"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"html-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.2.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"http-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.11.1"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"mini-css-extract-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.4.2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"node-sass"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.9.3"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"raw-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.5.1"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"rimraf"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.6.2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sass-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^7.1.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"script-ext-html-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.1"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"style-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.23.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"to-string-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.1.5"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"ts-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.2.1"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"tslint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.11.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"typescript"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.7.2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.19.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack-cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.0"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack-dev-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.1.8"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"webpack-inline-manifest-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.0.1"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"@angular/animations"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/common"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/compiler"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/core"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/forms"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/platform-browser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/platform-browser-dynamic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/platform-server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"@angular/router"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.1.9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"core-js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.5.7"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"rxjs"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.3.3"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"zone.js"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.8.26"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="最简单源代码">最简单源代码</h2>
+
+<p>抛开脚手架，项目真正的源代码要放到一个<code class="highlighter-rouge">src</code>目录下，本文重点不在此，所以除了入口文件外只创建最简单的源代码，只有一个根模块，根组件，以及外联的模板和样式文件，像这样：</p>
+
+<p><img src="/assets/images/201810/1.png" alt="目录结构" /></p>
+
+<p><strong>polyfills.ts：</strong></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="dl">'</span><span class="s1">core-js/es7/reflect</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="dl">'</span><span class="s1">zone.js/dist/zone</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><strong>main.ts：</strong></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">platformBrowserDynamic</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/platform-browser-dynamic</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">enableProdMode</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">AppModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./app/app.module</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="c1">// webpack DefinePlugin 注入的变量，需要声明，否则编辑器会报错</span>
+<span class="nx">declare</span> <span class="kd">var</span> <span class="nx">ENV</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">ENV</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">enableProdMode</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="nx">platformBrowserDynamic</span><span class="p">().</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><strong>index.html：</strong></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"viewport"</span> <span class="na">content=</span><span class="s">"width=device-width, initial-scale=1.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"ie=edge"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>My App<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;angulectron&gt;</span>Loading...<span class="nt">&lt;/angulectron&gt;</span>
+    <span class="nt">&lt;</span><span class="err">%</span> <span class="na">if</span> <span class="err">(</span><span class="na">isDevServer</span><span class="err">)</span> <span class="err">{</span> <span class="err">%</span><span class="nt">&gt;&lt;script </span><span class="na">src=</span><span class="s">"/webpack-dev-server.js"</span><span class="nt">&gt;&lt;/script&gt;&lt;</span><span class="err">%</span> <span class="err">}</span> <span class="err">%</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+
+</code></pre></div></div>
+
+<p><strong>app.module.ts：</strong></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">NgModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">BrowserModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/platform-browser</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">AppComponent</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./app.component</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">NgModule</span><span class="p">({</span>
+    <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+        <span class="nx">BrowserModule</span>
+    <span class="p">],</span>
+    <span class="na">declarations</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
+    <span class="na">providers</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>app.component.ts：</strong></p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Component</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@angular/core</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Component</span><span class="p">({</span>
+    <span class="na">selector</span><span class="p">:</span> <span class="dl">'</span><span class="s1">angulectron</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">templateUrl</span><span class="p">:</span> <span class="dl">'</span><span class="s1">app.component.html</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">app.component.css</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">app.component.scss</span><span class="dl">'</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>app.component.html：</strong></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;h2&gt;</span>Hello !!!<span class="nt">&lt;/h2&gt;</span>
+</code></pre></div></div>
+
+<p><strong>app.component.css：</strong></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">h2</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="m">#CD5C5C</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>app.component.scss：</strong></p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">h2</span> <span class="p">{</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">32px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>其中报错是因为未配置<code class="highlighter-rouge">tsconfig.json</code>，编辑器报了<code class="highlighter-rouge">es7</code>装饰器新特性的警告，所以在项目根目录新建一个<code class="highlighter-rouge">tsconfig.json</code>：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"compilerOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"target"</span><span class="p">:</span><span class="w"> </span><span class="s2">"es5"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"module"</span><span class="p">:</span><span class="w"> </span><span class="s2">"esnext"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">重要</span><span class="w"> </span><span class="err">可以明显减小最终打包的体积</span><span class="w">
+        </span><span class="nl">"moduleResolution"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"emitDecoratorMetadata"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"experimentalDecorators"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"allowSyntheticDefaultImports"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"sourceMap"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"noEmitHelpers"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"importHelpers"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"strictNullChecks"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"lib"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"dom"</span><span class="p">,</span><span class="w"> </span><span class="s2">"es2015"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"baseUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"./src"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"paths"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"@angular/*"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"../node_modules/@angular/*"</span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"exclude"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"node_modules"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"wwwroot"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="webpack">webpack</h2>
+
+<p><code class="highlighter-rouge">webpack</code>配置是重头戏，实际上<code class="highlighter-rouge">@angular/cli</code>生成的项目内部也使用了<code class="highlighter-rouge">webpack</code>，不过已经被封装好了使用时完全不用去关心。</p>
+
+<p>基本的<code class="highlighter-rouge">webpack</code>配置为一个名为<code class="highlighter-rouge">webpack.config.js</code>的文件，文件导出一个<code class="highlighter-rouge">object</code>，这个<code class="highlighter-rouge">object</code>至少包含以下几部分：</p>
+
+<ol>
+  <li><strong>entry</strong> 指定入口文件，我们这里是<code class="highlighter-rouge">main.ts</code>和<code class="highlighter-rouge">polyfills.ts</code>这两个</li>
+  <li><strong>output</strong> 指定输出的目录、名字等</li>
+  <li><strong>module.rules</strong> 配置各种<code class="highlighter-rouge">loader</code></li>
+  <li><strong>plugins</strong> 配置各种额外规则</li>
+  <li><strong>optimization</strong> 配置资源压缩以及分包</li>
+  <li><strong>devServer</strong> 配置开发服务器</li>
+</ol>
+
+<p>针对<code class="highlighter-rouge">angular</code>项目特有的配置项是两个<code class="highlighter-rouge">loader</code>和一个<code class="highlighter-rouge">plugin</code>，均来自于<code class="highlighter-rouge">@ngtools/webpack</code>这个包，实际上<code class="highlighter-rouge">@angular/cli</code>内部也使用了这个东西，依靠这个包才让手动配置<code class="highlighter-rouge">angular</code>项目的<code class="highlighter-rouge">webpack</code>变得简单(对比angular2刚发布的年代)。</p>
+
+<p>最终一个完整的webpack配置像这样：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">DefinePlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">webpack/lib/DefinePlugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">HtmlWebpackPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">html-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">MiniCssExtractPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">mini-css-extract-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">AngularCompilerPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@ngtools/webpack</span><span class="dl">'</span><span class="p">).</span><span class="nx">AngularCompilerPlugin</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">UglifyJsPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">uglifyjs-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">ENV</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="nx">ENV</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">source-map</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">polyfills</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/polyfills.ts</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">main</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/main.ts</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[chunkhash].bundle.js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">sourceMapFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[file].map</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[chunkhash].chunk.js</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">.ts</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.json</span><span class="dl">'</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="na">module</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">rules</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">css$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">to-string-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">],</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">scss$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">to-string-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sass-loader</span><span class="dl">'</span><span class="p">],</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">css$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="nx">MiniCssExtractPlugin</span><span class="p">.</span><span class="nx">loader</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">],</span>
+                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">scss$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="nx">MiniCssExtractPlugin</span><span class="p">.</span><span class="nx">loader</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sass-loader</span><span class="dl">'</span><span class="p">],</span>
+                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">html$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">raw-loader</span><span class="dl">'</span><span class="p">],</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/index.html</span><span class="dl">'</span><span class="p">)]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.(</span><span class="sr">jpg|png|gif|pdf|eot|woff2</span><span class="se">?</span><span class="sr">|svg|ttf</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="dl">'</span><span class="s1">file-loader</span><span class="dl">'</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">(?:\.</span><span class="sr">ngfactory</span><span class="se">\.</span><span class="sr">js|</span><span class="se">\.</span><span class="sr">ngstyle</span><span class="se">\.</span><span class="sr">js|</span><span class="se">\.</span><span class="sr">ts</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[{</span>
+                    <span class="na">loader</span><span class="p">:</span> <span class="dl">'</span><span class="s1">@angular-devkit/build-optimizer/webpack-loader</span><span class="dl">'</span><span class="p">,</span>
+                    <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="na">sourceMap</span><span class="p">:</span> <span class="kc">false</span>
+                    <span class="p">}</span>
+                <span class="p">},</span> <span class="dl">'</span><span class="s1">@ngtools/webpack</span><span class="dl">'</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">js$/</span><span class="p">,</span>
+                <span class="na">use</span><span class="p">:</span> <span class="p">[{</span>
+                    <span class="na">loader</span><span class="p">:</span> <span class="dl">'</span><span class="s1">@angular-devkit/build-optimizer/webpack-loader</span><span class="dl">'</span><span class="p">,</span>
+                    <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="na">sourceMap</span><span class="p">:</span> <span class="kc">false</span>
+                    <span class="p">}</span>
+                <span class="p">}]</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="na">plugins</span><span class="p">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">HtmlWebpackPlugin</span><span class="p">({</span>
+            <span class="na">template</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./src/index.html</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">inject</span><span class="p">:</span> <span class="dl">'</span><span class="s1">body</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">xhtml</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="na">minify</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}),</span>
+        <span class="k">new</span> <span class="nx">DefinePlugin</span><span class="p">({</span>
+            <span class="dl">'</span><span class="s1">isDevServer</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">false</span><span class="dl">'</span><span class="p">,</span>
+            <span class="dl">'</span><span class="s1">ENV</span><span class="dl">'</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">ENV</span><span class="p">)</span>
+        <span class="p">}),</span>
+        <span class="k">new</span> <span class="nx">AngularCompilerPlugin</span><span class="p">({</span>
+            <span class="na">tsConfigPath</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./tsconfig.json</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">entryModule</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./src/app/app.module#AppModule</span><span class="dl">'</span>
+        <span class="p">}),</span>
+        <span class="k">new</span> <span class="nx">MiniCssExtractPlugin</span><span class="p">({</span> <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[hash].css</span><span class="dl">'</span><span class="p">,</span> <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[chunkhash].css</span><span class="dl">'</span> <span class="p">})</span>
+    <span class="p">],</span>
+    <span class="na">optimization</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">minimizer</span><span class="p">:</span> <span class="p">[</span>
+            <span class="k">new</span> <span class="nx">UglifyJsPlugin</span><span class="p">({</span>
+                <span class="na">sourceMap</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="na">parallel</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="na">cache</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">webpack-cache/uglify-cache</span><span class="dl">'</span><span class="p">),</span>
+                <span class="na">uglifyOptions</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">compress</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="na">pure_getters</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="na">passes</span><span class="p">:</span> <span class="mi">2</span>
+                    <span class="p">},</span>
+                    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="na">ascii_only</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                        <span class="na">comments</span><span class="p">:</span> <span class="kc">false</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">],</span>
+        <span class="na">splitChunks</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">chunks</span><span class="p">:</span> <span class="dl">'</span><span class="s1">all</span><span class="dl">'</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">devServer</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">port</span><span class="p">:</span> <span class="mi">4201</span><span class="p">,</span>
+        <span class="na">host</span><span class="p">:</span> <span class="dl">'</span><span class="s1">127.0.0.1</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">historyApiFallback</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">watchOptions</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">ignored</span><span class="p">:</span> <span class="sr">/node_modules/</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">node</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">global</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">crypto</span><span class="p">:</span> <span class="dl">'</span><span class="s1">empty</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">process</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">module</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">clearImmediate</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">setImmediate</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="na">fs</span><span class="p">:</span> <span class="dl">'</span><span class="s1">empty</span><span class="dl">'</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>现在执行命令<code class="highlighter-rouge">yarn prod</code>，以上配置将生成生产模式加AOT模式下的输出，并且最终代码都会压缩至最小体积，像这样：</p>
+
+<p><img src="/assets/images/201810/2.png" alt="输出" /></p>
+
+<p>执行<code class="highlighter-rouge">yarn http</code>运行一下看看：</p>
+
+<p><img src="/assets/images/201810/3.png" alt="运行" /></p>
+
+<p>至此纯手工最简单的angular项目就完成了。对这个小项目做几个总结：</p>
+
+<ol>
+  <li>其中的配置只针对<code class="highlighter-rouge">prod + AOT</code>模式，即不是<code class="highlighter-rouge">JIT</code>模式</li>
+  <li>对于开发环境可以再新增一个<code class="highlighter-rouge">webpack.config.dev.js</code>来配置生产环境下的webpack规则，并搭配<code class="highlighter-rouge">webpack-dev-server</code>使用(本文未完成这一步)。对于生产环境就像文中这样先<code class="highlighter-rouge">yarn prod</code>，然后扔到服务器上。</li>
+  <li><code class="highlighter-rouge">@ngtools/webpack</code>与<code class="highlighter-rouge">MiniCssExtractPlugin</code>不兼容，所以注意配置<code class="highlighter-rouge">exclude</code>规则。</li>
+  <li><code class="highlighter-rouge">tsconfig.json</code>中的<code class="highlighter-rouge">"module": "esnext"</code>这一配置相比<code class="highlighter-rouge">"module": "commonjs"</code>能减少不少体积。</li>
+</ol>
+
+<h2 id="相关链接">相关链接</h2>
+
+<ul>
+  <li><a href="https://github.com/gdi2290/angular-starter">angular-starter</a> 一个教科书级复杂的angular启动项目，非常适合进阶观摩学习</li>
+  <li><a href="https://github.com/yitimo/angulectron">angulectron</a> 本文示例项目地址，之后会整合electron并继续完善。</li>
+</ul>
+
+            <div class="pager">
+                
+                <a class="article-pager-block" href="/android/2018/10/02/android-image-picker-library.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">Android 编写一个图片选择器</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/android/2019/01/03/image-cutter-for-android.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">Android图片裁剪工具封装</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </section>
+        <footer class="yitiblog-footer">
+            
+        </footer>
+    </div>
+    <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    <!-- <h1 style="display: none;">不使用cli搭建angular项目 | yitimo的个人博客</h1>
     <div class="home-body">
         <div id="blog-nav"></div>
         <div class="home-content">
@@ -498,6 +970,6 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
         s.parentNode.insertBefore(bp, s);
     })();
 </script>
-    </div>
+    </div> -->
 </body>
 </html>

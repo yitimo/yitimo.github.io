@@ -7,18 +7,18 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://0.0.0.0:4000" />
-<meta property="og:url" content="http://0.0.0.0:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://0.0.0.0:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -33,7 +33,468 @@
 
 </head>
 <body>
-    <h1 style="display: none;">JavaScript模块化编程整理 | yitimo的个人博客</h1>
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                <img src="/assets/images/yitimo.jpg" class="avatar" />
+<b class="title">再见二丁目</b>
+
+            </div>
+        </header>
+        <section class="yitiblog-content article">
+            <h1>JavaScript模块化编程整理</h1>
+            <p>在上古时期(<code class="highlighter-rouge">ES3</code>)我们用<strong>直接在html中引入script</strong>的方式来开发web项目，而现在我们用比如webpack这样的工具来帮助我们做这件事。这让我们能更专注于实际项目代码的开发而不是忙于项目依赖、兼容性和代码压缩等重复性的工作。</p>
+
+<p>本文将主要围绕<strong>webpack如何处理我们的JS代码</strong>这个问题来对JavaScript模块化编程进行梳理，包括以下几点:</p>
+
+<ol>
+  <li>node环境和浏览器环境
+    <ol>
+      <li>浏览器环境模块化</li>
+    </ol>
+  </li>
+  <li>commonjs, amd和其他
+    <ol>
+      <li>webpack的output.libraryTarget配置</li>
+    </ol>
+  </li>
+  <li>require/module.exports和es6 import/export
+    <ol>
+      <li>导入/导出同类模块(commonjs或es6)</li>
+      <li>导入/导出不同模块(commonjs或es6)</li>
+    </ol>
+  </li>
+  <li>webpack chunk和模块懒加载
+    <ol>
+      <li>webpack如何处理懒加载模块</li>
+      <li>webpack如何拆分chunk</li>
+    </ol>
+  </li>
+  <li>TypeScript和代码提示
+    <ol>
+      <li>TypeScript模块</li>
+      <li><code class="highlighter-rouge">.d.ts</code>文件和类型声明</li>
+    </ol>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="node环境和浏览器环境">node环境和浏览器环境</h2>
+
+<p>我们知道node环境中直接就可以使用commonjs规范进行模块化，并根据目录/文件来区分模块。</p>
+
+<p>比如<code class="highlighter-rouge">./lib</code>或<code class="highlighter-rouge">./lib/index.js</code>或<code class="highlighter-rouge">lib.js</code>都可以作为<code class="highlighter-rouge">lib</code>模块来使用。我们通过<code class="highlighter-rouge">module.exports</code>来导出变量并通过<code class="highlighter-rouge">require</code>来导入变量。</p>
+
+<p>但是在浏览器环境中我们无法直接使用commonjs，所以当我们发现自己项目的src目录下明明使用了<code class="highlighter-rouge">module.exports</code>这些语法却能在浏览器中生效时，这一定是webpack帮我们做了些什么。</p>
+
+<h3 id="浏览器环境的js模块化">浏览器环境的JS模块化</h3>
+
+<p>现在准备一个最简单的基于webpack的web项目，包含一个名为<code class="highlighter-rouge">calendar</code>的模块：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
+<span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">addZero</span><span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">src</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">number</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">src</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">src</span> <span class="o">&amp;&amp;</span> <span class="nx">src</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">?</span> <span class="p">(</span><span class="dl">'</span><span class="s1">0</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">src</span><span class="p">)</span> <span class="p">:</span> <span class="nx">src</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">now</span> <span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>然后我们在webpack.config.js中这样配置：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>最终编译生成的<code class="highlighter-rouge">calendar.js</code>会是这样的结构：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">){</span>
+    <span class="c1">// ...</span>
+    <span class="c1">// 闭包方式return出module.exports</span>
+<span class="p">})({</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+        <span class="c1">// 从__webpack_require__中访问utils模块</span>
+    <span class="p">}),</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>结论就是，浏览器环境下，webpack为我们把commonjs模块进行了转义，编译成为了一个立即执行函数。</p>
+
+<hr />
+
+<h2 id="模块化规范commonjs-amd和其他">模块化规范：commonjs, amd和其他</h2>
+
+<p>除了上文提到的commonjs之外，还有几个模块化相关的名词容易把人绕晕：commonjs、commonjs2、amd、umd。</p>
+
+<hr />
+
+<p><em>待补充 commonjs/commonjs2/amd各自介绍</em></p>
+
+<hr />
+
+<p>接下来我们围绕webpack配置中的<a href="https://webpack.docschina.org/configuration/output#output-librarytarget">output.libraryTarget</a>这个配置来梳理这些概念。</p>
+
+<p>上文示例是在编写一个实际应用，也就是说我们的项目源码只需要在一个立即执行函数中直接运行就完成了自己的任务。但是当要编写一个第三方库时，我们无法保证其他项目也一定会使用commonjs来引入这个库，此时就需要配置<code class="highlighter-rouge">libraryTarget</code>来指定模块如何导出为一个库，其中umd方式为通用方式，即能兼容不同的模块规范，现在我们配置这个属性看看：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
+<span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">library</span><span class="p">:</span> <span class="dl">'</span><span class="s1">libCalendar</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// +</span>
+        <span class="na">libraryTarget</span><span class="p">:</span> <span class="dl">'</span><span class="s1">umd</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// +</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>现在编译结果会是这样的结构：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
+<span class="p">(</span><span class="kd">function</span> <span class="nx">webpackUniversalModuleDefinition</span><span class="p">(</span><span class="nx">root</span><span class="p">,</span> <span class="nx">factory</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">module</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span>
+		<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">define</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">define</span><span class="p">.</span><span class="nx">amd</span><span class="p">)</span>
+		<span class="nx">define</span><span class="p">([],</span> <span class="nx">factory</span><span class="p">);</span>
+	<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span>
+		<span class="nx">exports</span><span class="p">[</span><span class="dl">"</span><span class="s2">libCalendar</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
+	<span class="k">else</span>
+		<span class="nx">root</span><span class="p">[</span><span class="dl">"</span><span class="s2">libCalendar</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">factory</span><span class="p">();</span>
+<span class="p">})(</span><span class="nb">window</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="err">上文编译输出的立即执行函数</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>结论就是，webpack默认将我们的模块化代码编译为兼容浏览器环境的commonjs方式输出，同时我们还可以进一步配置来完成兼容amd模块甚至将模块绑定到window等操作。</p>
+
+<hr />
+
+<h2 id="commonjs和es6-module">commonjs和es6 module</h2>
+
+<p>接下来我们改用es6模块来编写calendar库：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
+<span class="k">import</span> <span class="nx">addZero</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./utils</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">now</span>
+</code></pre></div></div>
+
+<p>移除上文webpack.config.js中添加的两行配置：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="nx">library</span><span class="p">:</span> <span class="dl">'</span><span class="s1">libCalendar</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// -</span>
+<span class="nx">libraryTarget</span><span class="p">:</span> <span class="dl">'</span><span class="s1">umd</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// -</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>此时编译结果的结构是这样的：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+    <span class="c1">// 闭包方式return module.exports</span>
+<span class="p">})({</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 从__webpack_require__访问utils模块</span>
+        <span class="c1">// 从__webpack_exports__导出default</span>
+    <span class="p">}),</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 从__webpack_exports__导出default</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>结论就是，目前的es6模块我们可以看成commonjs的语法糖，webpack会将其编译成与commonjs方式类似的输出，比如将变量导出至<code class="highlighter-rouge">module.exports.default</code>。</p>
+
+<h3 id="模块混用">模块混用</h3>
+
+<p>现在从上文结论可以得知，我们完全可以在es6模块中import一个commonjs方式导出的变量，或是在commonjs模块中require一个es6模块export的变量。目前webpack最终都会编译为commonjs方式。即：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="p">{</span> <span class="nx">A</span> <span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">A</span>
+</code></pre></div></div>
+
+<p>会编译为：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">default</span><span class="p">:</span> <span class="nx">A</span><span class="p">,</span>
+    <span class="na">A</span><span class="p">:</span> <span class="nx">A</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">B</span> <span class="k">as</span> <span class="nx">defaultB</span><span class="p">,</span> <span class="p">{</span> <span class="nx">B</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">...</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<p>会编译为：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">...</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">defaultB</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="k">default</span>
+<span class="kd">const</span> <span class="nx">B</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">B</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="webpack-chunk和模块懒加载">webpack chunk和模块懒加载</h2>
+
+<p>接下来看看懒加载(延迟加载)的模块是如何工作的，改造calendar模块为这样：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
+<span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">async</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">utils</span> <span class="o">=</span> <span class="k">await</span> <span class="k">import</span><span class="p">(</span><span class="dl">'</span><span class="s1">./utils</span><span class="dl">'</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">addZero</span> <span class="o">=</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">addZero</span>
+    <span class="kd">const</span> <span class="nx">_now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">_now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">()</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">-</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1"> </span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getHours</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getMinutes</span><span class="p">())</span> <span class="o">+</span>
+        <span class="dl">'</span><span class="s1">:</span><span class="dl">'</span> <span class="o">+</span>
+        <span class="nx">addZero</span><span class="p">(</span><span class="nx">_now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="p">{</span> <span class="nx">now</span> <span class="p">}</span>
+<span class="k">export</span> <span class="k">default</span> <span class="nx">now</span>
+</code></pre></div></div>
+
+<p>这样会在使用到utils模块时才加载这个模块进来，牺牲了少量的加载时间，换来了初始化时更快的加载体积拆分缩减。最终编译结果结构像这样：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 提供一个叫requireEnsure的函数，用于根据chunk id创建一个script标签，动态插入到document.head中</span>
+<span class="p">})({</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+        <span class="c1">// 调用__webpack_require__执行requireEnsure的函数函数以懒加载utils模块</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/0.js&gt;</span>
+<span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="dl">"</span><span class="s2">webpackJsonp</span><span class="dl">"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">window</span><span class="p">[</span><span class="dl">"</span><span class="s2">webpackJsonp</span><span class="dl">"</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]).</span><span class="nx">push</span><span class="p">([[</span><span class="mi">0</span><span class="p">],{</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">__webpack_exports__</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">})</span>
+<span class="p">}]);</span>
+</code></pre></div></div>
+
+<p>结论就是，对于懒加载的模块，会单独拆分到自己的js文件中，并通过jsonp方式(动态创建script标签，设置src并插入到head)动态执行这些拆分的js文件。</p>
+
+<h3 id="webpack如何拆分chunk">webpack如何拆分chunk</h3>
+
+<p>在webpack配置中，我们可以手动拆分依赖，做到node_modules和src中的代码分离，甚至分离css chunk，这样可以防止出现某个js文件过大，最终做到性能优化。
+接下来我们手动造一个比较大的依赖，看看webpack如何处理它。给webpack添加如下配置：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.js</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="na">optimization</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">splitChunks</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">cacheGroups</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">vendor</span><span class="p">:</span> <span class="p">{</span> <span class="c1">// 即utils下的依赖会被拆分到vendor模块下作为chunk被使用</span>
+                    <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">[\\/]</span><span class="sr">utils</span><span class="se">[\\/]</span><span class="sr">/</span><span class="p">,</span>
+                    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">vendor</span><span class="dl">'</span><span class="p">,</span>
+                    <span class="na">chunks</span><span class="p">:</span> <span class="dl">'</span><span class="s1">all</span><span class="dl">'</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>亲测目前的webpack比较“智能”，即使配置了splitChunks，若目标包不够“大”，依然不会将其拆分，在实际项目中一般依赖已经都足够大了，所以不会有这个困扰。</p>
+
+<p>最终输出会得到两个js，calendar.js和vendor.js。也就是，虽然没有显式使用懒加载引入utils模块，utils依然被拆分然后以懒加载形式被使用了，此实验想要成功，一定要保证utils模块足够大，条件参考webpack文档原文:</p>
+
+<p>webpack will automatically split chunks based on these conditions:</p>
+
+<ul>
+  <li>New chunk can be shared OR modules are from the node_modules folder</li>
+  <li>New chunk would be bigger than 30kb (before min+gz)</li>
+  <li>Maximum number of parallel requests when loading chunks on demand would be lower or equal to 5</li>
+  <li>Maximum number of parallel requests at initial page load would be lower or equal to 3</li>
+</ul>
+
+<p>When trying to fulfill the last two conditions, bigger chunks are preferred.</p>
+
+<p>另外chunk的拆分仅仅是拆分了文件，并没有改为异步加载，仍然会按顺序同步执行多个chunk。</p>
+
+<hr />
+
+<h2 id="typescript模块">TypeScript模块</h2>
+
+<p>接下来轮到TypeScript了，可以将其认为是es6的高级语法糖，有自己的编译器(tsc)，通过配置定制编译规则，比如编译至es5+commonjs模块。
+修改webpack添加ts支持(还需要<code class="highlighter-rouge">npm i --save-dev typescript ts-loader</code>来一发):</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">mode</span><span class="p">:</span> <span class="dl">'</span><span class="s1">development</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">none</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">calendar</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./calendar/index.ts</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].js</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">.ts</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">.json</span><span class="dl">'</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="na">module</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">rules</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">ts$/</span><span class="p">,</span>
+                <span class="na">loader</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ts-loader</span><span class="dl">'</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>现在执行webpack打包，得到的<code class="highlighter-rouge">calendar.js</code>与之前commonjs方式是一致的:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">){</span>
+    <span class="c1">// ...</span>
+    <span class="c1">// 闭包方式return出module.exports</span>
+<span class="p">})({</span>
+    <span class="dl">"</span><span class="s2">./calendar/index.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">__webpack_require__</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+        <span class="c1">// 从__webpack_require__中访问utils模块</span>
+    <span class="p">}),</span>
+    <span class="dl">"</span><span class="s2">./calendar/utils.js</span><span class="dl">"</span><span class="p">:</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">exports</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+    <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>而使用TypeScript的理由可以有这么几个:</p>
+
+<ul>
+  <li>编码阶段的代码提示和类型检查</li>
+  <li>编写第三方库时支持自动生成<code class="highlighter-rouge">.d.ts</code>类型声明(JS实现的话则需要手动维护一份)</li>
+  <li>告别babel全家桶</li>
+</ul>
+
+            <div class="pager">
+                
+                <a class="article-pager-block" href="/react/2019/04/07/dynamic-antd-theme.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">动态切换antd主题色配置</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/javascript/2019/09/03/build-your-own-ngrok-server.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">自己搭建ngrok服务器代理本地服务</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </section>
+        <footer class="yitiblog-footer">
+            
+        </footer>
+    </div>
+    <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    <!-- <h1 style="display: none;">JavaScript模块化编程整理 | yitimo的个人博客</h1>
     <div class="home-body">
         <div id="blog-nav"></div>
         <div class="home-content">
@@ -487,6 +948,6 @@
         s.parentNode.insertBefore(bp, s);
     })();
 </script>
-    </div>
+    </div> -->
 </body>
 </html>

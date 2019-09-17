@@ -7,18 +7,18 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://0.0.0.0:4000" />
-<meta property="og:url" content="http://0.0.0.0:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://0.0.0.0:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -33,7 +33,198 @@
 
 </head>
 <body>
-    <h1 style="display: none;">使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端 | yitimo的个人博客</h1>
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                <img src="/assets/images/yitimo.jpg" class="avatar" />
+<b class="title">再见二丁目</b>
+
+            </div>
+        </header>
+        <section class="yitiblog-content article">
+            <h1>使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端</h1>
+            <p>本文将搭建一个不具有任何功能的NEO轻钱包，所有的精力都仅集中于成功运行<code class="highlighter-rouge">neon-wallet-db</code>项目并搭配全节点的<code class="highlighter-rouge">neo-cli /rpc</code>接口为轻钱包客户端提供服务。
+首先需要准备几个项目：</p>
+<ol>
+  <li><a href="https://github.com/CityOfZion/neon-wallet-db">neon-wallet-db</a></li>
+  <li><a href="https://github.com/CityOfZion/neon-js">neon-js</a></li>
+  <li><a href="https://github.com/neo-project/neo-cli">neo-cli</a></li>
+  <li>任意实现的web客户端(本文将使用<code class="highlighter-rouge">angular</code>)</li>
+</ol>
+
+<p>然后是劝退部分，即笔者完成壮举准备的环境：</p>
+<ol>
+  <li>4台debian虚拟机，均运行共识节点</li>
+  <li>4台虚拟机中一台作为<code class="highlighter-rouge">RPC</code>节点运行提供<code class="highlighter-rouge">/rpc</code>接口</li>
+  <li>4台虚拟机中另一台运行<code class="highlighter-rouge">neon-wallet-db</code>项目</li>
+  <li>运行<code class="highlighter-rouge">neon-wallet-db</code>项目的前提如下：
+  4.1 运行<code class="highlighter-rouge">mongodb</code>服务端
+  4.2 运行<code class="highlighter-rouge">redis</code>服务端
+  4.3 安装<code class="highlighter-rouge">python</code>环境（笔者为 3.6.3）（建议搭配pyenv+virtualenv）
+  4.4 安装<code class="highlighter-rouge">heroku cli</code> 后续将使用<code class="highlighter-rouge">heroku local</code>运行项目</li>
+</ol>
+
+<h2 id="neon-wallet-db-项目的必要性">NEON-WALLET-DB 项目的必要性</h2>
+<p>neon社区维护的neon轻钱包项目实际上为一个 <code class="highlighter-rouge">react</code> + <code class="highlighter-rouge">electron</code> 的web项目，内部通过调用<code class="highlighter-rouge">neon-js</code>提供的api实现与测试网乃至主网的交互。
+然后思考一下轻钱包是如何做到不同步全节点也能进行<code class="highlighter-rouge">transaction</code>的。
+答案是不可能。这里的轻钱包不过是在远程调用<code class="highlighter-rouge">/rpc</code>接口罢了，全节点由远程的<code class="highlighter-rouge">neo-cli</code>来维护。
+那么问题来了，既然所有操作其实都是在调用<code class="highlighter-rouge">/rpc</code>接口，那<code class="highlighter-rouge">neon-wallet-db</code>项目又是用来做什么的？这还得从<code class="highlighter-rouge">nel-cli</code>都提供了哪些接口说起：
+<img src="http://upload-images.jianshu.io/upload_images/4740306-eeded87466cdb4a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" /></p>
+
+<p>没错就只有这么一些，而一个基于NEO的DAPP要做的事情就是用这么几个接口来搞事情。其中交易如何进行且不说，先关注如何查询交易记录(即区块链技术中广为流传的utxo)，毫无疑问这些utxo是包含在区块中并保存在全节点里的，那就需要一个接口来获取区块信息，也就是上面的<code class="highlighter-rouge">getblock</code>接口：
+<img src="http://upload-images.jianshu.io/upload_images/4740306-1c68e52540a2a9eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="" /></p>
+
+<p>如图所示调用方法就是，拿区块索引来查区块信息，那如何实现查询一个地址的余额呢？用上面提供的<code class="highlighter-rouge">getbalance</code>接口就想得太美了，此接口得前提是要打开钱包，也就是只能获取这个<code class="highlighter-rouge">neo-cli</code>中打开的钱包的余额。真正做法是——遍历所有区块所有<code class="highlighter-rouge">utxo</code>自己算。这就是为什么还需要<code class="highlighter-rouge">neon-wallet-db</code>的原因，需要它来事先遍历、存储好uxto等数据，那么只要请求其提供的接口，就可以直接获取其处理过的方便使用的数据，而不需要遍历NEO全节点百万计(截至目前的测试网)的区块信息了。</p>
+
+<h2 id="运行私链共识节点">运行私链共识节点</h2>
+
+<p>私链的运行比较简单，下载官方的<code class="highlighter-rouge">neo-cli</code>的<code class="highlighter-rouge">release</code>就可以，运行若出现问题(可能性很大)需要积极浏览官方文档和<code class="highlighter-rouge">github README</code>排查。</p>
+
+<p>4个共识节点的<code class="highlighter-rouge">protocol.json</code>配置须保持一致，内容为节点ip地址和对应的共识地址公钥，这样才可能建立最小共识进而产生区块。</p>
+
+<p>其中还要选择一个共识节点运行<code class="highlighter-rouge">/rpc</code>接口，命令为<code class="highlighter-rouge">dotnet neo-cli.dll /rpc</code>，然后实际使用的rpc接口就是<code class="highlighter-rouge">http://192.168.1.x:20332</code>(<code class="highlighter-rouge">rpc</code>节点ip以及默认端口).</p>
+
+<p>官方的<a href="http://docs.neo.org/zh-cn/node/private-chain.html">私链搭建文档</a>内容有些跳跃，让人搞不清何时用<code class="highlighter-rouge">neo-cli</code>还是<code class="highlighter-rouge">neo-gui</code>。其实回归字面共识的达成无非就是4个<code class="highlighter-rouge">neo-cli</code>节点达成共识每隔15秒新增一个区块，没有<code class="highlighter-rouge">neo-gui</code>什么事儿。实际上<code class="highlighter-rouge">NEO</code>的测试网估计也是<code class="highlighter-rouge">protocol.json</code>里那几个节点在跑<code class="highlighter-rouge">neo-cli</code>，然后广大开发者用<code class="highlighter-rouge">cli</code>或<code class="highlighter-rouge">gui</code>去连接。那搭建私链也是一样，4台共识节点必不可少(什么共识后可以减为3台这种话直接忽略)。</p>
+
+<p>笔者这边就是捣鼓了4个linux虚拟机，然后在外部windows下连接上这个私链：</p>
+
+<p><img src="/assets/images/201803/4-linux-vm.png" alt="4 linux VMs" /></p>
+
+<p>然后就只要保证四个节点的区块数据一致，<code class="highlighter-rouge">protocol.json</code>配置一致，就可以任意连接到这个私链，甚至可以删掉全部的区块数据来重置这条私链。</p>
+
+<h2 id="配置-neon-wallet-db-以及-neon-js">配置 neon-wallet-db 以及 neon-js</h2>
+
+<p>共识节点的运行是整条私链的根本了，利用其提供的<code class="highlighter-rouge">/rpc</code>接口可以做到所有事情，而<code class="highlighter-rouge">neon-wallet-db</code>是用来缓存私链中的区块数据以免除某些需要遍历区块数据的操作(比如查询余额)。</p>
+
+<p>首先直接克隆这两个项目:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/CityOfZion/neon-js.git
+
+git clone https://github.com/CityOfZion/neon-wallet-db.git
+</code></pre></div></div>
+
+<h3 id="neon-js的修改">neon-js的修改</h3>
+
+<p>neon-js默认会设置几个远程的<code class="highlighter-rouge">/rpc</code>服务端以及运行着<code class="highlighter-rouge">neon-wallet-db</code>的服务端。
+这里直接修改<code class="highlighter-rouge">src/api/neonDB.js</code>以及<code class="highlighter-rouge">src/api/neoscan.js</code>中的这个方法：</p>
+
+<p><img src="/assets/images/201803/change-end-point-1.png" alt="修改为私链下的地址" /></p>
+
+<p>这个地址就是之后运行<code class="highlighter-rouge">neon-wallet-db</code>项目的地址了。</p>
+
+<h3 id="neon-wallet-db的修改">neon-wallet-db的修改</h3>
+
+<p>neon-wallet-db 很厉害，使用<code class="highlighter-rouge">heroku</code>来搭建，一个命令<code class="highlighter-rouge">heroku local</code>搞定，然后就是要在一个干净的linux系统下解决报的错了。</p>
+
+<p>首先劝退，这东西在windows下安装比linux下要麻烦一些，因为涉及了<code class="highlighter-rouge">python</code>、<code class="highlighter-rouge">heroku</code>以及几个非关系型数据库。</p>
+
+<ol>
+  <li>保证安装了<code class="highlighter-rouge">heroku cli</code></li>
+  <li>安装<code class="highlighter-rouge">MongoDB</code>，全都使用默认配置，运行服务即可</li>
+  <li>安装<code class="highlighter-rouge">Redis</code>，使用默认配置，运行服务即可</li>
+  <li>可以再安装<code class="highlighter-rouge">Memcache</code>，不过笔者不想再挑战多一个数据库了，直接忽略也可以</li>
+  <li>安装<code class="highlighter-rouge">python 3</code>，笔者为<code class="highlighter-rouge">3.6.3</code>，搭配了<code class="highlighter-rouge">pyenv + virtualenv</code></li>
+</ol>
+
+<p>准备完毕后保证neon-wallet-db目录下的python环境为<code class="highlighter-rouge">3.6.3</code>，然后</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install -r requirements.txt
+</code></pre></div></div>
+
+<p>修改<code class="highlighter-rouge">api/util.py</code>:</p>
+
+<p><img src="/assets/images/201803/change-util.png" alt="修改为私链的rpc地址" /></p>
+
+<p>修改<code class="highlighter-rouge">api/db.py</code>:</p>
+
+<p><img src="/assets/images/201803/change-db.png" alt="修改为自己的数据库配置" /></p>
+
+<p>禁用<code class="highlighter-rouge">memcache</code>:</p>
+
+<p><img src="/assets/images/201803/disable-memcache.png" alt="禁用memcache" /></p>
+
+<p>疑问:</p>
+
+<p>代码中涉及到<code class="highlighter-rouge">os.environ.get</code>方法的操作会抛出异常，这受限于笔者对<code class="highlighter-rouge">python</code>项目的理解不足，所以直接全都删掉，写死了配置。</p>
+
+<p>下一步操作是手动同步一下区块，新建一个<code class="highlighter-rouge">rebuild.py</code>:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from apscheduler.schedulers.blocking import BlockingScheduler
+from rq import Queue
+from api import redis_db as conn
+from api.blockchain import storeLatestBlockInDB, getBlockCount, blockchain_db, storeBlockInDB, checkSeeds, get_highest_node
+
+for i in range(0,5) :
+  storeBlockInDB(i)
+</code></pre></div></div>
+
+<p>其中的 <code class="highlighter-rouge">range(0, 5)</code> 为想要遍历的高度，也就是，手动把 1~5 的区块数据给存储下来，直接执行<code class="highlighter-rouge">python rebuild.py</code>即可。对于区块中又大量数据的，可以这么做先自行存储数据，然后运行整个项目时再从已存储高度继续。为了做到这一步还得把项目里几个地方的区块高度值都对应起来：</p>
+
+<p><img src="/assets/images/201803/init-py.png" alt="对应区块高度" /></p>
+
+<h2 id="然后可以做什么">然后可以做什么</h2>
+<p>一切顺利的情况下执行<code class="highlighter-rouge">heroku local</code>，应该就会看见三种颜色的log在不停跳动了。然后确保log中没有错误，并尝试访问接口<code class="highlighter-rouge">/v2/block/height</code>，如果高度跟私链中真实高度一致，那就完美了。</p>
+
+<p>至此我们拥有了三个神器：</p>
+<ol>
+  <li>/rpc节点服务端(neo-cli)</li>
+  <li>区块数据服务端(neon-wallet-db)</li>
+  <li>neon-js</li>
+</ol>
+
+<p>他们之间的关系用一张图来表达就是：</p>
+
+<p><img src="/assets/images/201803/neon-flow.png" alt="neon体系架构" /></p>
+
+<p>其中黄色部分为底层节点以及接口，绿色部分为定期从<code class="highlighter-rouge">/rpc</code>更新数据的缓存接口，粉色部分就是轻钱包客户端，自身不保存区块数据，实则保存在缓存接口中。</p>
+
+<p>至于如何进行轻钱包开发，也就是用轻钱包做到交易转账、合约调用这些有实际意义的事情，还有很多篇幅可以讲 : )</p>
+
+            <div class="pager">
+                
+                <a class="article-pager-block" href="/blockchain/2018/02/06/how-to-run-neo-node.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">NEO全节点客户端的基本使用，节点的运行和共识达成</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/blockchain/2018/03/02/read-blockdata-on-neo.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">NEO区块数据解析</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </section>
+        <footer class="yitiblog-footer">
+            
+        </footer>
+    </div>
+    <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    <!-- <h1 style="display: none;">使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端 | yitimo的个人博客</h1>
     <div class="home-body">
         <div id="blog-nav"></div>
         <div class="home-content">
@@ -217,6 +408,6 @@ for i in range(0,5) :
         s.parentNode.insertBefore(bp, s);
     })();
 </script>
-    </div>
+    </div> -->
 </body>
 </html>

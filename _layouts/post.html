@@ -7,11 +7,43 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <link rel="stylesheet" href="/assets/style.css">
     {% include seo.html %}
 </head>
 <body>
-    <h1 style="display: none;">{{ page.title }} | {{site.description}}</h1>
+    <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                {% include header.html %}
+            </div>
+        </header>
+        <section class="yitiblog-content article">
+            <h1>{{ page.title }}</h1>
+            {{content}}
+            <div class="pager">
+                {% if page.previous %}
+                <a class="article-pager-block" href="{{page.previous.url}}">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">{{page.previous.title}}</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                {% endif %}
+                {% if page.next %}
+                <a class="article-pager-block" href="{{page.next.url}}">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">{{page.next.title}}</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                {% endif %}
+            </div>
+        </section>
+        <footer class="yitiblog-footer">
+            {% include footer.html %}
+        </footer>
+    </div>
+    {% include analysis.html %}
+    <!-- <h1 style="display: none;">{{ page.title }} | {{site.description}}</h1>
     <div class="home-body">
         <div id="blog-nav"></div>
         <div class="home-content">
@@ -38,6 +70,6 @@
         </div>
         {% include footer.html %}
         {% include analysis.html %}
-    </div>
+    </div> -->
 </body>
 </html>

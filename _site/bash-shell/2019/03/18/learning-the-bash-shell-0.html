@@ -7,18 +7,18 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/styles/global.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="http://0.0.0.0:4000" />
-<meta property="og:url" content="http://0.0.0.0:4000" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
-{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"http://0.0.0.0:4000","headline":"再見二丁目","@context":"http://schema.org"}</script>
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <!-- Bing -->
 <meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
@@ -33,7 +33,131 @@
 
 </head>
 <body>
-    <h1 style="display: none;">【翻译】序 - Learning the bash shell | yitimo的个人博客</h1>
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <div class="yitiblog">
+        <header class="yitiblog-header-container">
+            <div class="yitiblog-header flex">
+                <img src="/assets/images/yitimo.jpg" class="avatar" />
+<b class="title">再见二丁目</b>
+
+            </div>
+        </header>
+        <section class="yitiblog-content article">
+            <h1>【翻译】序 - Learning the bash shell</h1>
+            <p>对于Linux/Unix操作系统来说，首先与用户面对面的就是shell。<code class="highlighter-rouge">Shell</code>是属于Unix系统的用户接口(User Interface)——用来让你通过键盘和显示来与电脑交互。Shell只是囊括了系统的许多单独的程序，因此，其实还可以有很多别的选择。</p>
+
+<p>系统通常会给新用户无条件设置好一个“标准”的shell。然而，这些自带的shell可能会比较旧，且缺失一些新特性。这很遗憾，因为shell可以说承载了你得整个工作环境。由于更改shell就像换一顶帽子那样简单，我们没有理由不改用最新最强大的shell。</p>
+
+<p>跟多数shell的选择一样，本书介绍的是<code class="highlighter-rouge">Bourne Again shell</code>(简称<code class="highlighter-rouge">bash</code>)，一个现代的多功能shell。还有其他有用的现代shell比如<code class="highlighter-rouge">Korn shell (ksh)</code>，<code class="highlighter-rouge">Tenex C shell (tcsh)</code>。</p>
+
+<h2 id="bash版本">bash版本</h2>
+
+<p>本书将涉及到bash的所有版本，尽管旧版的bash会缺失一些新版才有的特性。你可以通过输入<code class="highlighter-rouge">echo $BASH_VERSION</code>来很轻松的知道自己在使用的bash版本。bash最早的公布版本是<code class="highlighter-rouge">1.0</code>，最新的是<code class="highlighter-rouge">3.0</code>(于2004年七月发行)。如果你的版本是较旧的，你可能会想要更新到最新版本，第12章会讲到如何去做。</p>
+
+<h2 id="bash特性总览">bash特性总览</h2>
+
+<p>bash向后兼容，继承演变自Bourne shell。包含了C shell的大多数长处，Korn shell的一些特性，以及自己特有的一些新特性。
+与C shell同有的特性包括：</p>
+
+<ul>
+  <li>通过pushd、popd、dirs命令的目录管理。</li>
+  <li>工作控制，包含fg、bg命令，以及可以通过ctrl+z终止工作的能力。</li>
+  <li>花括号扩展，用于生成更灵活的字符串。</li>
+  <li>波浪号扩展，一个快速引用路径的方式。</li>
+  <li>别名，允许你定义快捷命令来执行多个或多行命令。</li>
+  <li>命令历史，允许你再次调用之前执行过的命令。</li>
+</ul>
+
+<p>bash主要的新特性包括：</p>
+
+<ul>
+  <li>命令行编辑，允许你编辑使用vi或emacs风格的命令行。</li>
+  <li>按键绑定，允许你自定义按钮序列。</li>
+  <li>整体代码特性，多个扩展的UNIX命令，包括test、expr、getopt、echo都被整合进了shell当中，可以更干净高效的执行常用的代码。</li>
+  <li>控制结构，尤其是select结构，允许简单菜单的生成。</li>
+  <li>新选项和变量，给了你更多定制环境的方式。</li>
+  <li>一维数组，允许简单的引用和管理数据列表。</li>
+  <li>动态加载的内置插件，允许你自行编写并加载到正在运行的shell中。</li>
+</ul>
+
+<h2 id="目标读者">目标读者</h2>
+
+<p><em>先省略</em></p>
+
+<h2 id="代码示例">代码示例</h2>
+
+<p><em>先省略</em></p>
+
+<h2 id="章节总览">章节总览</h2>
+
+<p>如果你想要查找指定章节而不是通读本书，以下就是章节总览：</p>
+
+<ul>
+  <li><strong>第一章：bash基础</strong> 介绍bash，告诉你如何安装(当登录到shell时)。然后是与bash交互的基础，包括了UNIX文件目录体系、标准IO、后台任务的总览。</li>
+  <li><strong>第二章：命令行编辑</strong> 探讨shell的命令历史的机制(包括emacs和vi模式)，历史替换，fc命令，以及readline和bind的键位绑定。</li>
+  <li><strong>第三章：定制你的环境</strong> 包含定制你得shell环境的方法，使用启动环境文件而不是编程方式。别名、选项以及shell变量就是定制技术要探讨的内容。</li>
+  <li><strong>第四章：shell编程基础</strong> 介绍了shell编程。解释了shell脚本和函数的基础，探讨几个重要的具体(nuts-and-bolts)的编程特性：字符串操作符，大括号扩展，命令行参数和命令替换。</li>
+  <li><strong>第五章：流控制</strong> 继续对shell编程的讨论。解释命令退出状态，条件表达式，以及shell的流控制结构：if、for、case、select、while以及until。</li>
+  <li><strong>第六章：命令行选项和类型变量</strong> 深入位置参数和命令行选项处理，然后探讨特殊类型和属性的变量，整型计算和数组。</li>
+  <li><strong>第七章：输入/输出和命令行处理</strong> 详细介绍bash的IO，本章涵盖了shell的IO重定向，以及一次一行的IO命令read和echo。并且还探讨了shell的命令行处理机制和eval命令。</li>
+  <li><strong>第八章：进程处理</strong> 涵盖了进程相关问题的细节。从工作控制开始，然后进入到有关进程的几个低等级信息，包括进程ID，sign和trap。然后还会探讨更高级的概念，协程和子shell。</li>
+  <li><strong>第九章：shell编程调试</strong> 一些调试技术，像trace和verbose模式。假的进程标识。然后是一个有用的shell调试工具的细节(a bash debugger)。</li>
+  <li><strong>第十章：bash管理员</strong> 介绍系统管理员的信息，包含了实现系统层面的shell以及定制系统安全相关特性的技术。</li>
+  <li><strong>第十一章：shell脚本</strong> 介绍让shell脚本更加可维护的方法。</li>
+  <li><strong>第十二章：你系统中的shell</strong> 如何获取bash以及如何安装到你的系统中，还概括了一些问题的处理。</li>
+</ul>
+
+<h2 id="本书中的约定">本书中的约定</h2>
+
+<p><em>先省略</em></p>
+
+<h2 id="后续小结均先省略优先翻译实际技术讲解相关的内容">后续小结均先省略，优先翻译实际技术讲解相关的内容。</h2>
+
+            <div class="pager">
+                
+                <a class="article-pager-block" href="/chrome-extension/2019/03/14/translate-overview.html">
+                    <img src="/assets/images/prev.svg" alt="Older" />
+                    <span class="article-pager-block-title">【翻译】Overview</span>
+                    <span class="article-pager-block-tag">更新的</span>
+                </a>
+                
+                
+                <a class="article-pager-block" href="/bash-shell/2019/03/18/learning-the-bash-shell-1.html">
+                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
+                    <span class="article-pager-block-title">【翻译】第一章：bash基础 - Learning the bash shell</span>
+                    <span class="article-pager-block-tag">更早的</span>
+                </a>
+                
+            </div>
+        </section>
+        <footer class="yitiblog-footer">
+            
+        </footer>
+    </div>
+    <script>
+    // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+    // baidu 站长
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+    <!-- <h1 style="display: none;">【翻译】序 - Learning the bash shell | yitimo的个人博客</h1>
     <div class="home-body">
         <div id="blog-nav"></div>
         <div class="home-content">
@@ -150,6 +274,6 @@
         s.parentNode.insertBefore(bp, s);
     })();
 </script>
-    </div>
+    </div> -->
 </body>
 </html>
