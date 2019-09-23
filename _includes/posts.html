@@ -1,6 +1,13 @@
 {% for post in site.posts %}
-    <a class="post-block {{post.categories}}" href="{{ post.url }}">
-        <div class="post-block-title">{{ post.title }}</div>
-        <div class="post-block-desc">{{ post.author }} | {{ post.date | date:'%e %B %Y' }}</div>
+    <a class="post-block {{post.categories}} flex" href="{{ post.url }}">
+        <div class="post-block-info flex-1">
+            <p>{{ post.title }}</p>
+            <p>{{ post.tags }} - {{ post.keywords }}</p>
+        </div>
+        <div class="post-block-time">
+            <p class="date">{{ post.date | date:'%d' }} {{ post.date | date:'%b' }}</p>
+            <p class="month">{{ post.date | date:'%Y' }}</p>
+            <!-- post.date | date:'%e %B %Y' -->
+        </div>
     </a>
 {% endfor %}

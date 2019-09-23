@@ -50,15 +50,18 @@
 }
 
 .post-block {
-    display: block;
     padding: $space;
     margin: 0 $space;
     transition: 0.3s;
     border-left: 3px solid transparent;
+    align-items: center;
 
     &:hover {
         background: $color-light;
         border-left: 3px solid $color-primary;
+    }
+    &:first-of-type {
+        margin-top: $space;
     }
     &:not(:first-of-type) {
         border-top: 1px solid #f3f3f3;
@@ -66,6 +69,15 @@
     &-desc {
         margin-top: $space;
         color: $color-gray;
+    }
+
+    &-time {
+        color: $color-gray;
+        text-align: center;
+        .date {
+            font-size: $font-lg;
+            font-weight: 600;
+        }
     }
 }
 
