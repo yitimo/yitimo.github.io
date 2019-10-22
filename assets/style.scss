@@ -46,7 +46,7 @@
     }
 }
 .yitiblog-content {
-    padding: 60px 0;
+    padding-top: 60px;
 }
 
 .post-block {
@@ -79,10 +79,61 @@
             font-weight: 600;
         }
     }
+    .keyword {
+        color: $color-primary;
+    }
 }
 
+.yitiblog-pager {
+    margin: 60px auto;
+    color: $color-font;
+    text-align: center;
+    min-height: 30px;
+
+    .block {
+        width: auto;
+        max-width: 300px;
+        white-space: nowrap;
+        margin: 10px auto;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+            color: $color-primary;
+        }
+
+        img {
+            height: 24px;
+            width: 24px;
+            vertical-align: middle;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    }
+}
+
+.yitiblog-footer {
+    padding: 15px;
+}
+
+@media (min-width: 1281px) {
+    .yitiblog-pager {
+        .prev {
+            float: left;
+        }
+        .next {
+            float: right;
+        }   
+    }
+}
 @media (max-width: 1280px) {
     .yitiblog, .yitiblog-header {
         max-width: $max-width-md;
+    }
+    .yitiblog-pager {
+        .block {
+            display: block;
+        }
     }
 }

@@ -21,22 +21,20 @@
         <section class="yitiblog-content article">
             <h1>{{ page.title }}</h1>
             {{content}}
-            <div class="pager">
-                {% if page.previous %}
-                <a class="article-pager-block" href="{{page.previous.url}}">
-                    <img src="/assets/images/prev.svg" alt="Older" />
-                    <span class="article-pager-block-title">{{page.previous.title}}</span>
-                    <span class="article-pager-block-tag">更新的</span>
+        </section>
+        <section class="yitiblog-pager">
+            {% if page.previous %}
+                <a class="block prev" href="{{page.previous.url}}">
+                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                    {{page.previous.title}}
                 </a>
-                {% endif %}
-                {% if page.next %}
-                <a class="article-pager-block" href="{{page.next.url}}">
-                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
-                    <span class="article-pager-block-title">{{page.next.title}}</span>
-                    <span class="article-pager-block-tag">更早的</span>
+            {% endif %}
+            {% if page.next %}
+                <a class="block next" href="{{page.next.url}}">
+                    {{page.next.title}}
+                    <img class="next" src="/assets/images/next.svg" alt="next post" />
                 </a>
-                {% endif %}
-            </div>
+            {% endif %}
         </section>
         <footer class="yitiblog-footer">
             {% include footer.html %}
