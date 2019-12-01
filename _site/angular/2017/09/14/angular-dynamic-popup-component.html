@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/assets/style.css" />
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
@@ -31,6 +31,7 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
+	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
 <body>
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -132,99 +133,8 @@ create方法有个必选参数类型为Injector，顾名思义就是注入器，
         s.parentNode.insertBefore(bp, s);
     })();
 </script>
-    <!-- <h1 style="display: none;">动态创建angular组件实现popup弹窗(上) | yitimo的个人博客</h1>
-    <div class="home-body">
-        <div id="blog-nav"></div>
-        <div class="home-content">
-            <div class="article">
-                <h1>动态创建angular组件实现popup弹窗(上)</h1>
-                <p><em>笔者将用两篇文章来完成这个话题，本文将主要讲述自己使用过的弹窗的创建方法，以及为了彻底解耦，最终选择使用动态创建组件来完成如题所说的这个比较通用、低耦合、可扩展的弹窗能力</em></p>
-<h3 id="起步-直接使用ngif">起步: 直接使用ngIf</h3>
-<p>把弹窗的DOM直接放在页面底下隐藏，通过ngIf这样的指令控制其显示。</p>
-<h3 id="改进-封装成angular模块通过服务控制其显示">改进: 封装成angular模块，通过服务控制其显示</h3>
-<p>直接使用ngIf的话，让人不爽的地方就在于不够通用，每个页面都得加DOM。改进的话可以把比较通用的一些DOM封装成组件，统一添加到全局页面中，并将显示的控制交给一个angular服务来控制其显示。
-比如定义了两个组件(DialogComponent, AlertComponent)，将他们都添加到AppComponent下，然后提供一个PopupService来控制组件的显示，并支持传递参数进去。</p>
-<h3 id="仅通过控制显示的方式仍不够通用且存在耦合">仅通过控制显示的方式仍不够通用且存在耦合</h3>
-<p>将弹窗组件封装然后使用服务来控制显示的方法看上去已经比较通用了，不过还存在两个尴尬的问题:</p>
-<ol>
-  <li>仍然需要在页面的某个地方放置一个弹窗组件，比如叫做PopupComponent，此组件负责渲染出默认隐藏的一些通用弹窗子组件，才能进行显示控制实现弹窗能力。</li>
-  <li>如果想要弹出一个自定义窗口的话就只能回到最上面另外写DOM放到需要弹出自定义弹窗的位置上，或者将自定义的标签通过innerHtml指令传入(富文本方式)。</li>
-</ol>
-
-<p>由此可见这样的弹窗能力并没有做到非常通用，且必须手动放置弹窗插座(姑且这么叫)以致多了一处耦合。</p>
-<h3 id="动态创建弹窗">动态创建弹窗</h3>
-<p>最理想的方式应该是: 在想要弹个窗口出来时直接一行代码把窗口弹出来，不用事先在哪里先把这个弹窗写好(或者说这一步不应该由弹窗控件的使用者来做，弹窗控件应该要自动完成这件事)。
-而这一能力就涉及到angular的动态创建组件的能力了。</p>
-<h4 id="官网给出的用法">官网给出的用法</h4>
-<p><a href="https://angular.cn/guide/dynamic-component-loader">angular的官方文档</a>中就有关于动态创建组件的用法。不过其使用的是ViewContainerRef服务，此服务提供了createComponent方法来在指定的视图容器下动态创建一个组件出来。
-不过ViewContainerRef的尴尬点是只能在具体的指令、组件中使用，也就是说，必须告诉它打算在哪个地方创建新组建，这不还是需要实现创建好一个“弹窗插座”出来，才可以在这个“插座”中动态创建组件。
-那有什么办法可以不给定视图容器而创建出组建来，通俗地讲问题就是: 不是在指令或者组件中创建组件，而是在服务中创建出组件，还要让这个组件显示到页面上去。</p>
-<h4 id="组建工厂组件真正的创建者">组建工厂——组件真正的创建者</h4>
-<p>在组件中创建组件的核心代码分两步:</p>
-<ol>
-  <li>创建组件工厂
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">componentFactoryResolver</span><span class="p">.</span><span class="nx">resolveComponentFactory</span><span class="p">(</span><span class="err">待创建组件</span><span class="p">);</span>
-</code></pre></div>    </div>
-  </li>
-  <li>把工厂提供给容器创建出组件
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span><span class="nx">componentFactory</span><span class="p">);</span>
-</code></pre></div>    </div>
-    <p>现在的问题在于，在服务中得不到viewContainerRef，工厂倒是能创建成功。
-其实有工厂了已经足够了，查看componentFactory提供的成员里面包含了一个create方法，顾名思义这应该就是用来创建组件的了。
-create方法有个必选参数类型为Injector，顾名思义就是注入器，即这个创建的组件打算注入些什么服务进去，暴力点直接写null也没问题。
-直接使用工厂创建组件返回的同样是一个ComponentRef类型的引用，可见此时组件确实是创建出来了，但是还没有将其插入到视图中去。此时可以再暴力一点，直接用原生DOM操作插入到body标签的末尾去:</p>
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span>
- <span class="k">this</span><span class="p">.</span><span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">)</span>
-<span class="p">);</span>
-<span class="k">this</span><span class="p">.</span><span class="nx">appRef</span><span class="p">.</span><span class="nx">attachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">);</span> <span class="c1">// 注入ApplicationRef服务后使用</span>
-<span class="c1">// ...</span>
-<span class="kr">private</span> <span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
- <span class="k">return</span> <span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span> <span class="k">as</span> <span class="nx">EmbeddedViewRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">).</span><span class="nx">rootNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">HTMLElement</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="c1">// ...</span>
-</code></pre></div>    </div>
-    <p>此办法是笔者从Material2的茫茫源代码中找到的，Google自己都直接这么插，那就放心使用了。这里不得不赞叹Material2中Dialog模块的实现，实在是有够复杂。</p>
-    <h3 id="总结">总结</h3>
-    <p>本文主要在讲思路，扯到最后才开始要进入主题来动态创建组件，不过仅仅是创建出组件并添加到DOM中去还只是第一步，一个健壮的弹窗模块(Material2那样的)还得有一套完善的交互能力，比如弹出和关闭时的订阅和传值，这些就要通过注入服务到组件中来实现了，限于篇幅将在 <a href="/angular/2017/09/15/angular-dynamic-popup-component-2.html">下一篇文章</a> 中回归实际实现一个通过动态创建组件实现的弹窗模块出来。</p>
-  </li>
-</ol>
-
-            </div>
-            <div class="article-pager">
-                
-                
-                <a class="article-pager-block" href="/angular/2017/09/15/angular-dynamic-popup-component-2.html">
-                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
-                    <span class="article-pager-block-title">动态创建angular组件实现popup弹窗(下)</span>
-                    <span class="article-pager-block-tag">更早的</span>
-                </a>
-                
-            </div>
-        </div>
-        <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        <script>
-    // baidu统计
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
-        var s = document.getElementsByTagName("script")[0]; 
-        s.parentNode.insertBefore(hm, s);
-    })();
-    // baidu 站长
-    (function(){
-        var bp = document.createElement('script');
-        var curProtocol = window.location.protocol.split(':')[0];
-        if (curProtocol === 'https') {
-            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-        }
-        else {
-            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-        }
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(bp, s);
-    })();
-</script>
-    </div> -->
+	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
+	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

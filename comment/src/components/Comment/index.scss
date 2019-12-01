@@ -1,0 +1,15 @@
+.comment {
+    line-height: 1;
+    padding: 8px 15px;
+    font-size: 15px;
+
+    .floor {
+        display: inline-block;
+        width: 50px;
+    }
+    .time {
+        font-size: 12px;
+        line-height: 15px;
+        color: #969696;
+    }
+}

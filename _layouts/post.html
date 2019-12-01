@@ -7,11 +7,12 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/assets/style.css" />
     {% include seo.html %}
+	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
 <body>
-    <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
+    <h1 style="display: none;">{{ site.title }} | {{ site.description }}</h1>
     <div class="yitiblog">
         <header class="yitiblog-header-container">
             <div class="yitiblog-header flex">
@@ -20,18 +21,18 @@
         </header>
         <section class="yitiblog-content article">
             <h1>{{ page.title }}</h1>
-            {{content}}
+            {{ content }}
         </section>
         <section class="yitiblog-pager">
             {% if page.previous %}
                 <a class="block prev" href="{{page.previous.url}}">
                     <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    {{page.previous.title}}
+                    {{ page.previous.title }}
                 </a>
             {% endif %}
             {% if page.next %}
                 <a class="block next" href="{{page.next.url}}">
-                    {{page.next.title}}
+                    {{ page.next.title }}
                     <img class="next" src="/assets/images/next.svg" alt="next post" />
                 </a>
             {% endif %}
@@ -41,33 +42,8 @@
         </footer>
     </div>
     {% include analysis.html %}
-    <!-- <h1 style="display: none;">{{ page.title }} | {{site.description}}</h1>
-    <div class="home-body">
-        <div id="blog-nav"></div>
-        <div class="home-content">
-            <div class="article">
-                <h1>{{ page.title }}</h1>
-                {{content}}
-            </div>
-            <div class="article-pager">
-                {% if page.previous %}
-                <a class="article-pager-block" href="{{page.previous.url}}">
-                    <img src="/assets/images/prev.svg" alt="Older" />
-                    <span class="article-pager-block-title">{{page.previous.title}}</span>
-                    <span class="article-pager-block-tag">更新的</span>
-                </a>
-                {% endif %}
-                {% if page.next %}
-                <a class="article-pager-block" href="{{page.next.url}}">
-                    <img src="/assets/images/next.svg" alt="Newer" title="Newer post" />
-                    <span class="article-pager-block-title">{{page.next.title}}</span>
-                    <span class="article-pager-block-tag">更早的</span>
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% include footer.html %}
-        {% include analysis.html %}
-    </div> -->
+	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
+	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>
