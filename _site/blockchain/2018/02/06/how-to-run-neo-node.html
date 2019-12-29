@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>NEO全节点客户端的基本使用，节点的运行和共识达成</h1>
-            <p>截至目前NEO产品至少在技术层面不能算是成熟，从其官方文档的种种错漏以及频繁更改就可以看出来，本文是笔者经过近几周的NEO节点使用后的一些总结。NEO生态的使用从学习路线来看分为以下几部分：</p>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>NEO全节点客户端的基本使用，节点的运行和共识达成</h1>
+        <p>截至目前NEO产品至少在技术层面不能算是成熟，从其官方文档的种种错漏以及频繁更改就可以看出来，本文是笔者经过近几周的NEO节点使用后的一些总结。NEO生态的使用从学习路线来看分为以下几部分：</p>
 <ol>
   <li>使节点达成共识并产生区块。</li>
   <li>在私链上完成多重签名实现初始NEO资产的提取。</li>
@@ -140,25 +139,39 @@ dotnet run
 
 <p>本文更主要的目的在于整理NEO节点运行需要解决的问题，以及总结笔者自己使用NEO官方文档时遇到并解决的困惑。关于更多基础的NEO开发内容还是要亲自浏览<a href="https://neo.org/">NEO官网</a>才好，浏览的时候要永远铭记——这是一个残缺不全的文档，并且有很多内容都已经更改得乱套了，并保持关注文档的更新。</p>
 
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/blockchain/2018/01/23/personally-thought-on-blockchain-and-products-by-it.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    个人理解区块链及其产品
-                </a>
-            
-            
-                <a class="block next" href="/blockchain/2018/02/26/how-to-connect-neon-js-to-private-net.html">
-                    使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/blockchain/2018/01/23/personally-thought-on-blockchain-and-products-by-it.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                个人理解区块链及其产品
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/blockchain/2018/02/26/how-to-connect-neon-js-to-private-net.html">
+                使用 neon-wallet-db + neon-js + NEO-cli /rpc 搭建轻钱包服务端
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
+
+        </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -183,7 +196,7 @@ dotnet run
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

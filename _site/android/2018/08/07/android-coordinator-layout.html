@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>Android中使用CoordinatorLayout進行佈局</h1>
-            <p>本文主要为整理 Android 中<code class="highlighter-rouge">CoordinatorLayout</code>的内置行为的使用。注意<code class="highlighter-rouge">CoordinatorLayout</code>的所有这些行为都得用在<code class="highlighter-rouge">Activity</code>的根布局中，也就是<code class="highlighter-rouge">Fragment</code>用不了。</p>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>Android中使用CoordinatorLayout進行佈局</h1>
+        <p>本文主要为整理 Android 中<code class="highlighter-rouge">CoordinatorLayout</code>的内置行为的使用。注意<code class="highlighter-rouge">CoordinatorLayout</code>的所有这些行为都得用在<code class="highlighter-rouge">Activity</code>的根布局中，也就是<code class="highlighter-rouge">Fragment</code>用不了。</p>
 
 <h2 id="基本结构">基本结构</h2>
 
@@ -113,25 +112,39 @@
 
 <p>一般可以实现的效果就是，<code class="highlighter-rouge">ToolBar</code>中放置一个返回按钮，同时在<code class="highlighter-rouge">CollapsingToolbarLayout</code>中设置<code class="highlighter-rouge">title</code>的值，这样就能做到：未折叠时显示大标题，折叠后大标题缩小至左上角返回按钮的旁边。</p>
 
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/android/2018/08/06/android-round-corner-layout.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    Android中使用帶圓角佈局
-                </a>
-            
-            
-                <a class="block next" href="/android/2018/09/10/android-clear-history-except-home.html">
-                    Android中移除除了首页的历史Activity
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/android/2018/08/06/android-round-corner-layout.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                Android中使用帶圓角佈局
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/android/2018/09/10/android-clear-history-except-home.html">
+                Android中移除除了首页的历史Activity
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
+
+        </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -156,7 +169,7 @@
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 @import './variable.scss';
 
-html, body, div, li, label, p, hr {
+html, body, div, ul, li, label, p, hr, h1, h2, h3, h4, h5 {
     margin: 0; padding: 0;
     box-sizing: border-box;
 }
@@ -14,10 +14,12 @@ html, body {
 * {
     box-sizing: border-box;
     word-break: break-all;
-}
-*:focus,*:checked,*:active {
+    line-height: 1;
     outline: none;
 }
+// *:focus,*:checked,*:active {
+//     outline: none;
+// }
 
 a {
     color: inherit;
@@ -42,10 +44,35 @@ a:hover, a:active, a:checked {
 //     border-radius: 5px;
 //     background-color: $color-primary;
 // }
+.disable-select {
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
+
+.font-l {
+    font-size: $font-lg;
+}
+.font {
+    font-size: $font;
+}
+.font-m {
+    font-size: $font-md;
+}
 
 @media (max-width: 812px) {
     body {
         font-size: $font-md;
+    }
+    .font-l {
+        font-size: $font-lg - 4px;
+    }
+    .font {
+        font-size: $font-md;
+    }
+    .font-m {
+        font-size: $font-md - 2px;
     }
 }
 

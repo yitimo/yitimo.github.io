@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>动态切换antd主题色配置</h1>
-            <p><a href="https://ant.design/docs/react/customize-theme-cn">Ant Design</a>官网介绍了其主题色能力，并且相对模糊的提到了通过less来动态切换主题色的方案(底部<a href="https://medium.com/@mzohaib.qc/ant-design-dynamic-runtime-theme-1f9a1a030ba0">社区教程</a>中)。而<a href="https://ant.design">ant.design</a>本身看起来也是用同一方案实现了动态主题色切换。本文将介绍并配置此动态主题方案，即侧重<code class="highlighter-rouge">antd-theme-webpack-plugin</code>这个插件配合<code class="highlighter-rouge">antd</code>+<code class="highlighter-rouge">react</code>的使用，以后再另行介绍<code class="highlighter-rouge">less</code>的<code class="highlighter-rouge">modifyVars</code>原理。</p>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>动态切换antd主题色配置</h1>
+        <p><a href="https://ant.design/docs/react/customize-theme-cn">Ant Design</a>官网介绍了其主题色能力，并且相对模糊的提到了通过less来动态切换主题色的方案(底部<a href="https://medium.com/@mzohaib.qc/ant-design-dynamic-runtime-theme-1f9a1a030ba0">社区教程</a>中)。而<a href="https://ant.design">ant.design</a>本身看起来也是用同一方案实现了动态主题色切换。本文将介绍并配置此动态主题方案，即侧重<code class="highlighter-rouge">antd-theme-webpack-plugin</code>这个插件配合<code class="highlighter-rouge">antd</code>+<code class="highlighter-rouge">react</code>的使用，以后再另行介绍<code class="highlighter-rouge">less</code>的<code class="highlighter-rouge">modifyVars</code>原理。</p>
 
 <h2 id="项目准备">项目准备</h2>
 
@@ -135,25 +134,39 @@
   <li>手动配置的less，需要注意2/3版本less的区别以及自己管理好publicPath(需要正确访问到color.less)。</li>
 </ul>
 
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/react/2019/04/02/notes-on-react-redux.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    react+redux笔记
-                </a>
-            
-            
-                <a class="block next" href="/javascript/2019/05/04/es-module.html">
-                    JavaScript模块化编程整理
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/react/2019/04/02/notes-on-react-redux.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                react+redux笔记
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/javascript/2019/05/04/es-module.html">
+                JavaScript模块化编程整理
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
+
+        </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -178,7 +191,7 @@
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

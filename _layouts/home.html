@@ -10,21 +10,21 @@
     <link rel="stylesheet" href="/assets/style.css">
     {% include seo.html %}
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                {% include header.html %}
-            </div>
-        </header>
-        <section class="yitiblog-content">
-            {{content}}
-        </section>
-        <footer class="yitiblog-footer">
+    <header class="yitiblog-header">
+        <div class="block flex">
+            {% include header.html %}
+        </div>
+    </header>
+    <section class="yitiblog-content block">
+        {{content}}
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
             {% include footer.html %}
-        </footer>
-    </div>
+        </div>
+    </footer>
     {% include analysis.html %}
 </body>
 </html>

@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>自己搭建ngrok服务器代理本地服务</h1>
-            <h2 id="ngrok做了什么">ngrok做了什么</h2>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>自己搭建ngrok服务器代理本地服务</h1>
+        <h2 id="ngrok做了什么">ngrok做了什么</h2>
 
 <p>正常的网络拓扑下，一般通过 <code class="highlighter-rouge">255.255.255.0</code> 掩码区分不同网段，即IP的前三段都相同视为同一网段，若想要让两个网段通信，则需要通过路由器来完成，通过在路由器中配置路由表，使两个不同网段的IP建立映射关系。</p>
 
@@ -99,237 +98,39 @@
 
 <p><em>此文章还在更新中</em></p>
 
-<p>getters.js</p>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/javascript/2019/05/04/es-module.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                JavaScript模块化编程整理
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/javascript/2019/11/21/web-performance.html">
+                使用 RAIL 模型评估性能
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
 
-<p>/**
-     * 还有优惠可叠加使用
-     * 有会员卡 且 可选的都 未选中
-     * 或
-     * 有优惠券 且 可选的未 都选中
-     */
-    hasUnChosenPomotion(state, getters) {
-        const { cardPromotionList, mcCoupons } = getters
-        return (cardPromotionList.length &amp;&amp; cardPromotionList.all(card =&gt; card.selected === false &amp;&amp; card.canUse))
-            || mcCoupons.some(coupon =&gt; coupon.selected === false &amp;&amp; coupon.canUse)
-    },</p>
-
-<p>index.vue</p>
-
-<p>changeCardPromotion(item) {
-            const { cardId, type } = item
-            this.$store.commit(‘updatePointsPayFee’, 0) // 每次修改优惠前，要清除积分抵现状态</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        const param = {
-            cardId,
-            singleExchangeSelected: false,
-            mcPromotionSelected: false,
-            shouldReComputeKouBeiSelected: false,
-            memberPointsSelected: true,
-            cardPaySelected: true,
-            cardPays: [],
-            marketCenterPromotions: [],
-        }
-
-        const index = this.selectedCardPromotions.findIndex(e =&gt; e.cardId === cardId)
-        if (index &gt; -1) {
-            param.cardId = ''
-        } else {
-            // 如果之前选中的卡是 商城卡
-            // FIXME: 当前 个人优惠里 是否有 商城优惠card 选中, 那么取消它
-            const hasMallCardInSingle = this.selectedCardPromotions.filter(o =&gt; o.type === 121 &amp;&amp; o.multiTag === 0).length &gt; 0
-            if (hasMallCardInSingle) {
-                param.mallCardId = ''
-            }
-
-            // FIXME: 如果是 商圈卡 则使用 mallCardId
-            if (type === 121) {
-                param.cardId = ''
-                param.mallCardId = cardId
-            }
-        }
-        // TODO: [优惠复用] 这里的param需要支持多参数
-        this.requestTradeBill(param)
-    },
-</code></pre></div></div>
-
-<p>actions/index.js</p>
-
-<p>/**</p>
-<ul>
-  <li>
-    <p>选则券 TODO: [优惠复用]
- */
-function toggleCoupon({
- dispatch, commit, getters,
- state,
-}, id) {
- const { choseCoupon = [] } = state
- // 兼容原单选逻辑
- const chosenCouponList = typeof choseCoupon === ‘string’ ? [choseCoupon] : [].concat(choseCoupon)
- // 开关选中优惠券id
- const index = chosenCouponList.indexOf(id)
- if (index &gt;= 0) {
-     chosenCouponList.splice(index)
- } else {
-     chosenCouponList.push(id)
- }
- commit(‘updateCoupons’, chosenCouponList)
- const { currentSelectedPromotions } = getters
- commit(‘updateFormParams’, {
-     marketCenterPromotions: currentSelectedPromotions,
-     mcPromotionSelected: !!chosenCouponList.length,
- })</p>
-
-    <p>dispatch(‘requestTradeBill’)
-}</p>
-  </li>
-</ul>
-
-<p>function clearPromotions({ dispatch, commit }) {
-    commit(‘updateFormParams’, {
-        cardId: ‘’,
-        marketCenterPromotions: [],
-        mcPromotionSelected: false,
-        shouldReComputeKouBeiSelected: false,
-        singleExchangeSelected: false,</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    memberPointsSelected: true,
-    cardPaySelected: true,
-    cardPays: [],
-})
-commit('updateCoupons', [])
-dispatch('requestTradeBill') }
-</code></pre></div></div>
-
-<p>// 此为旧的改优惠券方法 不支持优惠复用
-    changeCoupon,
-    // 支持多选的改优惠券方法
-    toggleCoupon,</p>
-
-<p>getters.js</p>
-
-<p>currentSelectedPromotions(state, getters) {
-        const {
-            choseCoupon,
-            // choseExchanges
-        } = state
-        const {
-            mcCoupons,
-            // mcExchanges,
-        } = getters</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    // 优惠复用后choseCoupon数组
-    const selectedCoupon = mcCoupons.filter(coupon =&gt; choseCoupon.indexOf(coupon.promotionCustomerId) &gt; -1) || []
-    // 对组合优惠的特殊处理, 将其转化成服务端需要的数据格式
-    if (!isObjectEmpty(selectedCoupon)) {
-        const { promotionCustomerId, sign } = selectedCoupon
-        if (promotionCustomerId === sign) {
-            selectedCoupon.promotionCustomerId = ''
-            selectedCoupon.promotionId = ''
-            delete selectedCoupon.canUse
-            delete selectedCoupon.selected
-        }
-    }
-    // const selectedExchanges = choseExchanges.map(id =&gt;
-    //     mcExchanges.filter(exchange =&gt; exchange.promotionCustomerId === id)[0])
-
-    // return [].concat(selectedCoupon, selectedExchanges)
-    return [].concat(selectedCoupon)
-},
-</code></pre></div></div>
-
-<p>index.vue</p>
-
-<p>changeCoupon(value) {
-            // TODO: [优惠复用] 这里的value应该是卡ID 需要支持多参数
-            this.$store.dispatch(‘changeCoupon’, value)
-        },</p>
-
-<p>promotionSummary() {
-            // TODO: [优惠复用] 如果只有一项已选优惠 则显示这条 否则显示优惠组合
-            if (!this.promotionParam || !this.promotionParam.selectedPromotions) {
-                return ‘’
-            }
-            if (this.promotionParam.selectedPromotions.length === 1) {
-                return <code class="highlighter-rouge">${this.promotionParam.selectedPromotions[0].cardName}: ${this.divide100(this.promotionParam.selectedPromotions[0].value)}元</code>
-            }
-            let rs = 0
-            this.promotionParam.selectedPromotions.forEach((e) =&gt; {
-                rs += e.value
-            })
-            return <code class="highlighter-rouge">优惠组合(优惠${this.divide100(rs)}元)</code>
-        },
-        hasUnChosenPomotion() {
-            // TODO: [优惠复用] 根据优惠字段判断是否还有未选中的优惠(可用的)
-            return ‘还有优惠可叠加使用’
-        },</p>
-
-<div class="tip">
-            您已选中<span class="red"></span>项优惠，共可抵扣
-            <span class="red">
-                
-                
-            </span>
         </div>
-
-<p>&lt;FButton class=”submit” block round @click=”togglePromotionsLayer”&gt;确认&lt;/FButton&gt;</p>
-
-<p>// TODO: 改成由接口返回
-        promotionSum() {
-            let rs = 0
-            this.selectedCardPromotions.forEach((e) =&gt; {
-                rs += e.value
-            })
-            return this.divide100(rs)
-        },</p>
-
-<p>.tip {
-        line-height: 2;
-        background: #ec313d33;
-        font-size: 12px;
-        .red {
-            color: red;
-        }
-    }</p>
-
-<p>getters.js
-    const getRealUnit = (menu) =&gt; {
-            const {
-                doubleUnits,
-                accountUnit,
-                unit = ‘’, // unit === undefined 情况下最终显示会变成 XNaN (Number + undefined -&gt; NaN)
-                num,
-                accountNum,
-                …otherProps
-            } = menu
-            const menuUnit = num + unit
-            const menuAccountUnit = accountNum + accountUnit
-            if (doubleUnits) {
-                return { …otherProps, menuUnit: <code class="highlighter-rouge">${menuUnit} (${menuAccountUnit})</code> }
-            }
-            return { …otherProps, menuUnit }
-        }</p>
-
-
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/javascript/2019/05/04/es-module.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    JavaScript模块化编程整理
-                </a>
-            
-            
-                <a class="block next" href="/javascript/2019/11/21/web-performance.html">
-                    使用 RAIL 模型评估性能
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -354,7 +155,7 @@ dispatch('requestTradeBill') }
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

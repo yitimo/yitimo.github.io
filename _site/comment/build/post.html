@@ -10,36 +10,37 @@
     <link rel="stylesheet" href="/assets/style.css" />
     {% include seo.html %}
 </head>
-<body>
-    <h1 style="display: none;">{{ site.title }} | {{ site.description }}</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                {% include header.html %}
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>{{ page.title }}</h1>
-            {{ content }}
-        </section>
-        <section class="yitiblog-pager">
-            {% if page.previous %}
-                <a class="block prev" href="{{page.previous.url}}">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    {{ page.previous.title }}
-                </a>
-            {% endif %}
-            {% if page.next %}
-                <a class="block next" href="{{page.next.url}}">
-                    {{ page.next.title }}
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            {% endif %}
-        </section>
-        <footer class="yitiblog-footer">
+<body class="yitiblog">
+    <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            {% include header.html %}
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>{{ page.title }}</h1>
+        {{ content }}
+    </section>
+    <section class="yitiblog-pager block flex">
+        {% if page.previous %}
+            <a class="block prev" href="{{page.previous.url}}">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                {{ page.previous.title }}
+            </a>
+        {% endif %}
+        <div class="flex-1"></div>
+        {% if page.next %}
+            <a class="block next" href="{{page.next.url}}">
+                {{ page.next.title }}
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        {% endif %}
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
             {% include footer.html %}
-        </footer>
-    </div>
+        </div>
+    </footer>
     {% include analysis.html %}
 </body>
 </html>

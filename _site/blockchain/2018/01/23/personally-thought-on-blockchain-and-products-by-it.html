@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>个人理解区块链及其产品</h1>
-            <p>本文将从开发者视角谈谈个人近段时间研究区块链技术得到的收获与困惑。</p>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>个人理解区块链及其产品</h1>
+        <p>本文将从开发者视角谈谈个人近段时间研究区块链技术得到的收获与困惑。</p>
 
 <h2 id="字面理解区块链">字面理解区块链</h2>
 <p>从字面理解<code class="highlighter-rouge">BlockChain</code>一词，即是多个区块串成的链。其中链的存在需要用心去感受，类比数据接口中链表结构的<code class="highlighter-rouge">next</code>指针，这里则是替换称为上一个区块得到的<code class="highlighter-rouge">hash</code>，而比特币中矿工的所有工作都是为了得到这一<code class="highlighter-rouge">hash</code>以创建一个新区块连接到主链上。其中区块的存在用于存放去中心化的数据，比特币中就是传说中的<code class="highlighter-rouge">UTXO</code>，即包含输入(扣钱地址)、输出(加钱地址)的交易记录。</p>
@@ -141,25 +140,39 @@
 
 <p>由此看来，这些链、币、token、应用其实都是同一样东西——智能合约，岂不是天下大同 : )</p>
 
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/others/2018/01/20/yitimos-first-post.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    Yitimo's first post on jekyll
-                </a>
-            
-            
-                <a class="block next" href="/blockchain/2018/02/06/how-to-run-neo-node.html">
-                    NEO全节点客户端的基本使用，节点的运行和共识达成
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/others/2018/01/20/yitimos-first-post.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                Yitimo's first post on jekyll
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/blockchain/2018/02/06/how-to-run-neo-node.html">
+                NEO全节点客户端的基本使用，节点的运行和共识达成
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
+
+        </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -184,7 +197,7 @@
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

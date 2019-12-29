@@ -33,19 +33,18 @@
 
 	<link rel="stylesheet" href="/assets/comment/main.4d4862f4.chunk.css" />
 </head>
-<body>
+<body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
-    <div class="yitiblog">
-        <header class="yitiblog-header-container">
-            <div class="yitiblog-header flex">
-                <img src="/assets/images/yitimo.jpg" class="avatar" />
-<b class="title">再见二丁目</b>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
 
-            </div>
-        </header>
-        <section class="yitiblog-content article">
-            <h1>Android图片裁剪工具封装</h1>
-            <p>笔者从零开始开发Android，而且是跳过java直接使用kotlin开发，这其中的好处是可以避开java这门传统语言诸多的潜规则，难处是相比资深Android开发者少了许多可以现用的工具库。比如Android对图片的支持就非常开放，换言之就是非常依赖一个成熟的工具库(比如Glide)，(相比web里<img />标签就安全易用很多)。</p>
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>Android图片裁剪工具封装</h1>
+        <p>笔者从零开始开发Android，而且是跳过java直接使用kotlin开发，这其中的好处是可以避开java这门传统语言诸多的潜规则，难处是相比资深Android开发者少了许多可以现用的工具库。比如Android对图片的支持就非常开放，换言之就是非常依赖一个成熟的工具库(比如Glide)，(相比web里<img />标签就安全易用很多)。</p>
 
 <p>包括本文将实现的工具在内，笔者目前也收集了整整2个成熟好用的图片相关工具类，一个就是<a href="https://github.com/bumptech/glide">Glide</a>，另一个是<a href="https://github.com/davemorrissey/subsampling-scale-image-view">Subsampling Scale Image View</a>，并且膨胀地以为不再需要其他任何图片相关的工具库了。这个想法差点被动摇的一次就是现在需要加一个图片裁剪功能了，一想到网上现有的那些酷炫的工具库，就担心起要不要用和用哪个的问题，但是当笔者看了这篇文章——<a href="https://yalantis.com/blog/how-we-created-ucrop-our-own-image-cropping-library-for-android/">How We Created uCrop</a>，就对引入第三方图片裁剪库更加抵触了，思来想去自己内心的想法都是：
 <strong>为了传一张图片然后确定参数挖出一张新图片来这样一个需求而以来别人开发的自己无法控制或灵活定制的库是不值得的</strong>。</p>
@@ -319,25 +318,39 @@
 
 <p>最后再次膜拜<code class="highlighter-rouge">SubsamplingScaleImageView</code>并附上本文项目<a href="https://github.com/yitimo/ymage">Github地址</a>。</p>
 
-        </section>
-        <section class="yitiblog-pager">
-            
-                <a class="block prev" href="/angular/2018/10/10/build-angular-project-without-cli.html">
-                    <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                    不使用cli搭建angular项目
-                </a>
-            
-            
-                <a class="block next" href="/chrome-extension/2019/03/14/translate-what-are-extensions.html">
-                    【翻译】What are extensions?
-                    <img class="next" src="/assets/images/next.svg" alt="next post" />
-                </a>
-            
-        </section>
-        <footer class="yitiblog-footer">
-            <div style="color: #cccccc;text-align: center;">yitimo的个人博客@2019</div>
-        </footer>
-    </div>
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/angular/2018/10/10/build-angular-project-without-cli.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                不使用cli搭建angular项目
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/chrome-extension/2019/03/14/translate-what-are-extensions.html">
+                【翻译】What are extensions?
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2019
+</p>
+
+        </div>
+    </footer>
     <script>
     // baidu统计
     var _hmt = _hmt || [];
@@ -362,7 +375,7 @@
     })();
 </script>
 	<script src="/assets/comment/2.2b0db96a.chunk.js"></script>
-	<script src="/assets/comment/main.660807a6.chunk.js"></script>
+	<script src="/assets/comment/main.758c17ea.chunk.js"></script>
 	<script src="/assets/comment/runtime-main.ff567aa3.js"></script>
 </body>
 </html>

@@ -6,33 +6,33 @@
 @import './article.scss';
 
 .yitiblog {
-    position: relative;
-    min-height: 100%;
-    width: 100%;
-    max-width: $max-width;
-    margin:  0 auto;
+    margin: 0 auto;
+
+    .block {
+        width: 100%;
+        position: relative;
+        max-width: $max-width;
+        margin:  0 auto;
+        min-height: 100%;
+    }
 }
-.yitiblog-header-container {
+.yitiblog-header {
     height: 60px;
     width: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     z-index: 1;
     position: fixed;
     top: 0;
     left: 0;
     background: $color-font;
     color: $color-default;
-}
-.yitiblog-header {
-    height: 100%;
-    width: 100%;
-    max-width: $max-width;
-    align-items: center;
-    margin: 0 auto;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
+    
+    .flex {
+        align-items: center;
+    }
     .avatar {
         height: 40px;
         width: 40px;
@@ -40,13 +40,40 @@
         margin: 0 $space;
         cursor: default;
     }
-    .title {
-        font-size: 24px;
-        cursor: default;
-    }
 }
 .yitiblog-content {
     padding-top: 60px;
+}
+
+.yitiblog-footer {
+    padding: $space-l*2 0;
+    background: $color-font;
+    color: $color-gray;
+
+    .title {
+        text-align: center;
+    }
+    .flex {
+        margin-bottom: $space-l;
+    }
+    ul {
+        list-style: none;
+        .link {
+            display: block;
+            padding: $space-m / 2 $space;
+            margin: $space-m / 2 0;
+        }
+    }
+    .recordation {
+        margin-right: $space-l;
+    }
+    a {
+        cursor: pointer;
+        transition: 0.2s;
+        &:hover {
+            color: $color-default;
+        }
+    }
 }
 
 .post-block {
@@ -75,8 +102,14 @@
         color: $color-gray;
         text-align: center;
         .date {
-            font-size: $font-lg;
             font-weight: 600;
+        }
+    }
+    p:not(:first-of-type) {
+        margin-top: $space-m;
+
+        &.month {
+            margin-top: 0;
         }
     }
     .keyword {
@@ -85,10 +118,9 @@
 }
 
 .yitiblog-pager {
-    margin: 60px auto;
+    padding: $space-l $space;
     color: $color-font;
     text-align: center;
-    min-height: 30px;
 
     .block {
         width: auto;
@@ -96,6 +128,7 @@
         white-space: nowrap;
         margin: 10px auto;
         cursor: pointer;
+        display: block;
         transition: 0.2s;
 
         &:hover {
@@ -113,27 +146,41 @@
     }
 }
 
-.yitiblog-footer {
-    padding: 15px;
+// @media (min-width: 1281px) {
+//     .yitiblog-pager {
+//         .prev {
+//             float: left;
+//         }
+//         .next {
+//             float: right;
+//         }   
+//     }
+// }
+@media (max-width: 1280px) {
+    .yitiblog {
+        .block {
+            max-width: $max-width-md;
+        }
+    }
+    .yitiblog-header {
+        height: 40px;
+
+        .avatar {
+            height: 32px;
+            width: 32px;
+            margin: 0 $space;
+        }
+    }
 }
 
-@media (min-width: 1281px) {
-    .yitiblog-pager {
-        .prev {
-            float: left;
-        }
-        .next {
-            float: right;
-        }   
-    }
-}
-@media (max-width: 1280px) {
-    .yitiblog, .yitiblog-header {
-        max-width: $max-width-md;
-    }
-    .yitiblog-pager {
-        .block {
+@media (max-width: 812px) {
+    .yitiblog-footer {
+        .flex {
             display: block;
+            text-align: center;
         }
+    }
+    .yitiblog-pager.flex {
+        display: block;
     }
 }

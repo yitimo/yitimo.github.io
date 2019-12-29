@@ -10,8 +10,6 @@ keywords:
 description: 前端性能优化
 ---
 
-## 使用 RAIL 模型评估性能
-
 ### Response 响应(用户交互)
 
 **延迟与用户反应**
