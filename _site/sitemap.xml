@@ -125,6 +125,10 @@
 <lastmod>2020-02-27T22:35:12+08:00</lastmod>
 </url>
 <url>
+<loc>https://blog.yitimo.com/front/end/2020/02/27/use-ui-unit-test-to-help-coding.html</loc>
+<lastmod>2020-02-27T22:35:12+08:00</lastmod>
+</url>
+<url>
 <loc>https://blog.yitimo.com/</loc>
 </url>
 <url>
@@ -133,11 +137,11 @@
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/build/</loc>
-<lastmod>2020-02-29T00:16:54+08:00</lastmod>
+<lastmod>2020-03-26T12:24:12+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/build/post.html</loc>
-<lastmod>2020-02-29T00:16:47+08:00</lastmod>
+<lastmod>2020-03-26T12:24:02+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/array-includes/test.html</loc>
@@ -177,7 +181,7 @@
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/fsevents/node_modules/node-pre-gyp/lib/util/nw-pre-gyp/</loc>
-<lastmod>2020-02-27T10:32:59+08:00</lastmod>
+<lastmod>2020-03-25T14:04:18+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/js-base64/base64.html</loc>
@@ -202,6 +206,10 @@
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/loglevel/test/test-qunit.html</loc>
 <lastmod>2020-02-29T00:10:13+08:00</lastmod>
+</url>
+<url>
+<loc>https://blog.yitimo.com/comment/node_modules/node-pre-gyp/lib/util/nw-pre-gyp/</loc>
+<lastmod>2020-03-25T14:04:19+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/postcss/docs/api/</loc>
@@ -333,7 +341,7 @@
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/terser/tools/props.html</loc>
-<lastmod>2020-02-29T00:10:13+08:00</lastmod>
+<lastmod>2020-03-18T18:48:11+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/tslib/tslib.es6.html</loc>
@@ -361,7 +369,7 @@
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/node_modules/webpack-dev-server/client/live.html</loc>
-<lastmod>2020-02-29T00:10:05+08:00</lastmod>
+<lastmod>2020-03-18T18:48:11+08:00</lastmod>
 </url>
 <url>
 <loc>https://blog.yitimo.com/comment/public/</loc>
