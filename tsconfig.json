@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "module": "esnext",
+        "target": "es5",
+        "types": [
+            "react",
+            "react-dom"
+        ],
+        "jsx": "react"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "core"
+    ]
+}
