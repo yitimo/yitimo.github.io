@@ -6,7 +6,6 @@ const chalk = require('chalk')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const webpackMerge = require('webpack-merge')
-const rimraf = require('rimraf')
 const generateWebpackConfig = require('./webpack.config')
 
 const command = process.argv[2]
@@ -39,7 +38,7 @@ function servePages() {
         process.stdout.write('[development]编译完成')
     })
     const devServer = new WebpackDevServer(webpackInstance, {
-        // quiet: true,
+        quiet: true,
     })
     devServer.listen(port, host, () => {
         notifyResult()
@@ -53,6 +52,7 @@ function buildPages() {
             chunkFilename: 'js/[name].vendor.js',
             hashDigestLength: 8,
             path: path.resolve(__dirname, '../dist-core'),
+            publicPath: '/assets/core/',
         },
     })
     const webpackInstance = webpack(config)
@@ -72,8 +72,8 @@ function buildPages() {
 function notifyResult() {
     /* ================开发环境提示信息================ */
     // if (process.env.NODE_ENV) {
-    const num = Math.ceil(Math.random() * 5)
-    const key = ['red', 'blue', 'green', 'yellow', 'cyan', 'white'][num]
+    // const num = Math.ceil(Math.random() * 5)
+    // const key = ['red', 'blue', 'green', 'yellow', 'cyan', 'white'][num]
     // console.clear()
     console.log(chalk.blue('> Developers: ', 'yitimo'))
     // })

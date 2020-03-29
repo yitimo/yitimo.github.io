@@ -8,7 +8,7 @@ if (mtaOutlet) {
 }
 
 async function initMTA(dom: HTMLElement) {
-    const Component = await import('./MTA/index')
+    const Component = await import('./MTA')
     return ReactDOM.render(
         <Component.default />,
         dom

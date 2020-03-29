@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 // eslint-disable-next-line arrow-body-style
 module.exports = (env) => {
+    console.log('编译环境:', env)
   return webpackMerge({}, {
     mode: env,
     devtool: env === 'production' ? 'source-map' : 'inline-source-map',
@@ -15,7 +16,7 @@ module.exports = (env) => {
       alias: {
       },
       extensions: ['.js', '.ts', '.tsx', '.json'],
-      modules: ['core', 'node_modules'],
+      modules: ['node_modules'],
     },
     entry: {
         index: path.resolve(__dirname, `../core/index.tsx`),
@@ -67,6 +68,29 @@ module.exports = (env) => {
               },
             },
           ],
+          exclude: /\.module\.scss$/,
+        },
+        {
+          test: /\.(css|scss)$/,
+          use: [
+            env === 'production' ? MiniCssExtractPlugin.loader : 'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                url: false,
+                modules: true,
+              },
+            },
+            'postcss-loader',
+            {
+              loader: 'sass-loader',
+              options: {
+                // eslint-disable-next-line quotes
+                // data: ``,
+              },
+            },
+          ],
+          include: /\.module\.scss$/,
         },
       ],
     },
@@ -76,8 +100,9 @@ module.exports = (env) => {
         template: path.resolve(__dirname, '../core/templates/index.html'),
         inject: 'body',
         title: '再见二丁目',
-        chunks: ['index'],
         isProd: env === 'production',
+        minify: false,
+        scriptLoading: 'defer',
       }),
       ...(env === 'production' ? [new MiniCssExtractPlugin({
         filename: 'css/[name].[hash].css',

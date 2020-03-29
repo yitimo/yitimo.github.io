@@ -18,6 +18,7 @@ if [ "$command" = "serve" ]; then
 fi
 
 if [ "$command" = "build" ]; then
+    rimraf dist-core
     yarn build
     node scripts/core.merge.js
     jekyll build

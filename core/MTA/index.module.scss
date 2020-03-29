@@ -1,0 +1,11 @@
+.logo {
+  height: 50px;
+  width: 50px;
+  box-shadow: 0 0 12px #eeeeee;
+  border-radius: 50px;
+  transition: 0.2s ease-in;
+
+  &:hover {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
