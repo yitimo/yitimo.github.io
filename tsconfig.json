@@ -4,8 +4,13 @@
         "allowSyntheticDefaultImports": true,
         "strict": true,
         "strictNullChecks": true,
+        "moduleResolution": "node",
         "module": "esnext",
-        "target": "es5",
+        "target": "es3",
+        "lib": [
+            "DOM",
+            "ES2015"
+        ],
         "types": [
             "react",
             "react-dom"
@@ -13,9 +18,7 @@
         "jsx": "react"
     },
     "exclude": [
+        "comment",
         "node_modules"
-    ],
-    "include": [
-        "core"
     ]
 }

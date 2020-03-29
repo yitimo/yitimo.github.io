@@ -14,14 +14,11 @@ if [ "$command" = "" ]; then
 fi
 
 if [ "$command" = "serve" ]; then
-    cd comment
     yarn start
 fi
 
 if [ "$command" = "build" ]; then
-    cd comment
     yarn build
-    cd ..
-    node scripts/comment.merge.js
+    node scripts/core.merge.js
     jekyll build
 fi

@@ -2,5 +2,7 @@
 .jekyll-metadata
 .jekyll-cache
 
+dist-core
+
 node_modules
 yarn-error.log
