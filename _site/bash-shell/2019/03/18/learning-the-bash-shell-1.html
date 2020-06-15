@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -64,10 +63,10 @@
 <p>其意思是，<strong>按数字顺序排序文件phonelist中的每一行，结果输出到phonelist.sorted中</strong>，shell做的事情如下：</p>
 
 <ol>
-  <li>拆分命令为<code class="highlighter-rouge">sort</code>、<code class="highlighter-rouge">-n</code>、<code class="highlighter-rouge">phonelist</code>、<code class="highlighter-rouge">&gt;</code>、<code class="highlighter-rouge">phonelist.sorted</code>这几个片段，称为<code class="highlighter-rouge">words</code>。</li>
-  <li>查明<code class="highlighter-rouge">words</code>的目的，<code class="highlighter-rouge">sort</code>是个命令，<code class="highlighter-rouge">-n</code>和<code class="highlighter-rouge">phonelist</code>是参数，<code class="highlighter-rouge">&gt;</code>和<code class="highlighter-rouge">phonelist.sorted</code>则是IO指令。</li>
-  <li>根据<code class="highlighter-rouge">&gt; phonelist.sorted (输出到文件phonelist. sorted)</code>来设置IO以及一些标准的内置命令。</li>
-  <li>在一个文件中找到<code class="highlighter-rouge">sort</code>命令，并传入<code class="highlighter-rouge">-n</code>和<code class="highlighter-rouge">phonelist</code>来运行它。</li>
+  <li>拆分命令为<code class="language-plaintext highlighter-rouge">sort</code>、<code class="language-plaintext highlighter-rouge">-n</code>、<code class="language-plaintext highlighter-rouge">phonelist</code>、<code class="language-plaintext highlighter-rouge">&gt;</code>、<code class="language-plaintext highlighter-rouge">phonelist.sorted</code>这几个片段，称为<code class="language-plaintext highlighter-rouge">words</code>。</li>
+  <li>查明<code class="language-plaintext highlighter-rouge">words</code>的目的，<code class="language-plaintext highlighter-rouge">sort</code>是个命令，<code class="language-plaintext highlighter-rouge">-n</code>和<code class="language-plaintext highlighter-rouge">phonelist</code>是参数，<code class="language-plaintext highlighter-rouge">&gt;</code>和<code class="language-plaintext highlighter-rouge">phonelist.sorted</code>则是IO指令。</li>
+  <li>根据<code class="language-plaintext highlighter-rouge">&gt; phonelist.sorted (输出到文件phonelist. sorted)</code>来设置IO以及一些标准的内置命令。</li>
+  <li>在一个文件中找到<code class="language-plaintext highlighter-rouge">sort</code>命令，并传入<code class="language-plaintext highlighter-rouge">-n</code>和<code class="language-plaintext highlighter-rouge">phonelist</code>来运行它。</li>
 </ol>
 
 <p>当然，上述每一步都还包含一些子步骤，子步骤各自还可能包含一些操作系统层面的命令。</p>
@@ -88,7 +87,7 @@
 
 <p>shell脱离于UNIX操作系统本身帮助了shell的随着UNIX演变历史而茁壮成长，尽管只有极少数shell得到了广泛使用。</p>
 
-<p>第一个主流的shell是Bourne shell，名字来源于其发明者Steven Bourne。它被包含在UNIX的第一个流行起来的版本，版本7，开始于1979年。Bourne shell在系统中就是<code class="highlighter-rouge">sh</code>。尽管UNIX已经产生了许多变化，Bourne shell仍然是一直流行未改变的的。一些UNIX的工具集和管理员特性都依赖于它。</p>
+<p>第一个主流的shell是Bourne shell，名字来源于其发明者Steven Bourne。它被包含在UNIX的第一个流行起来的版本，版本7，开始于1979年。Bourne shell在系统中就是<code class="language-plaintext highlighter-rouge">sh</code>。尽管UNIX已经产生了许多变化，Bourne shell仍然是一直流行未改变的的。一些UNIX的工具集和管理员特性都依赖于它。</p>
 
 <p>第一个广泛使用的替代的shell就是C shell，或叫做csh。由Bill Joy在the University of California at Berkeley所写，作为Berkeley Software Distribution (BSD)版本的UNIX的一部分，在7版本发布几年后。</p>
 
@@ -120,13 +119,13 @@
 
 <p>你现在可能没有在使用bash，你的系统管理员可能给你设置了各种shell作为系统的标准shell。甚至你可能还没意识到你的系统中存在不止一种shell。</p>
 
-<p>查明你正在使用哪种shell很简单。登录你的系统并输入<code class="highlighter-rouge">echo $SHELL</code>。你可能会看到的响应比如<code class="highlighter-rouge">sh, csh, ksh, 或者 bash</code>。</p>
+<p>查明你正在使用哪种shell很简单。登录你的系统并输入<code class="language-plaintext highlighter-rouge">echo $SHELL</code>。你可能会看到的响应比如<code class="language-plaintext highlighter-rouge">sh, csh, ksh, 或者 bash</code>。</p>
 
-<p>如果你没有在使用bash而你想要使用，你首先要确定系统中是否存在bash。只需要输入<code class="highlighter-rouge">bash</code>。如果马上切换到了一些信息带上一个<code class="highlighter-rouge">$</code>符号，则表示一切正常。输入<code class="highlighter-rouge">exit</code>可以回到你原来的shell。</p>
+<p>如果你没有在使用bash而你想要使用，你首先要确定系统中是否存在bash。只需要输入<code class="language-plaintext highlighter-rouge">bash</code>。如果马上切换到了一些信息带上一个<code class="language-plaintext highlighter-rouge">$</code>符号，则表示一切正常。输入<code class="language-plaintext highlighter-rouge">exit</code>可以回到你原来的shell。</p>
 
-<p>如果你得到了<code class="highlighter-rouge">not founc</code>这样的信息，你的系统可能并没有安装bash。告诉你的系统管理员或其他专业人员。也有可能你安装了多个版本的bash在你不知道的路径下，你可以在第十一章了解到如何取得你的bash版本。</p>
+<p>如果你得到了<code class="language-plaintext highlighter-rouge">not founc</code>这样的信息，你的系统可能并没有安装bash。告诉你的系统管理员或其他专业人员。也有可能你安装了多个版本的bash在你不知道的路径下，你可以在第十一章了解到如何取得你的bash版本。</p>
 
-<p>当你知道了你的系统中存在bash，你可以在其他shell的任何地方输入<code class="highlighter-rouge">bash</code>来切换。当然，更好的是让你登录时就默认使用bash。你可能会自己来安装。</p>
+<p>当你知道了你的系统中存在bash，你可以在其他shell的任何地方输入<code class="language-plaintext highlighter-rouge">bash</code>来切换。当然，更好的是让你登录时就默认使用bash。你可能会自己来安装。</p>
 
 <p><em>待完成</em></p>
 
@@ -197,9 +196,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

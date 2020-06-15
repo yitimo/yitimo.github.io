@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,7 +43,7 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>从零搭建 webpack+react+typescript 启动项目</h1>
-        <p>本文将不使用脚手架(<code class="highlighter-rouge">create-react-app</code>)，从空项目开始搭建一个基本的react启动项目，并配置<code class="highlighter-rouge">typescript</code>。涉及到的技术有：</p>
+        <p>本文将不使用脚手架(<code class="language-plaintext highlighter-rouge">create-react-app</code>)，从空项目开始搭建一个基本的react启动项目，并配置<code class="language-plaintext highlighter-rouge">typescript</code>。涉及到的技术有：</p>
 
 <ul>
   <li>yarn/npm</li>
@@ -82,7 +81,7 @@
     </tr>
     <tr>
       <td>awesome-typescript-loader</td>
-      <td>处理<code class="highlighter-rouge">.tsx</code>文件</td>
+      <td>处理<code class="language-plaintext highlighter-rouge">.tsx</code>文件</td>
     </tr>
     <tr>
       <td>css-loader <br /> less-loader</td>
@@ -90,7 +89,7 @@
     </tr>
     <tr>
       <td>url-loader</td>
-      <td>配合 <code class="highlighter-rouge">MiniCssExtractPlugin</code> 处理样式中内联的字体、图标等资源</td>
+      <td>配合 <code class="language-plaintext highlighter-rouge">MiniCssExtractPlugin</code> 处理样式中内联的字体、图标等资源</td>
     </tr>
     <tr>
       <td>CopyWebpackPlugin</td>
@@ -98,11 +97,11 @@
     </tr>
     <tr>
       <td>HtmlWebpackPlugin</td>
-      <td>帮助渲染入口<code class="highlighter-rouge">html</code>文件，将打包结果自动引入</td>
+      <td>帮助渲染入口<code class="language-plaintext highlighter-rouge">html</code>文件，将打包结果自动引入</td>
     </tr>
     <tr>
       <td>MiniCssExtractPlugin</td>
-      <td>帮助压缩和单独打包<code class="highlighter-rouge">样式</code></td>
+      <td>帮助压缩和单独打包<code class="language-plaintext highlighter-rouge">样式</code></td>
     </tr>
     <tr>
       <td>webpack.DefinePlugin</td>
@@ -121,7 +120,7 @@
 yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom webpack webpack-cli webpack-dev-server awesome-typescript-loader less less-loader url-loader terser-webpack-plugin mini-css-extract-plugin html-webpack-plugin 
 </code></pre></div></div>
 
-<p>不要忘了加个<code class="highlighter-rouge">.gitignore</code>排除掉<code class="highlighter-rouge">node_modules</code>这些不需要托管的文件。</p>
+<p>不要忘了加个<code class="language-plaintext highlighter-rouge">.gitignore</code>排除掉<code class="language-plaintext highlighter-rouge">node_modules</code>这些不需要托管的文件。</p>
 
 <p>然后我们需要这么几个文件：</p>
 
@@ -272,7 +271,7 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
     </tr>
     <tr>
       <td>compilerOptions.paths</td>
-      <td>可以配置全局路径别名以免去太多<code class="highlighter-rouge">../..</code>的相对路径</td>
+      <td>可以配置全局路径别名以免去太多<code class="language-plaintext highlighter-rouge">../..</code>的相对路径</td>
     </tr>
     <tr>
       <td>compilerOptions.jsx</td>
@@ -315,7 +314,7 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>除此之外，笔者因为项目中引入了<code class="highlighter-rouge">monaco-editor</code>，需要给它单独配置<code class="highlighter-rouge">babel-loader</code>：</p>
+<p>除此之外，笔者因为项目中引入了<code class="language-plaintext highlighter-rouge">monaco-editor</code>，需要给它单独配置<code class="language-plaintext highlighter-rouge">babel-loader</code>：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
     <span class="nl">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">js$/</span><span class="p">,</span>
@@ -422,9 +421,5 @@ yarn add <span class="nt">-D</span> typescript @types/react @types/react-dom web
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

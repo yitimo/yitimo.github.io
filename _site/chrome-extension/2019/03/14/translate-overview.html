@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -54,20 +53,20 @@
 
 <h2 id="插件的文件结构">插件的文件结构</h2>
 
-<p>一个插件可以包含许多文件和目录，且一定都有一个<code class="highlighter-rouge">manifest</code>。有些简单但有用的插件甚至只由manifest和一个图标组成。</p>
+<p>一个插件可以包含许多文件和目录，且一定都有一个<code class="language-plaintext highlighter-rouge">manifest</code>。有些简单但有用的插件甚至只由manifest和一个图标组成。</p>
 
-<p>manifest即<code class="highlighter-rouge">manifest.json</code>文件，告诉了浏览器关于插件的基本信息，包括最重要的几个文件，以及插件会使用到哪些能力。</p>
+<p>manifest即<code class="language-plaintext highlighter-rouge">manifest.json</code>文件，告诉了浏览器关于插件的基本信息，包括最重要的几个文件，以及插件会使用到哪些能力。</p>
 
 <p>插件一定都有一个图标，显示在浏览器的工具栏。工具栏图标很方便用户访问到，且能让用户看到自己安装了哪些插件。大多数用户都会通过这个图标与弹出页面交互。</p>
 
 <h3 id="文件资源">文件资源</h3>
 
-<p>插件中的文件可以通过相对路径访问到，像这样：<code class="highlighter-rouge">&lt;img src="images/my_image.png"&gt;</code>。
-同时也可以通过绝对路径访问到，像这样：<code class="highlighter-rouge">chrome-extension://&lt;extensionID&gt;/&lt;pathToFile&gt;</code>。</p>
+<p>插件中的文件可以通过相对路径访问到，像这样：<code class="language-plaintext highlighter-rouge">&lt;img src="images/my_image.png"&gt;</code>。
+同时也可以通过绝对路径访问到，像这样：<code class="language-plaintext highlighter-rouge">chrome-extension://&lt;extensionID&gt;/&lt;pathToFile&gt;</code>。</p>
 
-<p>在绝对路径中，<code class="highlighter-rouge">extensionID</code>是插件系统为每个插件分配的唯一标识。所有已加载的插件都可以在<code class="highlighter-rouge">chrome://extensions</code>中访问到其ID。</p>
+<p>在绝对路径中，<code class="language-plaintext highlighter-rouge">extensionID</code>是插件系统为每个插件分配的唯一标识。所有已加载的插件都可以在<code class="language-plaintext highlighter-rouge">chrome://extensions</code>中访问到其ID。</p>
 
-<p>当调试未打包的插件时，这个ID会根据所在目录的不同而变化，当插件被打包后，ID将又不同。如果插件开发过程中要用到绝对路径，可以调用<code class="highlighter-rouge">chrome.runtime.getURL()</code>来避免硬编码ID。</p>
+<p>当调试未打包的插件时，这个ID会根据所在目录的不同而变化，当插件被打包后，ID将又不同。如果插件开发过程中要用到绝对路径，可以调用<code class="language-plaintext highlighter-rouge">chrome.runtime.getURL()</code>来避免硬编码ID。</p>
 
 <h2 id="架构">架构</h2>
 
@@ -89,9 +88,9 @@
 
 <p>插件的用户界面需要是较简单且有目的性的。界面需要定制或加强浏览器体验，又不会使其混乱。大多数插件都包含浏览器行为和页面行为，但也可以有其他形式的界面，比如内容菜单，地址栏使用以及键盘快捷键等。</p>
 
-<p>插件的用户界面，比如弹出层，可以包含平常的web页面和JS脚本。插件还可以调用<code class="highlighter-rouge">tabs.create</code>或<code class="highlighter-rouge">window.open()</code>来显示额外的页面。</p>
+<p>插件的用户界面，比如弹出层，可以包含平常的web页面和JS脚本。插件还可以调用<code class="language-plaintext highlighter-rouge">tabs.create</code>或<code class="language-plaintext highlighter-rouge">window.open()</code>来显示额外的页面。</p>
 
-<p>使用了<code class="highlighter-rouge">page action</code>和弹出层页面的插件可以使用可声明的内容接口来在后台脚本中设定规则，只要触发了特定条件，后台脚本就可以将插件按钮设为可用，以与弹出页面进行交互。</p>
+<p>使用了<code class="language-plaintext highlighter-rouge">page action</code>和弹出层页面的插件可以使用可声明的内容接口来在后台脚本中设定规则，只要触发了特定条件，后台脚本就可以将插件按钮设为可用，以与弹出页面进行交互。</p>
 
 <h3 id="内容脚本">内容脚本</h3>
 
@@ -103,7 +102,7 @@
 
 <h2 id="使用chrome接口">使用Chrome接口</h2>
 
-<p>除了访问与普通web项目相同的API之外，插件还可以调用插件专用的API，这些API更贴近浏览器原生能力。插件和web页面都可以调用到<code class="highlighter-rouge">window.open()</code>方法来打开一个地址，但插件还可以通过<code class="highlighter-rouge">tabs.create</code>指定在哪个窗口显示要打开的地址。</p>
+<p>除了访问与普通web项目相同的API之外，插件还可以调用插件专用的API，这些API更贴近浏览器原生能力。插件和web页面都可以调用到<code class="language-plaintext highlighter-rouge">window.open()</code>方法来打开一个地址，但插件还可以通过<code class="language-plaintext highlighter-rouge">tabs.create</code>指定在哪个窗口显示要打开的地址。</p>
 
 <h3 id="异步方法和同步方法">异步方法和同步方法</h3>
 
@@ -111,7 +110,7 @@
 
 <p>如果插件需要从用户当前选项卡页面导航到一个新地址，就需要获取到当前选项卡的ID然后更新其打开的地址。</p>
 
-<p>如果<code class="highlighter-rouge">tabs.query</code>方法是同步的，做法可能是这样：</p>
+<p>如果<code class="language-plaintext highlighter-rouge">tabs.query</code>方法是同步的，做法可能是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE DOESN'T WORK</span>
 <span class="kd">var</span> <span class="nx">tab</span> <span class="o">=</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span> <span class="c1">//WRONG!!!</span>
@@ -119,7 +118,7 @@
 <span class="nx">someOtherFunction</span><span class="p">();</span>
 </code></pre></div></div>
 
-<p>上面的代码会失败因为<code class="highlighter-rouge">query()</code>是一个异步方法，正确的做法是这样：</p>
+<p>上面的代码会失败因为<code class="language-plaintext highlighter-rouge">query()</code>是一个异步方法，正确的做法是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE WORKS</span>
 <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
@@ -130,7 +129,7 @@
 
 <h2 id="页面间交互">页面间交互</h2>
 
-<p>同一插件的不同组件之间经常需要交互。HTML页面之间可以通过<code class="highlighter-rouge">chrome.extension</code>找到彼此，比如<code class="highlighter-rouge">getViews()</code>和<code class="highlighter-rouge">getBackgroundPage()</code>方法。当页面得到了其他插件页面的引用时就可以调用其他页面中的方法以及操作其DOM了。除此之外，所有页面都可以共用一个<code class="highlighter-rouge">storage</code>接口，以及进行消息通信。</p>
+<p>同一插件的不同组件之间经常需要交互。HTML页面之间可以通过<code class="language-plaintext highlighter-rouge">chrome.extension</code>找到彼此，比如<code class="language-plaintext highlighter-rouge">getViews()</code>和<code class="language-plaintext highlighter-rouge">getBackgroundPage()</code>方法。当页面得到了其他插件页面的引用时就可以调用其他页面中的方法以及操作其DOM了。除此之外，所有页面都可以共用一个<code class="language-plaintext highlighter-rouge">storage</code>接口，以及进行消息通信。</p>
 
 <h2 id="保存数据和匿名模式">保存数据和匿名模式</h2>
 
@@ -138,7 +137,7 @@
 
 <p>匿名模式(Incognito mode)承诺窗口不会留下痕迹。当在匿名模式下处理数据时，插件也需要遵守这个承诺。如果插件正常情况下是要保存浏览历史的，在匿名模式下就不要这么做。然而，插件可以在任何窗口下保存偏好设定，匿名模式下也是。</p>
 
-<p>可以检查<code class="highlighter-rouge">tabs.Tab</code>的<code class="highlighter-rouge">incognito</code>属性来检查是否处于匿名模式下，或者<code class="highlighter-rouge">windows.Window</code>。</p>
+<p>可以检查<code class="language-plaintext highlighter-rouge">tabs.Tab</code>的<code class="language-plaintext highlighter-rouge">incognito</code>属性来检查是否处于匿名模式下，或者<code class="language-plaintext highlighter-rouge">windows.Window</code>。</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">saveTabData</span><span class="p">(</span><span class="nx">tab</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">incognito</span><span class="p">)</span> <span class="p">{</span>
@@ -215,9 +214,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

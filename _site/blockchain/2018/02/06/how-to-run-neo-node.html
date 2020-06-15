@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -57,26 +56,26 @@
 
 <h2 id="成功运行节点">成功运行节点</h2>
 
-<p>在<code class="highlighter-rouge">CLI 2.7.1</code>及<code class="highlighter-rouge">GUI 2.6.0</code>下想要成功运行节点确实足够作为一章来总结。</p>
+<p>在<code class="language-plaintext highlighter-rouge">CLI 2.7.1</code>及<code class="language-plaintext highlighter-rouge">GUI 2.6.0</code>下想要成功运行节点确实足够作为一章来总结。</p>
 
 <h3 id="运行cli">运行CLI</h3>
 
-<p>方法1是直接<code class="highlighter-rouge">clone</code>GitHub项目，从源码运行CLI。
-方法2是下载其<code class="highlighter-rouge">Realise</code>，直接运行其<code class="highlighter-rouge">.exe</code>文件。</p>
+<p>方法1是直接<code class="language-plaintext highlighter-rouge">clone</code>GitHub项目，从源码运行CLI。
+方法2是下载其<code class="language-plaintext highlighter-rouge">Realise</code>，直接运行其<code class="language-plaintext highlighter-rouge">.exe</code>文件。</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/neo-project/neo-cli.git
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/neo-project/neo-cli.git
 cd neo-cli
 dotnet restore
 cd neo-cli
 dotnet run
 </code></pre></div></div>
-<p>两种方式尝试运行结果是报错的，因为缺少了<code class="highlighter-rouge">libleveldb</code>的dll文件。</p>
+<p>两种方式尝试运行结果是报错的，因为缺少了<code class="language-plaintext highlighter-rouge">libleveldb</code>的dll文件。</p>
 
 <p><img src="/assets/images/201802/cli-restore.png" alt="DotNet Restore" /></p>
 
 <p><img src="/assets/images/201802/cli-error.png" alt="Error" /></p>
 
-<p>解决的办法是得到这个<code class="highlighter-rouge">libleveldb.dll</code>文件放到输出目录下，最快的办法是去下载 <a href="https://github.com/neo-project/neo-gui/releases">GUI的Release包</a>，里面就包含了这个缺失的<code class="highlighter-rouge">dll</code>，更高级的办法就是自己下载<code class="highlighter-rouge">libleveldb</code>并编译得到。</p>
+<p>解决的办法是得到这个<code class="language-plaintext highlighter-rouge">libleveldb.dll</code>文件放到输出目录下，最快的办法是去下载 <a href="https://github.com/neo-project/neo-gui/releases">GUI的Release包</a>，里面就包含了这个缺失的<code class="language-plaintext highlighter-rouge">dll</code>，更高级的办法就是自己下载<code class="language-plaintext highlighter-rouge">libleveldb</code>并编译得到。</p>
 
 <p><img src="/assets/images/201802/dll-in-gui.png" alt="GUI的Release中包含了缺失的dll" /></p>
 
@@ -86,13 +85,13 @@ dotnet run
 
 <h3 id="运行gui">运行GUI</h3>
 
-<p>首先铭记一句话——GUI只能运行于<code class="highlighter-rouge">windows</code>。原因是其实现是<code class="highlighter-rouge">WPF</code>。
-然后再记一句话——只有GUI能进行合约部署、签名等操作。同时CLI唯一有意义且只能由CLI做到的事情就是<code class="highlighter-rouge">建立共识产生区块</code>。</p>
+<p>首先铭记一句话——GUI只能运行于<code class="language-plaintext highlighter-rouge">windows</code>。原因是其实现是<code class="language-plaintext highlighter-rouge">WPF</code>。
+然后再记一句话——只有GUI能进行合约部署、签名等操作。同时CLI唯一有意义且只能由CLI做到的事情就是<code class="language-plaintext highlighter-rouge">建立共识产生区块</code>。</p>
 
 <p>接受了以上事实后，还得知道一件事，就是纯净安装的Windows(最好是win10)仍然是无法成功运行GUI的。需要安装以下东西：</p>
 
 <ul>
-  <li>源码下的GUI同样缺少<code class="highlighter-rouge">libleveldb.dll</code></li>
+  <li>源码下的GUI同样缺少<code class="language-plaintext highlighter-rouge">libleveldb.dll</code></li>
   <li>DotNetCore SDK</li>
   <li><a href="https://www.microsoft.com/de-de/download/details.aspx?id=14632">依赖1</a></li>
   <li><a href="https://www.microsoft.com/de-de/download/details.aspx?id=5555">依赖2</a></li>
@@ -105,22 +104,22 @@ dotnet run
 <p>这里粗暴概括五个NEO客户端中对重要的文件(目录)：</p>
 
 <ol>
-  <li><code class="highlighter-rouge">Chain目录</code> 是共识产生的区块文件，记录交易</li>
-  <li><code class="highlighter-rouge">Index目录</code> 是较早的区块文件转化的索引文件，相当于较早的区块就不存放在Chain中占空间而是仅作为索引在此了，所以也参与组成区块高度</li>
-  <li><code class="highlighter-rouge">config.json</code> 主要是为了在这里配置P2P的交互端口，要保持一致</li>
-  <li><code class="highlighter-rouge">protocol.json</code> 配置共识节点，包括节点的IP/端口以及公钥，保持一致了才能建立起共识，以及让其他节点以相同配置加入</li>
+  <li><code class="language-plaintext highlighter-rouge">Chain目录</code> 是共识产生的区块文件，记录交易</li>
+  <li><code class="language-plaintext highlighter-rouge">Index目录</code> 是较早的区块文件转化的索引文件，相当于较早的区块就不存放在Chain中占空间而是仅作为索引在此了，所以也参与组成区块高度</li>
+  <li><code class="language-plaintext highlighter-rouge">config.json</code> 主要是为了在这里配置P2P的交互端口，要保持一致</li>
+  <li><code class="language-plaintext highlighter-rouge">protocol.json</code> 配置共识节点，包括节点的IP/端口以及公钥，保持一致了才能建立起共识，以及让其他节点以相同配置加入</li>
 </ol>
 
 <h2 id="相对方便地搭建用于测试的私链的办法">相对方便地搭建用于测试的私链的办法</h2>
 
 <p>目前想要测试NEO的私链谈不上困难，但是麻烦是一定的，因为有上文中两个蛋疼的前提(GUI和CLI各自能做和不能做的事情)。</p>
 
-<p>除此之外还要考虑NEO节点共识机制的限制，也就是能达成最小共识的节点数。也就是<code class="highlighter-rouge">3/4</code>共识。具体的多方签名流程参照<a href="http://docs.neo.org/zh-cn/node/private-chain.html">官方文档</a>。</p>
+<p>除此之外还要考虑NEO节点共识机制的限制，也就是能达成最小共识的节点数。也就是<code class="language-plaintext highlighter-rouge">3/4</code>共识。具体的多方签名流程参照<a href="http://docs.neo.org/zh-cn/node/private-chain.html">官方文档</a>。</p>
 
 <p>其中一个办法是：</p>
 <ol>
   <li>准备4个windows机器或虚拟机，各自先运行CLI达成共识。</li>
-  <li>断开其中一个CLI进入GUI，此时仍满足<code class="highlighter-rouge">3/4</code>共识数。发起多方签名。</li>
+  <li>断开其中一个CLI进入GUI，此时仍满足<code class="language-plaintext highlighter-rouge">3/4</code>共识数。发起多方签名。</li>
   <li>退出GUI进入CLI重新加入共识，并依次断开两台CLI进入GUI执行签名操作。</li>
   <li>满足3个签名后就可以发起广播，确认后就完成了这个多方签名过程。</li>
 </ol>
@@ -205,9 +204,5 @@ dotnet run
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

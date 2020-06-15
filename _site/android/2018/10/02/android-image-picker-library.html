@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -47,7 +46,7 @@
         <p>笔者项目中遇到需要选择图片的情况，一开始直接使用的是知乎开源的<a href="https://github.com/zhihu/Matisse">Matisse</a>，(下文要讲述的自己实现的图片选择工具也从中参考了一些实现)。至于之后为什么要选择自己来实现一个选择器，原因大概如下：</p>
 
 <ol>
-  <li>难度不高(很大的原因是因为把图片渲染工作交给了<code class="highlighter-rouge">Glide</code>)</li>
+  <li>难度不高(很大的原因是因为把图片渲染工作交给了<code class="language-plaintext highlighter-rouge">Glide</code>)</li>
   <li>想要自己深度定制</li>
   <li>第2点的定制内容比如：<strong>第一次选择好图片后，再次进入图片选择器支持记录上次已选中的图片</strong>。</li>
 </ol>
@@ -58,7 +57,7 @@
 
 <ol>
   <li>项目准备</li>
-  <li>解藕<code class="highlighter-rouge">Glide</code></li>
+  <li>解藕<code class="language-plaintext highlighter-rouge">Glide</code></li>
   <li>实现列表浏览</li>
   <li>实现原图浏览</li>
   <li>与原页面交互实现选择</li>
@@ -66,17 +65,17 @@
 
 <h2 id="准备工作">准备工作</h2>
 
-<p>笔者使用的是<code class="highlighter-rouge">AndroidStudio</code> + <code class="highlighter-rouge">kotlin</code>开发(<em>Java是不可能Java的</em>)，并且目标是一个第三方库而不是完整应用。</p>
+<p>笔者使用的是<code class="language-plaintext highlighter-rouge">AndroidStudio</code> + <code class="language-plaintext highlighter-rouge">kotlin</code>开发(<em>Java是不可能Java的</em>)，并且目标是一个第三方库而不是完整应用。</p>
 
-<p>首先新建一个<code class="highlighter-rouge">Project</code>：</p>
+<p>首先新建一个<code class="language-plaintext highlighter-rouge">Project</code>：</p>
 
 <p><img src="/assets/images/201810/post-1.png" alt="新建Project" /></p>
 
-<p>新建自带的这个应用作为试例应用取名叫<code class="highlighter-rouge">Sample</code>：</p>
+<p>新建自带的这个应用作为试例应用取名叫<code class="language-plaintext highlighter-rouge">Sample</code>：</p>
 
 <p><img src="/assets/images/201810/post-2.png" alt="新建Project" /></p>
 
-<p>然后<code class="highlighter-rouge">File -&gt; New -&gt; New Module</code>创建出工具类自己的模块：</p>
+<p>然后<code class="language-plaintext highlighter-rouge">File -&gt; New -&gt; New Module</code>创建出工具类自己的模块：</p>
 
 <p><img src="/assets/images/201810/post-3.png" alt="新建Module" /></p>
 
@@ -86,44 +85,44 @@
 
 <h2 id="图片引擎">图片引擎</h2>
 
-<p>Android中图片的处理是个危险操作，很容易浪费性能甚至导致应用崩溃，笔者因此深度依赖了<code class="highlighter-rouge">Glide</code>这个库来处理图片，不过作为第三方库想要使用<code class="highlighter-rouge">Glide</code>，自己再引入一个<code class="highlighter-rouge">Glide</code>就会显得多余，而应该在最外层应用中配置好<code class="highlighter-rouge">Glide</code>，引入的第三方库若以来<code class="highlighter-rouge">Glide</code>，也应该使用外层的<code class="highlighter-rouge">Glide</code>，这就需要将第三方库与<code class="highlighter-rouge">Glide</code>的耦合给解开。笔者最终采用的思路类似<code class="highlighter-rouge">Matisse</code>，就是外层应用需要配置一个代码片段来传入并告诉我们的图片选择工具如何使用<code class="highlighter-rouge">Glide</code>。</p>
+<p>Android中图片的处理是个危险操作，很容易浪费性能甚至导致应用崩溃，笔者因此深度依赖了<code class="language-plaintext highlighter-rouge">Glide</code>这个库来处理图片，不过作为第三方库想要使用<code class="language-plaintext highlighter-rouge">Glide</code>，自己再引入一个<code class="language-plaintext highlighter-rouge">Glide</code>就会显得多余，而应该在最外层应用中配置好<code class="language-plaintext highlighter-rouge">Glide</code>，引入的第三方库若以来<code class="language-plaintext highlighter-rouge">Glide</code>，也应该使用外层的<code class="language-plaintext highlighter-rouge">Glide</code>，这就需要将第三方库与<code class="language-plaintext highlighter-rouge">Glide</code>的耦合给解开。笔者最终采用的思路类似<code class="language-plaintext highlighter-rouge">Matisse</code>，就是外层应用需要配置一个代码片段来传入并告诉我们的图片选择工具如何使用<code class="language-plaintext highlighter-rouge">Glide</code>。</p>
 
 <p>图片选择器需要准备一个结构体，来放置一些图片渲染的回调方法：</p>
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="py">setOrigin</span><span class="p">:</span> <span class="p">((</span><span class="nv">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="nv">width</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">height</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="n">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
-<span class="kd">var</span> <span class="py">setCommon</span><span class="p">:</span> <span class="p">((</span><span class="nv">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="nv">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
-<span class="kd">var</span> <span class="py">setThumb</span><span class="p">:</span> <span class="p">((</span><span class="nv">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="nv">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">fade</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">holderRes</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
-<span class="kd">var</span> <span class="py">pauseGlide</span><span class="p">:</span> <span class="p">((</span><span class="nv">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
-<span class="kd">var</span> <span class="py">resumeGlide</span><span class="p">:</span> <span class="p">((</span><span class="nv">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="py">setOrigin</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="nc">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">setCommon</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">setThumb</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">fade</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">holderRes</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">pauseGlide</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
+<span class="kd">var</span> <span class="py">resumeGlide</span><span class="p">:</span> <span class="p">((</span><span class="n">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)?</span> <span class="p">=</span> <span class="k">null</span>
 </code></pre></div></div>
 
-<p>其中<code class="highlighter-rouge">setOrigin</code>用于设置原图图片，<code class="highlighter-rouge">setCommon</code>用于直接设置图片作为通用方法，<code class="highlighter-rouge">setThumb</code>用于设置封面图，<code class="highlighter-rouge">pauseGlide</code>与<code class="highlighter-rouge">resumeGlide</code>方法用于帮助在页面滚动时暂停和继续<code class="highlighter-rouge">Glide</code>的渲染工作以避免此类卡顿情况。</p>
+<p>其中<code class="language-plaintext highlighter-rouge">setOrigin</code>用于设置原图图片，<code class="language-plaintext highlighter-rouge">setCommon</code>用于直接设置图片作为通用方法，<code class="language-plaintext highlighter-rouge">setThumb</code>用于设置封面图，<code class="language-plaintext highlighter-rouge">pauseGlide</code>与<code class="language-plaintext highlighter-rouge">resumeGlide</code>方法用于帮助在页面滚动时暂停和继续<code class="language-plaintext highlighter-rouge">Glide</code>的渲染工作以避免此类卡顿情况。</p>
 
-<p>最终应用中必须在某处(比如<code class="highlighter-rouge">BaseApplication</code>)执行一个代码片段，来将<code class="highlighter-rouge">Glide</code>配置给图片选择工具：</p>
+<p>最终应用中必须在某处(比如<code class="language-plaintext highlighter-rouge">BaseApplication</code>)执行一个代码片段，来将<code class="language-plaintext highlighter-rouge">Glide</code>配置给图片选择工具：</p>
 
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Ymager</span><span class="p">.</span><span class="n">setOrigin</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="nv">width</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">height</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="n">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">Unit</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">asBitmap</span><span class="p">().</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="k">override</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">).</span><span class="n">fitCenter</span><span class="p">().</span><span class="n">into</span><span class="p">(</span><span class="nv">object</span><span class="p">:</span> <span class="nc">SimpleTarget</span><span class="p">&lt;</span><span class="nc">Bitmap</span><span class="p">&gt;()</span> <span class="p">{</span>
-        <span class="k">override</span> <span class="k">fun</span> <span class="nf">onResourceReady</span><span class="p">(</span><span class="nv">resource</span><span class="p">:</span> <span class="nc">Bitmap</span><span class="p">,</span> <span class="nv">transition</span><span class="p">:</span> <span class="nc">Transition</span><span class="p">&lt;</span><span class="nc">in</span> <span class="nc">Bitmap</span><span class="p">&gt;?)</span> <span class="p">{</span>
-            <span class="n">callback</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Ymager</span><span class="p">.</span><span class="n">setOrigin</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="p">(</span><span class="nc">Bitmap</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nc">Unit</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nc">GlideApp</span><span class="p">.</span><span class="nf">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="nf">asBitmap</span><span class="p">().</span><span class="nf">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="k">override</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">).</span><span class="nf">fitCenter</span><span class="p">().</span><span class="nf">into</span><span class="p">(</span><span class="k">object</span><span class="p">:</span> <span class="nc">SimpleTarget</span><span class="p">&lt;</span><span class="nc">Bitmap</span><span class="p">&gt;()</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">onResourceReady</span><span class="p">(</span><span class="n">resource</span><span class="p">:</span> <span class="nc">Bitmap</span><span class="p">,</span> <span class="n">transition</span><span class="p">:</span> <span class="nc">Transition</span><span class="p">&lt;</span><span class="k">in</span> <span class="nc">Bitmap</span><span class="p">&gt;?)</span> <span class="p">{</span>
+            <span class="nf">callback</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span>
         <span class="p">}</span>
     <span class="p">})</span>
 <span class="p">}</span>
-<span class="n">Ymager</span><span class="p">.</span><span class="n">setCommon</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="nv">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="n">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
+<span class="nc">Ymager</span><span class="p">.</span><span class="n">setCommon</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nc">GlideApp</span><span class="p">.</span><span class="nf">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="nf">load</span><span class="p">(</span><span class="n">src</span><span class="p">).</span><span class="nf">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="n">Ymager</span><span class="p">.</span><span class="n">setThumb</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="nv">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="nv">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="nv">size</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">fade</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="nv">holderRes</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-            <span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
-            <span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">holderRes</span><span class="p">)</span>
-            <span class="p">.</span><span class="n">transition</span><span class="p">(</span><span class="n">DrawableTransitionOptions</span><span class="p">.</span><span class="n">withCrossFade</span><span class="p">(</span><span class="n">fade</span><span class="p">))</span>
+<span class="nc">Ymager</span><span class="p">.</span><span class="n">setThumb</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">,</span> <span class="n">imageView</span><span class="p">:</span> <span class="nc">ImageView</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="nc">File</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">fade</span><span class="p">:</span> <span class="nc">Int</span><span class="p">,</span> <span class="n">holderRes</span><span class="p">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nc">GlideApp</span><span class="p">.</span><span class="nf">with</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">error</span><span class="p">(</span><span class="n">holderRes</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">transition</span><span class="p">(</span><span class="nc">DrawableTransitionOptions</span><span class="p">.</span><span class="nf">withCrossFade</span><span class="p">(</span><span class="n">fade</span><span class="p">))</span>
             <span class="p">.</span><span class="k">override</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-            <span class="p">.</span><span class="n">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">into</span><span class="p">(</span><span class="n">imageView</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="n">Ymager</span><span class="p">.</span><span class="n">pauseGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">pauseRequests</span><span class="p">()</span>
+<span class="nc">Ymager</span><span class="p">.</span><span class="n">pauseGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nc">GlideApp</span><span class="p">.</span><span class="nf">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="nf">pauseRequests</span><span class="p">()</span>
 <span class="p">}</span>
-<span class="n">Ymager</span><span class="p">.</span><span class="n">resumeGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">GlideApp</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">resumeRequests</span><span class="p">()</span>
+<span class="nc">Ymager</span><span class="p">.</span><span class="n">resumeGlide</span> <span class="p">=</span> <span class="k">fun</span> <span class="err">(</span><span class="nf">context</span><span class="p">:</span> <span class="nc">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nc">GlideApp</span><span class="p">.</span><span class="nf">with</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="nf">resumeRequests</span><span class="p">()</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -134,23 +133,23 @@
 <p>图片选择器使用的数据源是系统相册数据库，这就需要执行数据库查询语句了，所以需要准备这么一个<a href="https://github.com/yitimo/ymage/blob/master/ymage/src/main/java/com/yitimo/ymage/DBUtils.kt">数据库工具类</a>，包含了如下方法：</p>
 
 <ul>
-  <li>queryAlbums -&gt; 查询所有的图片集，或者叫相册，Android中叫做<code class="highlighter-rouge">Bucket</code></li>
+  <li>queryAlbums -&gt; 查询所有的图片集，或者叫相册，Android中叫做<code class="language-plaintext highlighter-rouge">Bucket</code></li>
   <li>query -&gt; 查询所有的图片，支持指定某个图片集</li>
   <li>queryChosen -&gt; 传入默认选中的图片地址列表，查询出这些图片</li>
-  <li>first -&gt; 查询第一张图片，用于作为<code class="highlighter-rouge">全部</code>这个<code class="highlighter-rouge">Bucket</code>的封面</li>
+  <li>first -&gt; 查询第一张图片，用于作为<code class="language-plaintext highlighter-rouge">全部</code>这个<code class="language-plaintext highlighter-rouge">Bucket</code>的封面</li>
 </ul>
 
 <h2 id="列表展示">列表展示</h2>
 
-<p>列表展示需要以每行固定格子数的形式来展示比较小的图片列表，所以要使用的是<code class="highlighter-rouge">RecyclerView</code>搭配<code class="highlighter-rouge">GridLayoutManager</code>，列表数据传入<code class="highlighter-rouge">Cursor</code>来动态的从数据库中取出图片数据，而不是一口气取出成百上千张图片数据，再一口气传入<code class="highlighter-rouge">Adapter</code>中。</p>
+<p>列表展示需要以每行固定格子数的形式来展示比较小的图片列表，所以要使用的是<code class="language-plaintext highlighter-rouge">RecyclerView</code>搭配<code class="language-plaintext highlighter-rouge">GridLayoutManager</code>，列表数据传入<code class="language-plaintext highlighter-rouge">Cursor</code>来动态的从数据库中取出图片数据，而不是一口气取出成百上千张图片数据，再一口气传入<code class="language-plaintext highlighter-rouge">Adapter</code>中。</p>
 
-<p>与通常<code class="highlighter-rouge">RecyclerView</code>使用的<code class="highlighter-rouge">adapter</code>的不同在于，列表使用的<code class="highlighter-rouge">adapter</code>传入的是一个数据库查询得到的<code class="highlighter-rouge">Cursor</code>。</p>
+<p>与通常<code class="language-plaintext highlighter-rouge">RecyclerView</code>使用的<code class="language-plaintext highlighter-rouge">adapter</code>的不同在于，列表使用的<code class="language-plaintext highlighter-rouge">adapter</code>传入的是一个数据库查询得到的<code class="language-plaintext highlighter-rouge">Cursor</code>。</p>
 
 <p>具体代码实现在<a href="https://github.com/yitimo/ymage/blob/master/ymage/src/main/java/com/yitimo/ymage/ListAdapter.kt">这里</a>。</p>
 
 <h2 id="原图展示">原图展示</h2>
 
-<p>原图展示需要全屏显示某张图片，并支持缩放和左右切换图片。所以使用了<code class="highlighter-rouge">ViewPager</code>搭配<code class="highlighter-rouge">PagerAdapter</code>来实现。同样是传入<code class="highlighter-rouge">Cursor</code>，动态根据<code class="highlighter-rouge">position</code>取出图片信息并渲染。</p>
+<p>原图展示需要全屏显示某张图片，并支持缩放和左右切换图片。所以使用了<code class="language-plaintext highlighter-rouge">ViewPager</code>搭配<code class="language-plaintext highlighter-rouge">PagerAdapter</code>来实现。同样是传入<code class="language-plaintext highlighter-rouge">Cursor</code>，动态根据<code class="language-plaintext highlighter-rouge">position</code>取出图片信息并渲染。</p>
 
 <p>具体代码实现在<a href="https://github.com/yitimo/ymage/blob/master/ymage/src/main/java/com/yitimo/ymage/OriginAdapter.kt">这里</a>。</p>
 
@@ -159,12 +158,12 @@
 <p>剩余的工作包含了：</p>
 
 <ol>
-  <li><code class="highlighter-rouge">Bucket</code>列表的展示与切换，即根据<code class="highlighter-rouge">BucketId</code>来查询数据并使用第一张图作为封面。切换相册即只查询指定<code class="highlighter-rouge">BucketId</code>图片列表的<code class="highlighter-rouge">Cursor</code>并更新到<code class="highlighter-rouge">ListAdapter</code>。</li>
+  <li><code class="language-plaintext highlighter-rouge">Bucket</code>列表的展示与切换，即根据<code class="language-plaintext highlighter-rouge">BucketId</code>来查询数据并使用第一张图作为封面。切换相册即只查询指定<code class="language-plaintext highlighter-rouge">BucketId</code>图片列表的<code class="language-plaintext highlighter-rouge">Cursor</code>并更新到<code class="language-plaintext highlighter-rouge">ListAdapter</code>。</li>
   <li>选好图片后，通过intent传递选中的图片数据。</li>
-  <li>发布到<code class="highlighter-rouge">bintray</code>的流程，这个网上有很多了，大体就是<code class="highlighter-rouge">注册 -&gt; 创建项目 -&gt; 配置自己的项目 -&gt; 执行项目</code>这几步完事。</li>
+  <li>发布到<code class="language-plaintext highlighter-rouge">bintray</code>的流程，这个网上有很多了，大体就是<code class="language-plaintext highlighter-rouge">注册 -&gt; 创建项目 -&gt; 配置自己的项目 -&gt; 执行项目</code>这几步完事。</li>
 </ol>
 
-<p>完整项目的<code class="highlighter-rouge">Github</code>地址在<a href="https://github.com/yitimo/ymage">这里</a>。</p>
+<p>完整项目的<code class="language-plaintext highlighter-rouge">Github</code>地址在<a href="https://github.com/yitimo/ymage">这里</a>。</p>
 
     </section>
     <section class="yitiblog-pager block flex">
@@ -232,9 +231,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>
