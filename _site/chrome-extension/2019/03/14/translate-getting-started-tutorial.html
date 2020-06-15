@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -48,13 +47,13 @@
 
 <p>Chrome插件(以下简称插件)由不同但有凝聚力的组件组成。这些组件包括 <a href="https://developer.chrome.com/background_pages.html">background scripts</a>，<a href="https://developer.chrome.com/content_scripts.html">content scripts</a>，<a href="https://developer.chrome.com/optionsV2">options page</a>，<a href="https://developer.chrome.com/user_interface.html">UI elements</a>，以及许多的具体逻辑页面。插件组件使用web开发技术实现：HTML、JS和CSS。一个插件要实现的功能决定了它将使用到哪些组件，而不是全都会用到。</p>
 
-<p>本文将搭建一个插件，让用户可以更改<code class="highlighter-rouge">developer.chrome.com</code>站内所有页面的背景色。它将使用到许多核心组件以便介绍他们之间的关系。</p>
+<p>本文将搭建一个插件，让用户可以更改<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内所有页面的背景色。它将使用到许多核心组件以便介绍他们之间的关系。</p>
 
 <p>首先创建一个新的目录来存放插件文件，完整的插件代码可以在<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started_complete.zip">这里下载</a>。</p>
 
 <h2 id="创建manifest">创建Manifest</h2>
 
-<p>插件都从它们的<code class="highlighter-rouge">manifest</code>起步，创建<code class="highlighter-rouge">manifest.json</code>包含以下内容，或直接<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/manifest.json">下载</a>：</p>
+<p>插件都从它们的<code class="language-plaintext highlighter-rouge">manifest</code>起步，创建<code class="language-plaintext highlighter-rouge">manifest.json</code>包含以下内容，或直接<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/manifest.json">下载</a>：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
@@ -68,7 +67,7 @@
 
 <h2 id="添加指令">添加指令</h2>
 
-<p>尽管现在插件安装好了，它还没有任何指令。现在添加一个<code class="highlighter-rouge">background</code>属性，并创建相应文件(<code class="highlighter-rouge">background.js</code>)：</p>
+<p>尽管现在插件安装好了，它还没有任何指令。现在添加一个<code class="language-plaintext highlighter-rouge">background</code>属性，并创建相应文件(<code class="language-plaintext highlighter-rouge">background.js</code>)：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
@@ -84,16 +83,16 @@
 
 <p>以上代码说明插件现在包含了一个非持久化运行的后台脚本，在里面可以做一些监听事件。</p>
 
-<p>插件一旦安装就会需要一个持久化变量的信息。先在后台脚本中添加<code class="highlighter-rouge">runtime.onInstalled</code>事件的监听，回调中将设置一个值到storage中。并允许多个插件后续来访问和更新这个值：</p>
+<p>插件一旦安装就会需要一个持久化变量的信息。先在后台脚本中添加<code class="language-plaintext highlighter-rouge">runtime.onInstalled</code>事件的监听，回调中将设置一个值到storage中。并允许多个插件后续来访问和更新这个值：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chrome.runtime.onInstalled.addListener(function() {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chrome.runtime.onInstalled.addListener(function() {
     chrome.storage.sync.set({color: '#3aa757'}, function() {
         console.log("The color is green.");
     });
 });
 </code></pre></div></div>
 
-<p>包括<code class="highlighter-rouge">storage</code>在内的大多数API都必须在manifest的permissions属性中声明过，像这样：</p>
+<p>包括<code class="language-plaintext highlighter-rouge">storage</code>在内的大多数API都必须在manifest的permissions属性中声明过，像这样：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
@@ -108,11 +107,11 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>现在刷新插件，会多出来一个<code class="highlighter-rouge">背景页</code>按钮，点击可以看到后台代码打出的log：”The color is green.”。</p>
+<p>现在刷新插件，会多出来一个<code class="language-plaintext highlighter-rouge">背景页</code>按钮，点击可以看到后台代码打出的log：”The color is green.”。</p>
 
 <h2 id="实现用户接口">实现用户接口</h2>
 
-<p>插件可以有很多形式的用户接口，本插件将用到popup(弹出式页面)。创建文件<code class="highlighter-rouge">popup.html</code>，包含如下代码，用于显示一个按钮用于点击来更改背景色：</p>
+<p>插件可以有很多形式的用户接口，本插件将用到popup(弹出式页面)。创建文件<code class="language-plaintext highlighter-rouge">popup.html</code>，包含如下代码，用于显示一个按钮用于点击来更改背景色：</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
   <span class="nt">&lt;html&gt;</span>
@@ -151,7 +150,7 @@
 
 <p>然后继续配置插件的<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/images.zip">图标</a>，其中page_action中的图标用于在右上角显示，外部的icons中的图标用于在插件管理页中显示：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
     "name": "Getting Started Example",
     "version": "1.0",
     "description": "Build an Extension!",
@@ -179,7 +178,7 @@
 }
 </code></pre></div></div>
 
-<p>如果现在重载插件，将会显示一个灰色图标，但没有任何功能。因为<code class="highlighter-rouge">manifest</code>中定义了<code class="highlighter-rouge">page_actions</code>，将由插件来告诉浏览器用户合适可以和<code class="highlighter-rouge">popup.html交互</code>。</p>
+<p>如果现在重载插件，将会显示一个灰色图标，但没有任何功能。因为<code class="language-plaintext highlighter-rouge">manifest</code>中定义了<code class="language-plaintext highlighter-rouge">page_actions</code>，将由插件来告诉浏览器用户合适可以和<code class="language-plaintext highlighter-rouge">popup.html交互</code>。</p>
 
 <p>现在在后台脚本中添加新功能：</p>
 
@@ -199,7 +198,7 @@
 <span class="p">});</span>
 </code></pre></div></div>
 
-<p>现在插件将需要<code class="highlighter-rouge">declarativeContent</code>权限：</p>
+<p>现在插件将需要<code class="language-plaintext highlighter-rouge">declarativeContent</code>权限：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
@@ -209,9 +208,9 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>现在当用户在<code class="highlighter-rouge">developer.chrome.com</code>站内时插件将变成正常彩色图标，，点击时将弹出<code class="highlighter-rouge">popup.html</code>页面。</p>
+<p>现在当用户在<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内时插件将变成正常彩色图标，，点击时将弹出<code class="language-plaintext highlighter-rouge">popup.html</code>页面。</p>
 
-<p>弹出页面的最后一步是添加按钮颜色。创建页面脚本<code class="highlighter-rouge">popup.js</code>：</p>
+<p>弹出页面的最后一步是添加按钮颜色。创建页面脚本<code class="language-plaintext highlighter-rouge">popup.js</code>：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
 
@@ -237,7 +236,7 @@
 
 <h2 id="layer-logic">Layer Logic</h2>
 
-<p>插件现在知道了弹出层要当用户在<code class="highlighter-rouge">developer.chrome.com</code>站内时可用，并显示一个有颜色的按钮，但还需要进一步的用户交互。更新<code class="highlighter-rouge">popup.js</code>：</p>
+<p>插件现在知道了弹出层要当用户在<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内时可用，并显示一个有颜色的按钮，但还需要进一步的用户交互。更新<code class="language-plaintext highlighter-rouge">popup.js</code>：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
 <span class="p">...</span>
@@ -253,7 +252,7 @@
 
 <p>更新的代码添加了一个点击事件到按钮，将会出发一个动态注入脚本。这将把页面的背景色设为跟按钮颜色相同。使用程序注入允许用户手动触发内容脚本，而不是添加不想要的代码到web页面中。</p>
 
-<p>manifest中需要添加<code class="highlighter-rouge">activeTab</code>权限来允许插件临时访问<code class="highlighter-rouge">tabs</code>接口，以允许插件调用<code class="highlighter-rouge">tabs.executeScript</code>方法。</p>
+<p>manifest中需要添加<code class="language-plaintext highlighter-rouge">activeTab</code>权限来允许插件临时访问<code class="language-plaintext highlighter-rouge">tabs</code>接口，以允许插件调用<code class="language-plaintext highlighter-rouge">tabs.executeScript</code>方法。</p>
 
 <p>本插件现在可用了！重载插件，刷新页面，打开popup并点击按钮来把页面变绿！然而，有些用户可能想要将背景色更改为不同的颜色。</p>
 
@@ -261,7 +260,7 @@
 
 <p>插件现在只允许用户更改背景色为绿色。</p>
 
-<p>创建<code class="highlighter-rouge">options.html</code>页面包含如下代码：</p>
+<p>创建<code class="language-plaintext highlighter-rouge">options.html</code>页面包含如下代码：</p>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
 <span class="nt">&lt;html&gt;</span>
@@ -297,7 +296,7 @@
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<p>重载插件并点击<code class="highlighter-rouge">详细信息</code>，点击<code class="highlighter-rouge">扩展程序选项</code>即可看到这个页面。现在添加<code class="highlighter-rouge">options.js</code>包含如下内容：</p>
+<p>重载插件并点击<code class="language-plaintext highlighter-rouge">详细信息</code>，点击<code class="language-plaintext highlighter-rouge">扩展程序选项</code>即可看到这个页面。现在添加<code class="language-plaintext highlighter-rouge">options.js</code>包含如下内容：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">buttonDiv</span><span class="dl">'</span><span class="p">);</span>
 <span class="kd">const</span> <span class="nx">kButtonColors</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">#3aa757</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#e8453c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#f9bb2d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#4688f1</span><span class="dl">'</span><span class="p">];</span>
@@ -385,9 +384,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

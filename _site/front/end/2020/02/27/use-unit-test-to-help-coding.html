@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -49,11 +48,11 @@
 <p>从单元测试字面意思可以想到，这是对项目内的某个最小单元(类的方法、工具函数、条件语句)进行的测试。
 对于开发人员来说，项目开发过程一般只进行冒烟测试，且只是以代码正确执行为目的。更全面的业务、流程测试要让专门的测试工程师来完成。成功的单元测试还能减轻测试人员的工作，尽量避免让他们来帮我们找空指针、死循环、页面白屏之类的代码错误。</p>
 
-<p>而像jest、mocha等这些测试框架就是通过提供一个强大的测试环境，支持只执行某个被 <code class="highlighter-rouge">import</code> 进来的模块，并能尽可能的模拟所有测试用例执行时不需要关心只需要执行结果的流程和副作用。</p>
+<p>而像jest、mocha等这些测试框架就是通过提供一个强大的测试环境，支持只执行某个被 <code class="language-plaintext highlighter-rouge">import</code> 进来的模块，并能尽可能的模拟所有测试用例执行时不需要关心只需要执行结果的流程和副作用。</p>
 
 <p>最终能做到的就是，单元测试用例里一个模块是如何执行的，正式上线时这个模块代码就是如何执行的，这就能避免很多代码执行错误。同时凭借测试框架附带的其他强大能力，我们还能提前得知自己代码的逻辑复杂度、测试覆盖率等信息。</p>
 
-<p>举个例子，我们有一个 <code class="highlighter-rouge">getBillAction</code> 函数用于获取在界面上展示的账单，做了这么一些事情:</p>
+<p>举个例子，我们有一个 <code class="language-plaintext highlighter-rouge">getBillAction</code> 函数用于获取在界面上展示的账单，做了这么一些事情:</p>
 
 <ol>
   <li>从 state、getters 中取出一些数据，拼装成请求参数</li>
@@ -81,7 +80,7 @@
   </li>
 </ol>
 
-<p>这里面有很多步骤是测试 <code class="highlighter-rouge">拉取账单</code> 这个单一行为之外的事情，这些步骤出现任何问题，都会干扰我们对我们的核心目的的测试，可能导致测试不准确，或者找到别的问题导致分心和混乱。</p>
+<p>这里面有很多步骤是测试 <code class="language-plaintext highlighter-rouge">拉取账单</code> 这个单一行为之外的事情，这些步骤出现任何问题，都会干扰我们对我们的核心目的的测试，可能导致测试不准确，或者找到别的问题导致分心和混乱。</p>
 
 <p>而凭借单元测试，我们对这个action的测试可以做这么一些事情:</p>
 
@@ -111,9 +110,9 @@
 <p>现在一个前端项目源码可能由这些部分组成:</p>
 
 <ul>
-  <li>js模块 主要测试的内容，jest天然支持，不过对于es6及以上的语法，需要配置 <code class="highlighter-rouge">babel-jest</code></li>
-  <li>ts模块 主要的测试内容，需要配置 <code class="highlighter-rouge">ts-jest</code>，以及在 <code class="highlighter-rouge">tsconfig.json</code> 的 <code class="highlighter-rouge">types</code> 中增加 <code class="highlighter-rouge">jest</code></li>
-  <li>css样式和文件资源 这些模块更适合通过肉眼和开发者工具进行视觉对稿, <code class="highlighter-rouge">jest</code> 可以直接模拟跳过这些内容</li>
+  <li>js模块 主要测试的内容，jest天然支持，不过对于es6及以上的语法，需要配置 <code class="language-plaintext highlighter-rouge">babel-jest</code></li>
+  <li>ts模块 主要的测试内容，需要配置 <code class="language-plaintext highlighter-rouge">ts-jest</code>，以及在 <code class="language-plaintext highlighter-rouge">tsconfig.json</code> 的 <code class="language-plaintext highlighter-rouge">types</code> 中增加 <code class="language-plaintext highlighter-rouge">jest</code></li>
+  <li>css样式和文件资源 这些模块更适合通过肉眼和开发者工具进行视觉对稿, <code class="language-plaintext highlighter-rouge">jest</code> 可以直接模拟跳过这些内容</li>
   <li>界面组件标签 对于原生DOM, jest 天然支持，可以检查其节点和值。对于基于前端框架的组件，各框架本身都提供了自己的测试方式，用于在测试环境中渲染组件节点</li>
 </ul>
 
@@ -145,7 +144,7 @@
 
 <h3 id="异步模块的测试">异步模块的测试</h3>
 
-<p>对于异步模块你可能还需要在jest的初始化脚本中引入 <code class="highlighter-rouge">babel-polyfill</code>, 配置好后即可正常进行 <code class="highlighter-rouge">async/await</code> 等异步语法测试:</p>
+<p>对于异步模块你可能还需要在jest的初始化脚本中引入 <code class="language-plaintext highlighter-rouge">babel-polyfill</code>, 配置好后即可正常进行 <code class="language-plaintext highlighter-rouge">async/await</code> 等异步语法测试:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">这个单元测试的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">一个测试用例的名字</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -163,7 +162,7 @@
 
 <p><strong>模拟样式和文件</strong></p>
 
-<p>样式和文件模块无法通过js执行来判断正确性，也就失去了单元测试意义，我们只需要直接跳过这类模块，保证代码执行下去即可，可以在 <code class="highlighter-rouge">jest.config.js</code> 中配置如何处理样式和文件模块:</p>
+<p>样式和文件模块无法通过js执行来判断正确性，也就失去了单元测试意义，我们只需要直接跳过这类模块，保证代码执行下去即可，可以在 <code class="language-plaintext highlighter-rouge">jest.config.js</code> 中配置如何处理样式和文件模块:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">moduleNameMapper</span><span class="p">:</span> <span class="p">{</span>
     <span class="dl">"</span><span class="se">\\</span><span class="s2">.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">&lt;rootDir&gt;/__mocks__/fileMock.js</span><span class="dl">"</span><span class="p">,</span>
@@ -173,7 +172,7 @@
 
 <p><strong>模拟浏览器对象</strong></p>
 
-<p>有时候我们的代码依赖了浏览器的全局对象(window), 比如需要读取<code class="highlighter-rouge">location.href</code>, 可以参考<a href="https://stackoverflow.com/a/54021633">这个问答</a>。</p>
+<p>有时候我们的代码依赖了浏览器的全局对象(window), 比如需要读取<code class="language-plaintext highlighter-rouge">location.href</code>, 可以参考<a href="https://stackoverflow.com/a/54021633">这个问答</a>。</p>
 
 <p><strong>模拟内部函数执行</strong></p>
 
@@ -181,7 +180,7 @@
 
 <p>用上面拉取账单的例子的话，就是拉账单过程中需要执行拉取账单请求，但是我们不想真的去向服务器发起请求(如果是测试支付，那就更加不能真的发请求了:D)。</p>
 
-<p>模拟待测试函数内部函数的执行，<code class="highlighter-rouge">jest</code> 提供了 <code class="highlighter-rouge">spyOn</code>方法:</p>
+<p>模拟待测试函数内部函数的执行，<code class="language-plaintext highlighter-rouge">jest</code> 提供了 <code class="language-plaintext highlighter-rouge">spyOn</code>方法:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">billAction</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/billAction</span><span class="dl">'</span>
 <span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">billApi</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/billApi</span><span class="dl">'</span>
@@ -199,8 +198,8 @@
 <span class="p">})</span>
 </code></pre></div></div>
 
-<p>示例代码中, 需要 <code class="highlighter-rouge">spyOn</code> 的函数是以 <code class="highlighter-rouge">export default</code> 方式导出的，所以需要 <code class="highlighter-rouge">jest.spyOn(billApi, 'default')</code> 来模拟。
-详细关于 <code class="highlighter-rouge">spyOn</code> 的使用可以看<a href="https://jestjs.io/docs/en/jest-object#jestspyonobject-methodname">官方文档</a>。</p>
+<p>示例代码中, 需要 <code class="language-plaintext highlighter-rouge">spyOn</code> 的函数是以 <code class="language-plaintext highlighter-rouge">export default</code> 方式导出的，所以需要 <code class="language-plaintext highlighter-rouge">jest.spyOn(billApi, 'default')</code> 来模拟。
+详细关于 <code class="language-plaintext highlighter-rouge">spyOn</code> 的使用可以看<a href="https://jestjs.io/docs/en/jest-object#jestspyonobject-methodname">官方文档</a>。</p>
 
 <h2 id="测试目的">测试目的</h2>
 
@@ -288,9 +287,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

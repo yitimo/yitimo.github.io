@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -152,7 +151,7 @@
     <span class="k">return</span> <span class="nx">assertPlatform</span><span class="p">(</span><span class="nx">marker</span><span class="p">);</span>
   <span class="p">};</span>
 <span class="p">}</span>
-<span class="k">export</span> <span class="kd">function</span> <span class="nx">assertPlatform</span><span class="p">(</span><span class="na">requiredToken</span><span class="p">:</span> <span class="nx">any</span><span class="p">):</span> <span class="nx">PlatformRef</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">assertPlatform</span><span class="p">(</span><span class="nx">requiredToken</span><span class="p">:</span> <span class="nx">any</span><span class="p">):</span> <span class="nx">PlatformRef</span> <span class="p">{</span>
   <span class="kd">const</span> <span class="nx">platform</span> <span class="o">=</span> <span class="nx">getPlatform</span><span class="p">();</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">platform</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 确保平台被创建</span>
     <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">No platform exists!</span><span class="dl">'</span><span class="p">);</span>
@@ -197,7 +196,7 @@
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bootstrapModuleWithZone</span><span class="p">(</span><span class="nx">moduleType</span><span class="p">,</span> <span class="nx">compilerOptions</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="kr">private</span> <span class="nx">_bootstrapModuleWithZone</span><span class="o">&lt;</span><span class="nx">M</span><span class="o">&gt;</span><span class="p">(</span>
-    <span class="na">moduleType</span><span class="p">:</span> <span class="nx">Type</span><span class="o">&lt;</span><span class="nx">M</span><span class="o">&gt;</span><span class="p">,</span> <span class="na">compilerOptions</span><span class="p">:</span> <span class="nx">CompilerOptions</span><span class="o">|</span><span class="nx">CompilerOptions</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nx">moduleType</span><span class="p">:</span> <span class="nx">Type</span><span class="o">&lt;</span><span class="nx">M</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">compilerOptions</span><span class="p">:</span> <span class="nx">CompilerOptions</span><span class="o">|</span><span class="nx">CompilerOptions</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="nx">ngZone</span><span class="p">?:</span> <span class="nx">NgZone</span>
 <span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">NgModuleRef</span><span class="o">&lt;</span><span class="nx">M</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
     <span class="kd">const</span> <span class="na">compilerFactory</span><span class="p">:</span> <span class="nx">CompilerFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">CompilerFactory</span><span class="p">);</span> <span class="c1">// 从注入器中得到编译器工厂</span>
@@ -358,9 +357,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

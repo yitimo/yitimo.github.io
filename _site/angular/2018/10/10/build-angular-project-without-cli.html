@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,7 +43,7 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>不使用cli搭建angular项目</h1>
-        <p>本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖<code class="highlighter-rouge">@angular/cli</code>，纯手工配置<code class="highlighter-rouge">webpack</code>来实现。即花费巨大力气完成<code class="highlighter-rouge">@angular/cli</code>中的如下命令：</p>
+        <p>本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖<code class="language-plaintext highlighter-rouge">@angular/cli</code>，纯手工配置<code class="language-plaintext highlighter-rouge">webpack</code>来实现。即花费巨大力气完成<code class="language-plaintext highlighter-rouge">@angular/cli</code>中的如下命令：</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ng new angulectron
 ng build <span class="nt">--prod</span>
@@ -52,14 +51,14 @@ ng build <span class="nt">--prod</span>
 
 <h2 id="初始化">初始化</h2>
 
-<p>初始化项目使用<code class="highlighter-rouge">yarn init</code>(或<code class="highlighter-rouge">npm init</code>)完成，最终得到包含单个<code class="highlighter-rouge">package.json</code>的项目。像这样：</p>
+<p>初始化项目使用<code class="language-plaintext highlighter-rouge">yarn init</code>(或<code class="language-plaintext highlighter-rouge">npm init</code>)完成，最终得到包含单个<code class="language-plaintext highlighter-rouge">package.json</code>的项目。像这样：</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>angulectron <span class="o">&amp;&amp;</span> <span class="nb">cd </span>angulectron
 yarn init
 // 一路回车或细心输入配置
 </code></pre></div></div>
 
-<p>得到类似如下内容的<code class="highlighter-rouge">package.json</code>文件：</p>
+<p>得到类似如下内容的<code class="language-plaintext highlighter-rouge">package.json</code>文件：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
@@ -81,10 +80,10 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <ul>
   <li>第一波依赖是angular相关的几个依赖，已经足够最简单运行了</li>
   <li>第二波是大哥webpack还有干爹typescript。其中typescript必须指定2版本(目前最新已经到3以上了)。</li>
-  <li>第三波是webpack家族的一些loader和plugin，以及<code class="highlighter-rouge">rimraf</code>用于删除生成的文件，<code class="highlighter-rouge">http-server</code>用于运行小服务器来访问生成的资源。</li>
+  <li>第三波是webpack家族的一些loader和plugin，以及<code class="language-plaintext highlighter-rouge">rimraf</code>用于删除生成的文件，<code class="language-plaintext highlighter-rouge">http-server</code>用于运行小服务器来访问生成的资源。</li>
 </ul>
 
-<p>再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个<code class="highlighter-rouge">package.json</code>文件的项目，内容像这样：</p>
+<p>再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个<code class="language-plaintext highlighter-rouge">package.json</code>文件的项目，内容像这样：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"angulectron"</span><span class="p">,</span><span class="w">
@@ -164,7 +163,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 
 <h2 id="最简单源代码">最简单源代码</h2>
 
-<p>抛开脚手架，项目真正的源代码要放到一个<code class="highlighter-rouge">src</code>目录下，本文重点不在此，所以除了入口文件外只创建最简单的源代码，只有一个根模块，根组件，以及外联的模板和样式文件，像这样：</p>
+<p>抛开脚手架，项目真正的源代码要放到一个<code class="language-plaintext highlighter-rouge">src</code>目录下，本文重点不在此，所以除了入口文件外只创建最简单的源代码，只有一个根模块，根组件，以及外联的模板和样式文件，像这样：</p>
 
 <p><img src="/assets/images/201810/1.png" alt="目录结构" /></p>
 
@@ -181,7 +180,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <span class="k">import</span> <span class="p">{</span> <span class="nx">AppModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./app/app.module</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="c1">// webpack DefinePlugin 注入的变量，需要声明，否则编辑器会报错</span>
-<span class="nx">declare</span> <span class="kd">var</span> <span class="nx">ENV</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="kr">declare</span> <span class="kd">var</span> <span class="nx">ENV</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="nx">ENV</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">enableProdMode</span><span class="p">();</span>
@@ -256,7 +255,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>其中报错是因为未配置<code class="highlighter-rouge">tsconfig.json</code>，编辑器报了<code class="highlighter-rouge">es7</code>装饰器新特性的警告，所以在项目根目录新建一个<code class="highlighter-rouge">tsconfig.json</code>：</p>
+<p>其中报错是因为未配置<code class="language-plaintext highlighter-rouge">tsconfig.json</code>，编辑器报了<code class="language-plaintext highlighter-rouge">es7</code>装饰器新特性的警告，所以在项目根目录新建一个<code class="language-plaintext highlighter-rouge">tsconfig.json</code>：</p>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
     </span><span class="nl">"compilerOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -285,20 +284,20 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 
 <h2 id="webpack">webpack</h2>
 
-<p><code class="highlighter-rouge">webpack</code>配置是重头戏，实际上<code class="highlighter-rouge">@angular/cli</code>生成的项目内部也使用了<code class="highlighter-rouge">webpack</code>，不过已经被封装好了使用时完全不用去关心。</p>
+<p><code class="language-plaintext highlighter-rouge">webpack</code>配置是重头戏，实际上<code class="language-plaintext highlighter-rouge">@angular/cli</code>生成的项目内部也使用了<code class="language-plaintext highlighter-rouge">webpack</code>，不过已经被封装好了使用时完全不用去关心。</p>
 
-<p>基本的<code class="highlighter-rouge">webpack</code>配置为一个名为<code class="highlighter-rouge">webpack.config.js</code>的文件，文件导出一个<code class="highlighter-rouge">object</code>，这个<code class="highlighter-rouge">object</code>至少包含以下几部分：</p>
+<p>基本的<code class="language-plaintext highlighter-rouge">webpack</code>配置为一个名为<code class="language-plaintext highlighter-rouge">webpack.config.js</code>的文件，文件导出一个<code class="language-plaintext highlighter-rouge">object</code>，这个<code class="language-plaintext highlighter-rouge">object</code>至少包含以下几部分：</p>
 
 <ol>
-  <li><strong>entry</strong> 指定入口文件，我们这里是<code class="highlighter-rouge">main.ts</code>和<code class="highlighter-rouge">polyfills.ts</code>这两个</li>
+  <li><strong>entry</strong> 指定入口文件，我们这里是<code class="language-plaintext highlighter-rouge">main.ts</code>和<code class="language-plaintext highlighter-rouge">polyfills.ts</code>这两个</li>
   <li><strong>output</strong> 指定输出的目录、名字等</li>
-  <li><strong>module.rules</strong> 配置各种<code class="highlighter-rouge">loader</code></li>
+  <li><strong>module.rules</strong> 配置各种<code class="language-plaintext highlighter-rouge">loader</code></li>
   <li><strong>plugins</strong> 配置各种额外规则</li>
   <li><strong>optimization</strong> 配置资源压缩以及分包</li>
   <li><strong>devServer</strong> 配置开发服务器</li>
 </ol>
 
-<p>针对<code class="highlighter-rouge">angular</code>项目特有的配置项是两个<code class="highlighter-rouge">loader</code>和一个<code class="highlighter-rouge">plugin</code>，均来自于<code class="highlighter-rouge">@ngtools/webpack</code>这个包，实际上<code class="highlighter-rouge">@angular/cli</code>内部也使用了这个东西，依靠这个包才让手动配置<code class="highlighter-rouge">angular</code>项目的<code class="highlighter-rouge">webpack</code>变得简单(对比angular2刚发布的年代)。</p>
+<p>针对<code class="language-plaintext highlighter-rouge">angular</code>项目特有的配置项是两个<code class="language-plaintext highlighter-rouge">loader</code>和一个<code class="language-plaintext highlighter-rouge">plugin</code>，均来自于<code class="language-plaintext highlighter-rouge">@ngtools/webpack</code>这个包，实际上<code class="language-plaintext highlighter-rouge">@angular/cli</code>内部也使用了这个东西，依靠这个包才让手动配置<code class="language-plaintext highlighter-rouge">angular</code>项目的<code class="language-plaintext highlighter-rouge">webpack</code>变得简单(对比angular2刚发布的年代)。</p>
 
 <p>最终一个完整的webpack配置像这样：</p>
 
@@ -437,21 +436,21 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>现在执行命令<code class="highlighter-rouge">yarn prod</code>，以上配置将生成生产模式加AOT模式下的输出，并且最终代码都会压缩至最小体积，像这样：</p>
+<p>现在执行命令<code class="language-plaintext highlighter-rouge">yarn prod</code>，以上配置将生成生产模式加AOT模式下的输出，并且最终代码都会压缩至最小体积，像这样：</p>
 
 <p><img src="/assets/images/201810/2.png" alt="输出" /></p>
 
-<p>执行<code class="highlighter-rouge">yarn http</code>运行一下看看：</p>
+<p>执行<code class="language-plaintext highlighter-rouge">yarn http</code>运行一下看看：</p>
 
 <p><img src="/assets/images/201810/3.png" alt="运行" /></p>
 
 <p>至此纯手工最简单的angular项目就完成了。对这个小项目做几个总结：</p>
 
 <ol>
-  <li>其中的配置只针对<code class="highlighter-rouge">prod + AOT</code>模式，即不是<code class="highlighter-rouge">JIT</code>模式</li>
-  <li>对于开发环境可以再新增一个<code class="highlighter-rouge">webpack.config.dev.js</code>来配置生产环境下的webpack规则，并搭配<code class="highlighter-rouge">webpack-dev-server</code>使用(本文未完成这一步)。对于生产环境就像文中这样先<code class="highlighter-rouge">yarn prod</code>，然后扔到服务器上。</li>
-  <li><code class="highlighter-rouge">@ngtools/webpack</code>与<code class="highlighter-rouge">MiniCssExtractPlugin</code>不兼容，所以注意配置<code class="highlighter-rouge">exclude</code>规则。</li>
-  <li><code class="highlighter-rouge">tsconfig.json</code>中的<code class="highlighter-rouge">"module": "esnext"</code>这一配置相比<code class="highlighter-rouge">"module": "commonjs"</code>能减少不少体积。</li>
+  <li>其中的配置只针对<code class="language-plaintext highlighter-rouge">prod + AOT</code>模式，即不是<code class="language-plaintext highlighter-rouge">JIT</code>模式</li>
+  <li>对于开发环境可以再新增一个<code class="language-plaintext highlighter-rouge">webpack.config.dev.js</code>来配置生产环境下的webpack规则，并搭配<code class="language-plaintext highlighter-rouge">webpack-dev-server</code>使用(本文未完成这一步)。对于生产环境就像文中这样先<code class="language-plaintext highlighter-rouge">yarn prod</code>，然后扔到服务器上。</li>
+  <li><code class="language-plaintext highlighter-rouge">@ngtools/webpack</code>与<code class="language-plaintext highlighter-rouge">MiniCssExtractPlugin</code>不兼容，所以注意配置<code class="language-plaintext highlighter-rouge">exclude</code>规则。</li>
+  <li><code class="language-plaintext highlighter-rouge">tsconfig.json</code>中的<code class="language-plaintext highlighter-rouge">"module": "esnext"</code>这一配置相比<code class="language-plaintext highlighter-rouge">"module": "commonjs"</code>能减少不少体积。</li>
 </ol>
 
 <h2 id="相关链接">相关链接</h2>
@@ -527,9 +526,5 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

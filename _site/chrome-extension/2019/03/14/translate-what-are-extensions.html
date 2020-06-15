@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -52,7 +51,7 @@
 
 <p>用户接口(应用入口)需要是最小化的并且包含具体意图的。可以是一些简单的图标。<em>这里原文以 Google Mail Checker extension 的插件图标举例</em>。</p>
 
-<p>插件文件被压缩在单个<code class="highlighter-rouge">.crx</code>后缀的应用程序包中来让用户下载安装。这意味着插件不依赖于web提供内容(而是下载内容到本地然后运行)。</p>
+<p>插件文件被压缩在单个<code class="language-plaintext highlighter-rouge">.crx</code>后缀的应用程序包中来让用户下载安装。这意味着插件不依赖于web提供内容(而是下载内容到本地然后运行)。</p>
 
 <p>插件通过<a href="https://chrome.google.com/webstore/developer/dashboard">Chrome Developer Dashboard</a>来部署，并发布到<a href="http://chrome.google.com/webstore">Chrome Web Store</a>，更多关于发布的信息请前往<a href="http://code.google.com/chrome/webstore">store developer documentation</a>。</p>
 
@@ -60,9 +59,9 @@
 
 <p>现在通过一个快速起步项目来体验插件。先创建一个新的目录来存放插件的文件，或直接下载<a href="https://developer.chrome.com/extensions/samples#search:hello">示例项目</a>。<strong>这里其实只要准备一个传统的web项目即可，可以简单到只有一个包含最简单内容的index.html</strong>。</p>
 
-<p>下一步，添加一个文件名为<code class="highlighter-rouge">manifest.json</code>，内容如下：</p>
+<p>下一步，添加一个文件名为<code class="language-plaintext highlighter-rouge">manifest.json</code>，内容如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
     "name": "Hello Extensions",
     "description" : "Base Level Extension",
     "version": "1.0",
@@ -74,20 +73,20 @@
 }
 </code></pre></div></div>
 
-<p>每一个插件都需要一个manifest文件，尽管大多数插件都不会在这个文件中做太多事情。对于这个起步项目，此文件的<code class="highlighter-rouge">browser_action</code>字段中定义了此插件包含的一个默认弹出页面和默认图标。</p>
+<p>每一个插件都需要一个manifest文件，尽管大多数插件都不会在这个文件中做太多事情。对于这个起步项目，此文件的<code class="language-plaintext highlighter-rouge">browser_action</code>字段中定义了此插件包含的一个默认弹出页面和默认图标。</p>
 
-<p>下载 <a href="https://developer.chrome.com/static/images/index/hello_extensions.png">hello_extensions.png</a> 并创建<code class="highlighter-rouge">hello.html</code>：</p>
+<p>下载 <a href="https://developer.chrome.com/static/images/index/hello_extensions.png">hello_extensions.png</a> 并创建<code class="language-plaintext highlighter-rouge">hello.html</code>：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
-    <span class="nt">&lt;body&gt;</span>
-      <span class="nt">&lt;h1&gt;</span>Hello Extensions<span class="nt">&lt;/h1&gt;</span>
-    <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;html&gt;
+    &lt;body&gt;
+      &lt;h1&gt;Hello Extensions&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
 </code></pre></div></div>
 
-<p>现在点击插件图标将会显示这个 <code class="highlighter-rouge">hello.html</code> 页面。下一步是添加一个快捷键命令，这一步不是必要的，但是很有趣：</p>
+<p>现在点击插件图标将会显示这个 <code class="language-plaintext highlighter-rouge">hello.html</code> 页面。下一步是添加一个快捷键命令，这一步不是必要的，但是很有趣：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
     "name": "Hello Extensions",
     "description" : "Base Level Extension",
     "version": "1.0",
@@ -111,12 +110,12 @@
 <p>最后一步是在本地安装这个插件：</p>
 
 <ol>
-  <li>在 Chrome 中跳转到 <code class="highlighter-rouge">chrome://extensions</code>，你也可以直接点击<code class="highlighter-rouge">浏览器右上角 -&gt; 更多工具 -&gt; 扩展程序</code>。</li>
-  <li>开启此页面右上角的<code class="highlighter-rouge">开发者模式</code>。</li>
-  <li>点击 <code class="highlighter-rouge">加载已解压的扩展程序</code> 并选择这个插件项目所在目录。</li>
+  <li>在 Chrome 中跳转到 <code class="language-plaintext highlighter-rouge">chrome://extensions</code>，你也可以直接点击<code class="language-plaintext highlighter-rouge">浏览器右上角 -&gt; 更多工具 -&gt; 扩展程序</code>。</li>
+  <li>开启此页面右上角的<code class="language-plaintext highlighter-rouge">开发者模式</code>。</li>
+  <li>点击 <code class="language-plaintext highlighter-rouge">加载已解压的扩展程序</code> 并选择这个插件项目所在目录。</li>
 </ol>
 
-<p>恭喜！你现在可以使用你这个基于弹出页面的插件了，只需点击右上角的插件图标或者使用快捷键<code class="highlighter-rouge">Ctrl+Shift+F</code>。</p>
+<p>恭喜！你现在可以使用你这个基于弹出页面的插件了，只需点击右上角的插件图标或者使用快捷键<code class="language-plaintext highlighter-rouge">Ctrl+Shift+F</code>。</p>
 
     </section>
     <section class="yitiblog-pager block flex">
@@ -184,9 +183,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

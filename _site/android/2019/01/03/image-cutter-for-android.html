@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -49,9 +48,9 @@
 <p>包括本文将实现的工具在内，笔者目前也收集了整整2个成熟好用的图片相关工具类，一个就是<a href="https://github.com/bumptech/glide">Glide</a>，另一个是<a href="https://github.com/davemorrissey/subsampling-scale-image-view">Subsampling Scale Image View</a>，并且膨胀地以为不再需要其他任何图片相关的工具库了。这个想法差点被动摇的一次就是现在需要加一个图片裁剪功能了，一想到网上现有的那些酷炫的工具库，就担心起要不要用和用哪个的问题，但是当笔者看了这篇文章——<a href="https://yalantis.com/blog/how-we-created-ucrop-our-own-image-cropping-library-for-android/">How We Created uCrop</a>，就对引入第三方图片裁剪库更加抵触了，思来想去自己内心的想法都是：
 <strong>为了传一张图片然后确定参数挖出一张新图片来这样一个需求而以来别人开发的自己无法控制或灵活定制的库是不值得的</strong>。</p>
 
-<p>本文将纯依赖<code class="highlighter-rouge">SubsamplingScaleImageView</code>来实现一个支持缩放和旋转的图片裁剪组件，<code class="highlighter-rouge">SubsamplingScaleImageView</code>帮助我完成了其中图片缩放、旋转、拖拽的底层触摸交互以及图片的内存管理工作，这让我可以专心的利用这些动作来确定一件事：<strong>我需要裁剪出一张图片如何旋转/缩放后的哪个部分</strong>。然后就可以根据这些信息从原图创建出需要的裁剪图。</p>
+<p>本文将纯依赖<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>来实现一个支持缩放和旋转的图片裁剪组件，<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>帮助我完成了其中图片缩放、旋转、拖拽的底层触摸交互以及图片的内存管理工作，这让我可以专心的利用这些动作来确定一件事：<strong>我需要裁剪出一张图片如何旋转/缩放后的哪个部分</strong>。然后就可以根据这些信息从原图创建出需要的裁剪图。</p>
 
-<p>依靠<code class="highlighter-rouge">SubsamplingScaleImageView</code>已经具备的能力，这个图片裁剪组件的kotlin代码目前包含非关键代码在内也只有300行出头。</p>
+<p>依靠<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>已经具备的能力，这个图片裁剪组件的kotlin代码目前包含非关键代码在内也只有300行出头。</p>
 
 <h2 id="实现过程总览">实现过程总览</h2>
 
@@ -65,7 +64,7 @@
 
 <h2 id="自定义view">自定义View</h2>
 
-<p>首先给这个图片裁剪工具起个难听的名字叫做<code class="highlighter-rouge">YmageCutterView</code>，其布局基于<code class="highlighter-rouge">ConstraintLayout</code>中间放一个指定宽高的矩形作为裁剪框，四周是四个半透明矩形作为遮罩，底下是原图。设想就是缩放和拖拽原图，再以中间裁剪框作为边界裁剪出目标图。像这样：</p>
+<p>首先给这个图片裁剪工具起个难听的名字叫做<code class="language-plaintext highlighter-rouge">YmageCutterView</code>，其布局基于<code class="language-plaintext highlighter-rouge">ConstraintLayout</code>中间放一个指定宽高的矩形作为裁剪框，四周是四个半透明矩形作为遮罩，底下是原图。设想就是缩放和拖拽原图，再以中间裁剪框作为边界裁剪出目标图。像这样：</p>
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
     <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
     <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
@@ -124,32 +123,32 @@
 <span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
 </code></pre></div></div>
 
-<p>然后为了使裁剪尺寸支持自定义，需要设置一个自定义参数叫<code class="highlighter-rouge">ratio</code>，用来传入需要裁剪图片的宽高比，比如支持这么使用：</p>
+<p>然后为了使裁剪尺寸支持自定义，需要设置一个自定义参数叫<code class="language-plaintext highlighter-rouge">ratio</code>，用来传入需要裁剪图片的宽高比，比如支持这么使用：</p>
 <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;com.yitimo.ymage.cutter.YmageCutterView</span>
         <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
         <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
         <span class="na">app:ratio=</span><span class="s">"4:3"</span><span class="nt">/&gt;</span>
 </code></pre></div></div>
-<p>上面这样中间的裁剪框就是个4:3的矩形。至于用户通过拖拽实时更改这个裁剪框尺寸这个需求，本文还未去实现，讲真其使用场景也不多，后续再考虑补足。由于使用的是<code class="highlighter-rouge">ConstraintLayout</code>，只需要将传入的<code class="highlighter-rouge">ratio</code>属性设置给中间裁剪框的<code class="highlighter-rouge">layoutParams.dimensionRatio</code>就完成裁剪图片宽高比的更新了。</p>
+<p>上面这样中间的裁剪框就是个4:3的矩形。至于用户通过拖拽实时更改这个裁剪框尺寸这个需求，本文还未去实现，讲真其使用场景也不多，后续再考虑补足。由于使用的是<code class="language-plaintext highlighter-rouge">ConstraintLayout</code>，只需要将传入的<code class="language-plaintext highlighter-rouge">ratio</code>属性设置给中间裁剪框的<code class="language-plaintext highlighter-rouge">layoutParams.dimensionRatio</code>就完成裁剪图片宽高比的更新了。</p>
 
 <h2 id="拖拽位置边界的保护">拖拽位置边界的保护</h2>
 
-<p><code class="highlighter-rouge">SubsamplingScaleImageView</code>本身已经实现了较完整的触摸交互，包括拖拽和缩放，在它的基础上我们先加一个边界保护：</p>
-<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">originIV</span><span class="p">.</span><span class="n">setOnTouchListener</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">event</span> <span class="p">-&gt;</span>
+<p><code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>本身已经实现了较完整的触摸交互，包括拖拽和缩放，在它的基础上我们先加一个边界保护：</p>
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">originIV</span><span class="p">.</span><span class="nf">setOnTouchListener</span> <span class="p">{</span> <span class="n">_</span><span class="p">,</span> <span class="n">event</span> <span class="p">-&gt;</span>
     <span class="k">when</span> <span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">action</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">MotionEvent</span><span class="p">.</span><span class="n">ACTION_UP</span><span class="p">,</span> <span class="n">MotionEvent</span><span class="p">.</span><span class="n">ACTION_CANCEL</span> <span class="p">-&gt;</span> <span class="p">{</span>
+        <span class="nc">MotionEvent</span><span class="p">.</span><span class="nc">ACTION_UP</span><span class="p">,</span> <span class="nc">MotionEvent</span><span class="p">.</span><span class="nc">ACTION_CANCEL</span> <span class="p">-&gt;</span> <span class="p">{</span>
             <span class="n">inDrag</span> <span class="p">=</span> <span class="k">false</span>
             <span class="n">inCheck</span> <span class="p">=</span> <span class="k">false</span>
-            <span class="n">lazyCheck</span><span class="o">?.</span><span class="n">cancel</span><span class="p">()</span>
+            <span class="n">lazyCheck</span><span class="o">?.</span><span class="nf">cancel</span><span class="p">()</span>
             <span class="n">lazyCheck</span> <span class="p">=</span> <span class="k">null</span>
-            <span class="n">lazyCheck</span> <span class="p">=</span> <span class="n">Timer</span><span class="p">().</span><span class="n">schedule</span><span class="p">(</span><span class="m">100</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">lazyCheck</span> <span class="p">=</span> <span class="nc">Timer</span><span class="p">().</span><span class="nf">schedule</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(!</span><span class="n">inDrag</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">inCheck</span><span class="p">)</span> <span class="p">{</span>
                     <span class="n">inCheck</span> <span class="p">=</span> <span class="k">true</span>
-                    <span class="n">resolvePositionCheck</span><span class="p">()</span>
+                    <span class="nf">resolvePositionCheck</span><span class="p">()</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="n">MotionEvent</span><span class="p">.</span><span class="n">ACTION_DOWN</span> <span class="p">-&gt;</span> <span class="p">{</span>
+        <span class="nc">MotionEvent</span><span class="p">.</span><span class="nc">ACTION_DOWN</span> <span class="p">-&gt;</span> <span class="p">{</span>
             <span class="n">inDrag</span> <span class="p">=</span> <span class="k">true</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -168,11 +167,11 @@
 
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="k">fun</span> <span class="nf">resolvePositionCheck</span><span class="p">()</span> <span class="p">{</span>
     <span class="kd">val</span> <span class="py">center</span> <span class="p">=</span> <span class="n">originIV</span><span class="p">.</span><span class="n">center</span> <span class="o">?:</span> <span class="k">return</span>
-    <span class="kd">val</span> <span class="py">x</span><span class="p">:</span> <span class="n">Float</span>
-    <span class="kd">val</span> <span class="py">y</span><span class="p">:</span> <span class="n">Float</span>
+    <span class="kd">val</span> <span class="py">x</span><span class="p">:</span> <span class="nc">Float</span>
+    <span class="kd">val</span> <span class="py">y</span><span class="p">:</span> <span class="nc">Float</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">orientation</span> <span class="p">==</span> <span class="n">rotation0</span> <span class="p">||</span> <span class="n">originIV</span><span class="p">.</span><span class="n">orientation</span> <span class="p">==</span> <span class="n">rotation180</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">val</span> <span class="py">left</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
-        <span class="kd">val</span> <span class="py">top</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
+        <span class="kd">val</span> <span class="py">left</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
+        <span class="kd">val</span> <span class="py">top</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="kd">val</span> <span class="py">right</span> <span class="p">=</span> <span class="n">left</span> <span class="p">+</span> <span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">sWidth</span><span class="p">*</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">)/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="kd">val</span> <span class="py">bottom</span> <span class="p">=</span> <span class="n">top</span> <span class="p">+</span> <span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">sHeight</span><span class="p">*</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">)/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="n">limitRect</span><span class="p">.</span><span class="k">set</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">)</span>
@@ -215,8 +214,8 @@
             <span class="n">center</span><span class="p">.</span><span class="n">y</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="kd">val</span> <span class="py">left</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
-        <span class="kd">val</span> <span class="py">top</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
+        <span class="kd">val</span> <span class="py">left</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
+        <span class="kd">val</span> <span class="py">top</span> <span class="p">=</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="kd">val</span> <span class="py">right</span> <span class="p">=</span> <span class="n">left</span> <span class="p">+</span> <span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">sHeight</span><span class="p">*</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">)/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="kd">val</span> <span class="py">bottom</span> <span class="p">=</span> <span class="n">top</span> <span class="p">+</span> <span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">sWidth</span><span class="p">*</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">)/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span>
         <span class="n">limitRect</span><span class="p">.</span><span class="k">set</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span><span class="p">)</span>
@@ -260,12 +259,12 @@
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="p">!=</span> <span class="n">center</span><span class="p">.</span><span class="n">x</span> <span class="p">||</span> <span class="n">y</span> <span class="p">!=</span> <span class="n">center</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">GlobalScope</span><span class="p">.</span><span class="n">launch</span><span class="p">(</span><span class="n">Dispatchers</span><span class="p">.</span><span class="n">Main</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">originIV</span><span class="p">.</span><span class="n">animateCenter</span><span class="p">(</span><span class="n">PointF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
-                    <span class="o">?.</span><span class="n">withDuration</span><span class="p">(</span><span class="m">100</span><span class="p">)</span>
-                    <span class="o">?.</span><span class="n">withEasing</span><span class="p">(</span><span class="n">SubsamplingScaleImageView</span><span class="p">.</span><span class="n">EASE_OUT_QUAD</span><span class="p">)</span>
-                    <span class="o">?.</span><span class="n">withInterruptible</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
-                    <span class="o">?.</span><span class="n">start</span><span class="p">()</span>
+        <span class="nc">GlobalScope</span><span class="p">.</span><span class="nf">launch</span><span class="p">(</span><span class="nc">Dispatchers</span><span class="p">.</span><span class="nc">Main</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">originIV</span><span class="p">.</span><span class="nf">animateCenter</span><span class="p">(</span><span class="nc">PointF</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                    <span class="o">?.</span><span class="nf">withDuration</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+                    <span class="o">?.</span><span class="nf">withEasing</span><span class="p">(</span><span class="nc">SubsamplingScaleImageView</span><span class="p">.</span><span class="nc">EASE_OUT_QUAD</span><span class="p">)</span>
+                    <span class="o">?.</span><span class="nf">withInterruptible</span><span class="p">(</span><span class="k">false</span><span class="p">)</span>
+                    <span class="o">?.</span><span class="nf">start</span><span class="p">()</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -275,48 +274,48 @@
 
 <h2 id="旋转能力和执行裁剪">旋转能力和执行裁剪</h2>
 
-<p>图片的旋转只需设置<code class="highlighter-rouge">SubsamplingScaleImageView</code>的<code class="highlighter-rouge">orientation</code>即可，麻烦的是不同旋转角度下原图的宽高要区分处理，也就是说，0度和180度下原图的宽就是宽，高就是高，但90度和270度下原图的宽是高而高是宽。这在上文边界保护和下文执行裁剪时都要加以区分处理。</p>
+<p>图片的旋转只需设置<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>的<code class="language-plaintext highlighter-rouge">orientation</code>即可，麻烦的是不同旋转角度下原图的宽高要区分处理，也就是说，0度和180度下原图的宽就是宽，高就是高，但90度和270度下原图的宽是高而高是宽。这在上文边界保护和下文执行裁剪时都要加以区分处理。</p>
 
 <p>执行裁剪作为一个方法提供给外界调用，实现如下：</p>
 <div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="nf">shutter</span><span class="p">():</span> <span class="nc">Bitmap</span><span class="p">?</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">resultBitmap</span><span class="o">?.</span><span class="n">isRecycled</span> <span class="p">==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">resultBitmap</span><span class="o">?.</span><span class="n">recycle</span><span class="p">()</span>
+        <span class="n">resultBitmap</span><span class="o">?.</span><span class="nf">recycle</span><span class="p">()</span>
     <span class="p">}</span>
     <span class="kd">val</span> <span class="py">center</span> <span class="p">=</span> <span class="n">originIV</span><span class="p">.</span><span class="n">center</span> <span class="o">?:</span> <span class="k">return</span> <span class="k">null</span>
-    <span class="kd">val</span> <span class="py">cut</span> <span class="p">=</span> <span class="n">Rect</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">x</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
-            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">y</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
-            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">x</span> <span class="p">+</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="n">toInt</span><span class="p">(),</span>
-            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">y</span> <span class="p">+</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="m">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="n">toInt</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">cut</span> <span class="p">=</span> <span class="nc">Rect</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">x</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="nf">toInt</span><span class="p">(),</span>
+            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">y</span> <span class="p">-</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="nf">toInt</span><span class="p">(),</span>
+            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">x</span> <span class="p">+</span> <span class="n">frameV</span><span class="p">.</span><span class="n">width</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="nf">toInt</span><span class="p">(),</span>
+            <span class="p">(</span><span class="n">center</span><span class="p">.</span><span class="n">y</span> <span class="p">+</span> <span class="n">frameV</span><span class="p">.</span><span class="n">height</span><span class="p">/</span><span class="mi">2</span><span class="p">/</span><span class="n">originIV</span><span class="p">.</span><span class="n">scale</span><span class="p">).</span><span class="nf">toInt</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="kd">val</span> <span class="py">bitmap</span> <span class="p">=</span> <span class="n">BitmapFactory</span><span class="p">.</span><span class="n">decodeFile</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
-    <span class="kd">val</span> <span class="py">matrix</span> <span class="p">=</span> <span class="n">Matrix</span><span class="p">()</span>
-    <span class="n">matrix</span><span class="p">.</span><span class="n">postRotate</span><span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">orientation</span><span class="p">.</span><span class="n">toFloat</span><span class="p">())</span>
-    <span class="kd">val</span> <span class="py">rotatedBitmap</span> <span class="p">=</span> <span class="n">Bitmap</span><span class="p">.</span><span class="n">createBitmap</span><span class="p">(</span><span class="n">bitmap</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
-    <span class="n">resultBitmap</span> <span class="p">=</span> <span class="n">Bitmap</span><span class="p">.</span><span class="n">createBitmap</span><span class="p">(</span><span class="n">rotatedBitmap</span><span class="p">,</span> <span class="n">Math</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Math</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">top</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Math</span><span class="p">.</span><span class="n">min</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">right</span><span class="p">-</span><span class="n">cut</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">width</span><span class="p">),</span> <span class="n">Math</span><span class="p">.</span><span class="n">min</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">bottom</span><span class="p">-</span><span class="n">cut</span><span class="p">.</span><span class="n">top</span><span class="p">,</span> <span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">height</span><span class="p">),</span> <span class="k">null</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">bitmap</span> <span class="p">=</span> <span class="nc">BitmapFactory</span><span class="p">.</span><span class="nf">decodeFile</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+    <span class="kd">val</span> <span class="py">matrix</span> <span class="p">=</span> <span class="nc">Matrix</span><span class="p">()</span>
+    <span class="n">matrix</span><span class="p">.</span><span class="nf">postRotate</span><span class="p">(</span><span class="n">originIV</span><span class="p">.</span><span class="n">orientation</span><span class="p">.</span><span class="nf">toFloat</span><span class="p">())</span>
+    <span class="kd">val</span> <span class="py">rotatedBitmap</span> <span class="p">=</span> <span class="nc">Bitmap</span><span class="p">.</span><span class="nf">createBitmap</span><span class="p">(</span><span class="n">bitmap</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> <span class="n">bitmap</span><span class="p">.</span><span class="n">height</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
+    <span class="n">resultBitmap</span> <span class="p">=</span> <span class="nc">Bitmap</span><span class="p">.</span><span class="nf">createBitmap</span><span class="p">(</span><span class="n">rotatedBitmap</span><span class="p">,</span> <span class="nc">Math</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nc">Math</span><span class="p">.</span><span class="nf">max</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">top</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nc">Math</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">right-cut</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">width</span><span class="p">),</span> <span class="nc">Math</span><span class="p">.</span><span class="nf">min</span><span class="p">(</span><span class="n">cut</span><span class="p">.</span><span class="n">bottom-cut</span><span class="p">.</span><span class="n">top</span><span class="p">,</span> <span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">height</span><span class="p">),</span> <span class="k">null</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">bitmap</span> <span class="p">!=</span> <span class="n">resultBitmap</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">bitmap</span><span class="p">.</span><span class="n">isRecycled</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">bitmap</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
+        <span class="n">bitmap</span><span class="p">.</span><span class="nf">recycle</span><span class="p">()</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">rotatedBitmap</span> <span class="p">!=</span> <span class="n">resultBitmap</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">isRecycled</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">rotatedBitmap</span><span class="p">.</span><span class="n">recycle</span><span class="p">()</span>
+        <span class="n">rotatedBitmap</span><span class="p">.</span><span class="nf">recycle</span><span class="p">()</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">resultBitmap</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>此方法做的事情就是，先将原图根据当前的旋转角度旋转得到源bitmap，再根据当前原图的缩放和位置确定裁剪图片的起点坐标(x,y)以及宽高，调用<code class="highlighter-rouge">createBitmap</code>挖出裁剪图，最后返回裁剪后的目标bitmap。</p>
+<p>此方法做的事情就是，先将原图根据当前的旋转角度旋转得到源bitmap，再根据当前原图的缩放和位置确定裁剪图片的起点坐标(x,y)以及宽高，调用<code class="language-plaintext highlighter-rouge">createBitmap</code>挖出裁剪图，最后返回裁剪后的目标bitmap。</p>
 
 <h2 id="总结">总结</h2>
 
-<p>至此这个图片裁剪组件已经完成，说白了是以自定义View的形式对<code class="highlighter-rouge">SubsamplingScaleImageView</code>进行扩展和二次封装，使用起来需要把这个View放到自己的Activity中，目前支持传入ratio属性设置裁剪图的宽高比，并提供了这么几个方法供调用：</p>
+<p>至此这个图片裁剪组件已经完成，说白了是以自定义View的形式对<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>进行扩展和二次封装，使用起来需要把这个View放到自己的Activity中，目前支持传入ratio属性设置裁剪图的宽高比，并提供了这么几个方法供调用：</p>
 
 <ol>
-  <li><code class="highlighter-rouge">reset()</code> 重设图片的旋转和缩放</li>
-  <li><code class="highlighter-rouge">rotate(degree: Int)</code> 执行旋转，角度必须为 <code class="highlighter-rouge">0, 90, 180, 270</code>的其中一个</li>
-  <li><code class="highlighter-rouge">shutter(): Bitmap?</code> 按快门方法，执行裁剪并返回bitmap</li>
+  <li><code class="language-plaintext highlighter-rouge">reset()</code> 重设图片的旋转和缩放</li>
+  <li><code class="language-plaintext highlighter-rouge">rotate(degree: Int)</code> 执行旋转，角度必须为 <code class="language-plaintext highlighter-rouge">0, 90, 180, 270</code>的其中一个</li>
+  <li><code class="language-plaintext highlighter-rouge">shutter(): Bitmap?</code> 按快门方法，执行裁剪并返回bitmap</li>
 </ol>
 
-<p>最后再次膜拜<code class="highlighter-rouge">SubsamplingScaleImageView</code>并附上本文项目<a href="https://github.com/yitimo/ymage">Github地址</a>。</p>
+<p>最后再次膜拜<code class="language-plaintext highlighter-rouge">SubsamplingScaleImageView</code>并附上本文项目<a href="https://github.com/yitimo/ymage">Github地址</a>。</p>
 
     </section>
     <section class="yitiblog-pager block flex">
@@ -384,9 +383,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

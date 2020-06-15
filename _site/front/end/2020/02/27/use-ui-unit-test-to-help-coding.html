@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -46,7 +45,7 @@
         <h1>测试react组件</h1>
         <h2 id="快照测试">快照测试</h2>
 
-<p>一般UI组件的测试方法都比较相似，React组件也是如此。渲染可视化的UI界面会需要我们运行起整个app(即真正运行应用然后用肉眼进行测试)，而我们可以使用测试渲染器来快速生成React组件树的序列化结果。比如下面这样测试一个组件<code class="highlighter-rouge">&lt;Link /&gt;</code>:</p>
+<p>一般UI组件的测试方法都比较相似，React组件也是如此。渲染可视化的UI界面会需要我们运行起整个app(即真正运行应用然后用肉眼进行测试)，而我们可以使用测试渲染器来快速生成React组件树的序列化结果。比如下面这样测试一个组件<code class="language-plaintext highlighter-rouge">&lt;Link /&gt;</code>:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">Link</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../Link.react</span><span class="dl">'</span><span class="p">;</span>
@@ -83,7 +82,7 @@
   <li>组件的实现改变了导致快照需要被更新</li>
 </ol>
 
-<p>如果是情况2，可以传入 <code class="highlighter-rouge">-u</code> 参数表明这次测试是用来更新快照的，还可以传入 <code class="highlighter-rouge">--testNamePattern</code> 来只更新匹配名称的快照。<strong>需要谨慎操作，不要无意将错误的快照更新了。</strong></p>
+<p>如果是情况2，可以传入 <code class="language-plaintext highlighter-rouge">-u</code> 参数表明这次测试是用来更新快照的，还可以传入 <code class="language-plaintext highlighter-rouge">--testNamePattern</code> 来只更新匹配名称的快照。<strong>需要谨慎操作，不要无意将错误的快照更新了。</strong></p>
 
 <h3 id="测试结果应该是恒定的">测试结果应该是恒定的</h3>
 
@@ -96,7 +95,7 @@
 
 <h3 id="在持续集成系统中-快照不会被自动编写">在持续集成系统中, 快照不会被自动编写</h3>
 
-<p>除非手动指定 <code class="highlighter-rouge">--updateSnapshot</code>, 当jest在持续集成系统中运行时，新快照都不会被自动编写。快照应该被当作是代码的一部分，应该在外部被测试通过，而不应该在持续集成系统中来更新快照。</p>
+<p>除非手动指定 <code class="language-plaintext highlighter-rouge">--updateSnapshot</code>, 当jest在持续集成系统中运行时，新快照都不会被自动编写。快照应该被当作是代码的一部分，应该在外部被测试通过，而不应该在持续集成系统中来更新快照。</p>
 
 <h3 id="使用场景">使用场景</h3>
 
@@ -115,7 +114,7 @@
 
 <h3 id="劝退">劝退</h3>
 
-<p>即使很多人声称<code class="highlighter-rouge">enzyme</code>为代表的的各种组件可以用来很容易的进行组件测试，但是对于UI组件这样以展示为目的的东西(不同于js模块)，把组件先渲染成虚拟DOM，并在脑海里想象这个虚拟DOM，然后用expect来验证虚拟DOM的各种属性，以及交互造成的属性变化，始终是抽象的。</p>
+<p>即使很多人声称<code class="language-plaintext highlighter-rouge">enzyme</code>为代表的的各种组件可以用来很容易的进行组件测试，但是对于UI组件这样以展示为目的的东西(不同于js模块)，把组件先渲染成虚拟DOM，并在脑海里想象这个虚拟DOM，然后用expect来验证虚拟DOM的各种属性，以及交互造成的属性变化，始终是抽象的。</p>
 
 <ul>
   <li>如果条件允许，能直接运行起应用亲自用肉眼和手指来测试一定是最高效直观的。</li>
@@ -147,7 +146,7 @@
 <span class="p">};</span>
 </code></pre></div></div>
 
-<p>上述代码浅渲染了<code class="highlighter-rouge">&lt;App /&gt;</code>组件, 并检查其是否存在标题为<code class="highlighter-rouge">Todos</code>的<code class="highlighter-rouge">h1</code>元素。过程比较抽象，由于没有实际运行应用，只能在脑海里想象这个组件会渲染成什么样，然后用你觉得足够的<code class="highlighter-rouge">expect</code>来证明。</p>
+<p>上述代码浅渲染了<code class="language-plaintext highlighter-rouge">&lt;App /&gt;</code>组件, 并检查其是否存在标题为<code class="language-plaintext highlighter-rouge">Todos</code>的<code class="language-plaintext highlighter-rouge">h1</code>元素。过程比较抽象，由于没有实际运行应用，只能在脑海里想象这个组件会渲染成什么样，然后用你觉得足够的<code class="language-plaintext highlighter-rouge">expect</code>来证明。</p>
 
     </section>
     <section class="yitiblog-pager block flex">
@@ -158,6 +157,11 @@
             </a>
         
         <div class="flex-1"></div>
+        
+            <a class="block next" href="/nodejs/2020/06/12/manage-token-in-eggjs.html">
+                在eggjs中管理微信token
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
         
     </section>
     <footer class="yitiblog-footer">
@@ -210,9 +214,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

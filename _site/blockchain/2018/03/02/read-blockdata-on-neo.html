@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,16 +43,16 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>NEO区块数据解析</h1>
-        <p>本文将通过NEO节点提供的<code class="highlighter-rouge">/rpc</code>接口中的<code class="highlighter-rouge">getblock</code>接口获取NEO测试网上的包含了各种类型的交易的区块数据并进行解析。</p>
+        <p>本文将通过NEO节点提供的<code class="language-plaintext highlighter-rouge">/rpc</code>接口中的<code class="language-plaintext highlighter-rouge">getblock</code>接口获取NEO测试网上的包含了各种类型的交易的区块数据并进行解析。</p>
 
-<p><code class="highlighter-rouge">getblock</code>接口支持两个参数，第一个是区块的哈希或者高度，第二个是用来指明返回哈希数据还是json数据。那么问题的关键就是哈希数据跟json数据之间的区别，NEO区块链上存储的是序列化过的哈希数据，而想要用户能看得懂区块数据就必须反序列化区块数据。</p>
+<p><code class="language-plaintext highlighter-rouge">getblock</code>接口支持两个参数，第一个是区块的哈希或者高度，第二个是用来指明返回哈希数据还是json数据。那么问题的关键就是哈希数据跟json数据之间的区别，NEO区块链上存储的是序列化过的哈希数据，而想要用户能看得懂区块数据就必须反序列化区块数据。</p>
 
 <p>比如直接获取NEO主网的创世区块得到的两种结果如下：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>000000000000000000000000000000000000000000000000000000000000000000000000f41bc036e39b0d6b0579c851c6fde83af802fa4e57bec0bc3365eae3abf43f8065fc8857000000001dac2b7c0000000059e75d652b5d3827bf04c165bbe9ef95cca4bf55010001510400001dac2b7c00000000400000455b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e882a1227d2c7b226c616e67223a22656e222c226e616d65223a22416e745368617265227d5d0000c16ff28623000000da1745e9b549bd0bfa1a569971c77eba30cd5a4b00000000400001445b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e5b881227d2c7b226c616e67223a22656e222c226e616d65223a22416e74436f696e227d5d0000c16ff286230008009f7fd096d37ed2c0e3f7f0cfc924beef4ffceb680000000001000000019b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc50000c16ff28623005fa99d93303775fe50ca119c327759313eccfa1c01000151
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>000000000000000000000000000000000000000000000000000000000000000000000000f41bc036e39b0d6b0579c851c6fde83af802fa4e57bec0bc3365eae3abf43f8065fc8857000000001dac2b7c0000000059e75d652b5d3827bf04c165bbe9ef95cca4bf55010001510400001dac2b7c00000000400000455b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e882a1227d2c7b226c616e67223a22656e222c226e616d65223a22416e745368617265227d5d0000c16ff28623000000da1745e9b549bd0bfa1a569971c77eba30cd5a4b00000000400001445b7b226c616e67223a227a682d434e222c226e616d65223a22e5b08fe89a81e5b881227d2c7b226c616e67223a22656e222c226e616d65223a22416e74436f696e227d5d0000c16ff286230008009f7fd096d37ed2c0e3f7f0cfc924beef4ffceb680000000001000000019b7cffdaa674beae0f930ebe6085af9093e5fe56b34a5c220ccdcf6efc336fc50000c16ff28623005fa99d93303775fe50ca119c327759313eccfa1c01000151
 </code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
     "hash": "0xd42561e3d30e15be6400b6df2f328e02d2bf6354c41dce433bc57687c82144bf",
     "size": 401,
     "version": 0,
@@ -208,9 +207,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

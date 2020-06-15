@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,7 +43,7 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>JavaScript模块化编程整理</h1>
-        <p>在上古时期(<code class="highlighter-rouge">ES3</code>)我们用<strong>直接在html中引入script</strong>的方式来开发web项目，而现在我们用比如webpack这样的工具来帮助我们做这件事。这让我们能更专注于实际项目代码的开发而不是忙于项目依赖、兼容性和代码压缩等重复性的工作。</p>
+        <p>在上古时期(<code class="language-plaintext highlighter-rouge">ES3</code>)我们用<strong>直接在html中引入script</strong>的方式来开发web项目，而现在我们用比如webpack这样的工具来帮助我们做这件事。这让我们能更专注于实际项目代码的开发而不是忙于项目依赖、兼容性和代码压缩等重复性的工作。</p>
 
 <p>本文将主要围绕<strong>webpack如何处理我们的JS代码</strong>这个问题来对JavaScript模块化编程进行梳理，包括以下几点:</p>
 
@@ -74,7 +73,7 @@
   <li>TypeScript和代码提示
     <ol>
       <li>TypeScript模块</li>
-      <li><code class="highlighter-rouge">.d.ts</code>文件和类型声明</li>
+      <li><code class="language-plaintext highlighter-rouge">.d.ts</code>文件和类型声明</li>
     </ol>
   </li>
 </ol>
@@ -85,13 +84,13 @@
 
 <p>我们知道node环境中直接就可以使用commonjs规范进行模块化，并根据目录/文件来区分模块。</p>
 
-<p>比如<code class="highlighter-rouge">./lib</code>或<code class="highlighter-rouge">./lib/index.js</code>或<code class="highlighter-rouge">lib.js</code>都可以作为<code class="highlighter-rouge">lib</code>模块来使用。我们通过<code class="highlighter-rouge">module.exports</code>来导出变量并通过<code class="highlighter-rouge">require</code>来导入变量。</p>
+<p>比如<code class="language-plaintext highlighter-rouge">./lib</code>或<code class="language-plaintext highlighter-rouge">./lib/index.js</code>或<code class="language-plaintext highlighter-rouge">lib.js</code>都可以作为<code class="language-plaintext highlighter-rouge">lib</code>模块来使用。我们通过<code class="language-plaintext highlighter-rouge">module.exports</code>来导出变量并通过<code class="language-plaintext highlighter-rouge">require</code>来导入变量。</p>
 
-<p>但是在浏览器环境中我们无法直接使用commonjs，所以当我们发现自己项目的src目录下明明使用了<code class="highlighter-rouge">module.exports</code>这些语法却能在浏览器中生效时，这一定是webpack帮我们做了些什么。</p>
+<p>但是在浏览器环境中我们无法直接使用commonjs，所以当我们发现自己项目的src目录下明明使用了<code class="language-plaintext highlighter-rouge">module.exports</code>这些语法却能在浏览器中生效时，这一定是webpack帮我们做了些什么。</p>
 
 <h3 id="浏览器环境的js模块化">浏览器环境的JS模块化</h3>
 
-<p>现在准备一个最简单的基于webpack的web项目，包含一个名为<code class="highlighter-rouge">calendar</code>的模块：</p>
+<p>现在准备一个最简单的基于webpack的web项目，包含一个名为<code class="language-plaintext highlighter-rouge">calendar</code>的模块：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
 <span class="kd">const</span> <span class="nx">now</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
@@ -138,7 +137,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>最终编译生成的<code class="highlighter-rouge">calendar.js</code>会是这样的结构：</p>
+<p>最终编译生成的<code class="language-plaintext highlighter-rouge">calendar.js</code>会是这样的结构：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
 <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">){</span>
@@ -171,7 +170,7 @@
 
 <p>接下来我们围绕webpack配置中的<a href="https://webpack.docschina.org/configuration/output#output-librarytarget">output.libraryTarget</a>这个配置来梳理这些概念。</p>
 
-<p>上文示例是在编写一个实际应用，也就是说我们的项目源码只需要在一个立即执行函数中直接运行就完成了自己的任务。但是当要编写一个第三方库时，我们无法保证其他项目也一定会使用commonjs来引入这个库，此时就需要配置<code class="highlighter-rouge">libraryTarget</code>来指定模块如何导出为一个库，其中umd方式为通用方式，即能兼容不同的模块规范，现在我们配置这个属性看看：</p>
+<p>上文示例是在编写一个实际应用，也就是说我们的项目源码只需要在一个立即执行函数中直接运行就完成了自己的任务。但是当要编写一个第三方库时，我们无法保证其他项目也一定会使用commonjs来引入这个库，此时就需要配置<code class="language-plaintext highlighter-rouge">libraryTarget</code>来指定模块如何导出为一个库，其中umd方式为通用方式，即能兼容不同的模块规范，现在我们配置这个属性看看：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;calendar/index.js&gt;</span>
 <span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
@@ -263,7 +262,7 @@
 <span class="p">})</span>
 </code></pre></div></div>
 
-<p>结论就是，目前的es6模块我们可以看成commonjs的语法糖，webpack会将其编译成与commonjs方式类似的输出，比如将变量导出至<code class="highlighter-rouge">module.exports.default</code>。</p>
+<p>结论就是，目前的es6模块我们可以看成commonjs的语法糖，webpack会将其编译成与commonjs方式类似的输出，比如将变量导出至<code class="language-plaintext highlighter-rouge">module.exports.default</code>。</p>
 
 <h3 id="模块混用">模块混用</h3>
 
@@ -397,7 +396,7 @@
 <h2 id="typescript模块">TypeScript模块</h2>
 
 <p>接下来轮到TypeScript了，可以将其认为是es6的高级语法糖，有自己的编译器(tsc)，通过配置定制编译规则，比如编译至es5+commonjs模块。
-修改webpack添加ts支持(还需要<code class="highlighter-rouge">npm i --save-dev typescript ts-loader</code>来一发):</p>
+修改webpack添加ts支持(还需要<code class="language-plaintext highlighter-rouge">npm i --save-dev typescript ts-loader</code>来一发):</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">)</span>
 
@@ -425,7 +424,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>现在执行webpack打包，得到的<code class="highlighter-rouge">calendar.js</code>与之前commonjs方式是一致的:</p>
+<p>现在执行webpack打包，得到的<code class="language-plaintext highlighter-rouge">calendar.js</code>与之前commonjs方式是一致的:</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">/// &lt;wwwroot/calendar.js&gt;</span>
 <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">modules</span><span class="p">){</span>
@@ -446,7 +445,7 @@
 
 <ul>
   <li>编码阶段的代码提示和类型检查</li>
-  <li>编写第三方库时支持自动生成<code class="highlighter-rouge">.d.ts</code>类型声明(JS实现的话则需要手动维护一份)</li>
+  <li>编写第三方库时支持自动生成<code class="language-plaintext highlighter-rouge">.d.ts</code>类型声明(JS实现的话则需要手动维护一份)</li>
   <li>告别babel全家桶</li>
 </ul>
 
@@ -516,9 +515,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

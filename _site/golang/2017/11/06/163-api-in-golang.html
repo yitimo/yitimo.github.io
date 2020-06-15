@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -62,9 +61,9 @@
 
 <h2 id="一搜索能力">一、搜索能力</h2>
 
-<p>这里使用的是 <code class="highlighter-rouge">http://music.163.com/api/search/get/</code> 这个api地址，发送的是POST请求，需要注意的点就是必须带上的几个头部以及参数的格式，实现难度相对中等。在golang下的请求核心代码如下:</p>
+<p>这里使用的是 <code class="language-plaintext highlighter-rouge">http://music.163.com/api/search/get/</code> 这个api地址，发送的是POST请求，需要注意的点就是必须带上的几个头部以及参数的格式，实现难度相对中等。在golang下的请求核心代码如下:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/** 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/** 
  * 执行搜索
  * params: 	关键词 类型 页码 数量
  * return:	字符串形式的请求结果
@@ -115,7 +114,7 @@ func formatParams(page int, limit int) (string, string) {
 }
 </code></pre></div></div>
 
-<p>传入的参数即 <code class="highlighter-rouge">关键词，搜索类型，数量，偏移量</code> 四个。最终效果像这样:</p>
+<p>传入的参数即 <code class="language-plaintext highlighter-rouge">关键词，搜索类型，数量，偏移量</code> 四个。最终效果像这样:</p>
 
 <p><img src="http://upload-images.jianshu.io/upload_images/4740306-71dad47b316dca0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求参数" /></p>
 
@@ -125,7 +124,7 @@ func formatParams(page int, limit int) (string, string) {
 
 <p>歌曲详情接口比搜索接口要简单很多，因为是更开放的GET请求，不需要加复杂的头部:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func SongInfo(id string) string {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func SongInfo(id string) string {
 	res, err := http.Get("http://music.163.com/api/song/detail/?id=" + id + "&amp;ids=[" + id + "]")
 	// 错误处理
 	if err != nil {
@@ -141,11 +140,11 @@ func formatParams(page int, limit int) (string, string) {
 
 <p><img src="http://upload-images.jianshu.io/upload_images/4740306-2e24bac45a90ba18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
 
-<p>相比搜索接口的结果，详情接口能拿到具体的封面信息这应该是最有用的，因为搜索得到的结果中图片都是假的，可惜的是详情结果中的 <code class="highlighter-rouge">mp3Url</code> 字段是空的，说明想要真正听到歌曲还得使用别的接口才行。</p>
+<p>相比搜索接口的结果，详情接口能拿到具体的封面信息这应该是最有用的，因为搜索得到的结果中图片都是假的，可惜的是详情结果中的 <code class="language-plaintext highlighter-rouge">mp3Url</code> 字段是空的，说明想要真正听到歌曲还得使用别的接口才行。</p>
 
 <h2 id="三歌曲下载">三、歌曲下载</h2>
 
-<p>歌曲下载接口应该是变动最多的接口了，经测试很多网上现有的方式都没有用，最靠谱的应该是使用其官方的请求方式，接口为 <code class="highlighter-rouge">http://music.163.com/weapi/song/enhance/player/url?csrf_token=</code> ，参数为两个很长的加密的字符串，要做的斗争就是如何得到这两个字符串。</p>
+<p>歌曲下载接口应该是变动最多的接口了，经测试很多网上现有的方式都没有用，最靠谱的应该是使用其官方的请求方式，接口为 <code class="language-plaintext highlighter-rouge">http://music.163.com/weapi/song/enhance/player/url?csrf_token=</code> ，参数为两个很长的加密的字符串，要做的斗争就是如何得到这两个字符串。</p>
 
 <p><img src="http://upload-images.jianshu.io/upload_images/4740306-a3bf6ae3d5bd2ad4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="官网中的请求" /></p>
 
@@ -153,17 +152,17 @@ func formatParams(page int, limit int) (string, string) {
 
 <ol>
   <li>将请求参数使用一个固定的标识字符串进行 AES加密并进行base64编码</li>
-  <li>从 <code class="highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 中随机取出16次字符组成一个秘钥</li>
-  <li>将1得到的结果使用2得到的秘钥串再进行一次 AES加密并base64编码，至此得到第一个参数 <code class="highlighter-rouge">params</code></li>
+  <li>从 <code class="language-plaintext highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 中随机取出16次字符组成一个秘钥</li>
+  <li>将1得到的结果使用2得到的秘钥串再进行一次 AES加密并base64编码，至此得到第一个参数 <code class="language-plaintext highlighter-rouge">params</code></li>
   <li>将2中的秘钥倒序后转ascii码，然后转16进制字符串得到一个中间字符串</li>
   <li>将4得到的中间字符串转为十进制大整数1，将另两个固定的16进制字符串也都转为十进制大整数2、3</li>
   <li>5中得到了三个大整数，现在执行 pow(大整数1, 大整数2, 大整数3) ，即1的2次幂取模3，得到新的大整数4</li>
-  <li>将6得到的大整数4转为16进制字符串，并在左边补满0补满256位，最终得到第二个参数 <code class="highlighter-rouge">encSecKey</code></li>
+  <li>将6得到的大整数4转为16进制字符串，并在左边补满0补满256位，最终得到第二个参数 <code class="language-plaintext highlighter-rouge">encSecKey</code></li>
 </ol>
 
 <p>封装好的函数如下:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func EncParams(param string) (string, string, error) {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func EncParams(param string) (string, string, error) {
 	// 创建 key
 	secKey := createSecretKey(16);
 	// 第一次加密 使用固定的 nonce
@@ -193,7 +192,7 @@ func formatParams(page int, limit int) (string, string) {
 
 <ol>
   <li>对golang经验不够导致数据类型转来转去花了不少力气，以及还涉及到了大数运算，数据的格式化真的是虐惨了</li>
-  <li>上文提到的 <code class="highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 这个字符串中， 最后的 <code class="highlighter-rouge">+/</code> 很关键不能少</li>
+  <li>上文提到的 <code class="language-plaintext highlighter-rouge">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 这个字符串中， 最后的 <code class="language-plaintext highlighter-rouge">+/</code> 很关键不能少</li>
 </ol>
 
 <ul>
@@ -268,9 +267,5 @@ func formatParams(page int, limit int) (string, string) {
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

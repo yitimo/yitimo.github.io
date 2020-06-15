@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -48,7 +47,7 @@
   <li>react本身做的事情大体是根据编写好的组件渲染出真实的DOM。</li>
   <li>
     <ul>
-      <li>编写的组件可以是一个<code class="highlighter-rouge">es6/typescript</code>的<code class="highlighter-rouge">class</code>，也可以直接是个返回标签的函数。</li>
+      <li>编写的组件可以是一个<code class="language-plaintext highlighter-rouge">es6/typescript</code>的<code class="language-plaintext highlighter-rouge">class</code>，也可以直接是个返回标签的函数。</li>
     </ul>
   </li>
   <li>
@@ -58,22 +57,22 @@
   </li>
   <li>
     <ul>
-      <li>父级传入的props更改时会触发：<code class="highlighter-rouge">componentWillReceiveProps</code> -&gt; <code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">render</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+      <li>父级传入的props更改时会触发：<code class="language-plaintext highlighter-rouge">componentWillReceiveProps</code> -&gt; <code class="language-plaintext highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">componentWillUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">render</code> -&gt; <code class="language-plaintext highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>内部<code class="highlighter-rouge">state</code>更改时会触发：<code class="highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="highlighter-rouge">componentWillUpdate</code> -&gt; <code class="highlighter-rouge">render</code> -&gt; <code class="highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+      <li>内部<code class="language-plaintext highlighter-rouge">state</code>更改时会触发：<code class="language-plaintext highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">componentWillUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">render</code> -&gt; <code class="language-plaintext highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>组件本身通过<code class="highlighter-rouge">setState</code>更新<code class="highlighter-rouge">state</code>，以更新界面值。</li>
+      <li>组件本身通过<code class="language-plaintext highlighter-rouge">setState</code>更新<code class="language-plaintext highlighter-rouge">state</code>，以更新界面值。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>react本身封装好了标签的一些事件(<code class="highlighter-rouge">onClick</code>等)，也可以通过<code class="highlighter-rouge">ref</code>获取真实DOM的引用(<code class="highlighter-rouge">componentDidMount</code>中可访问到)。</li>
+      <li>react本身封装好了标签的一些事件(<code class="language-plaintext highlighter-rouge">onClick</code>等)，也可以通过<code class="language-plaintext highlighter-rouge">ref</code>获取真实DOM的引用(<code class="language-plaintext highlighter-rouge">componentDidMount</code>中可访问到)。</li>
     </ul>
   </li>
 </ul>
@@ -84,22 +83,22 @@
   <li>redux本身做的事情大体是帮助维护一份单例的数据集(store)。</li>
   <li>
     <ul>
-      <li>通过<code class="highlighter-rouge">subscribe</code>监听状态变化，<code class="highlighter-rouge">getState</code>获取当前状态。</li>
+      <li>通过<code class="language-plaintext highlighter-rouge">subscribe</code>监听状态变化，<code class="language-plaintext highlighter-rouge">getState</code>获取当前状态。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>通过<code class="highlighter-rouge">reducer</code>来决定不同<code class="highlighter-rouge">action</code>都会如何操作数据。</li>
+      <li>通过<code class="language-plaintext highlighter-rouge">reducer</code>来决定不同<code class="language-plaintext highlighter-rouge">action</code>都会如何操作数据。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>通过<code class="highlighter-rouge">action</code>来规范支持的操作。</li>
+      <li>通过<code class="language-plaintext highlighter-rouge">action</code>来规范支持的操作。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>通过<code class="highlighter-rouge">dispatch</code>方法来传入<code class="highlighter-rouge">action</code>。</li>
+      <li>通过<code class="language-plaintext highlighter-rouge">dispatch</code>方法来传入<code class="language-plaintext highlighter-rouge">action</code>。</li>
     </ul>
   </li>
 </ul>
@@ -131,22 +130,22 @@
   <li>react-redux帮助react整合redux到自己的组件体系中。</li>
   <li>
     <ul>
-      <li>直接解决的问题就是不用层层传入<code class="highlighter-rouge">props</code>来访问<code class="highlighter-rouge">store</code>了。</li>
+      <li>直接解决的问题就是不用层层传入<code class="language-plaintext highlighter-rouge">props</code>来访问<code class="language-plaintext highlighter-rouge">store</code>了。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>顶层包裹<code class="highlighter-rouge">Provider</code>组件并传入<code class="highlighter-rouge">store</code>来使用。</li>
+      <li>顶层包裹<code class="language-plaintext highlighter-rouge">Provider</code>组件并传入<code class="language-plaintext highlighter-rouge">store</code>来使用。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li><code class="highlighter-rouge">Provider</code>组件做的事是用<code class="highlighter-rouge">Context</code>维护一份store。</li>
+      <li><code class="language-plaintext highlighter-rouge">Provider</code>组件做的事是用<code class="language-plaintext highlighter-rouge">Context</code>维护一份store。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>需要访问store的组件用<code class="highlighter-rouge">connect</code>来将状态和<code class="highlighter-rouge">action</code>注入到<code class="highlighter-rouge">props</code>中。</li>
+      <li>需要访问store的组件用<code class="language-plaintext highlighter-rouge">connect</code>来将状态和<code class="language-plaintext highlighter-rouge">action</code>注入到<code class="language-plaintext highlighter-rouge">props</code>中。</li>
     </ul>
   </li>
 </ul>
@@ -154,30 +153,30 @@
 <hr />
 
 <ul>
-  <li>mapStateToProps是<code class="highlighter-rouge">connect</code>的第一个参数，帮助绑定状态到组件的<code class="highlighter-rouge">props</code>。</li>
+  <li>mapStateToProps是<code class="language-plaintext highlighter-rouge">connect</code>的第一个参数，帮助绑定状态到组件的<code class="language-plaintext highlighter-rouge">props</code>。</li>
   <li>
     <ul>
-      <li>此函数返回的对象会被整合到组件<code class="highlighter-rouge">props</code>中。</li>
+      <li>此函数返回的对象会被整合到组件<code class="language-plaintext highlighter-rouge">props</code>中。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>函数第一个参数(<code class="highlighter-rouge">state</code>)为全局所有的<code class="highlighter-rouge">reducer</code>，即<code class="highlighter-rouge">store</code>中的数据</li>
+      <li>函数第一个参数(<code class="language-plaintext highlighter-rouge">state</code>)为全局所有的<code class="language-plaintext highlighter-rouge">reducer</code>，即<code class="language-plaintext highlighter-rouge">store</code>中的数据</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>函数第二个参数(<code class="highlighter-rouge">ownProps</code>)为组件本身的<code class="highlighter-rouge">props</code>。</li>
+      <li>函数第二个参数(<code class="language-plaintext highlighter-rouge">ownProps</code>)为组件本身的<code class="language-plaintext highlighter-rouge">props</code>。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>每当状态更新时最先触发<code class="highlighter-rouge">mapStateToProps</code>，随后走组件<code class="highlighter-rouge">update</code>四步。</li>
+      <li>每当状态更新时最先触发<code class="language-plaintext highlighter-rouge">mapStateToProps</code>，随后走组件<code class="language-plaintext highlighter-rouge">update</code>四步。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>组件本身传入的props更改不会触发<code class="highlighter-rouge">mapStateToProps</code>，但传入<code class="highlighter-rouge">ownProps</code>后就也会触发。</li>
+      <li>组件本身传入的props更改不会触发<code class="language-plaintext highlighter-rouge">mapStateToProps</code>，但传入<code class="language-plaintext highlighter-rouge">ownProps</code>后就也会触发。</li>
     </ul>
   </li>
 </ul>
@@ -185,22 +184,22 @@
 <hr />
 
 <ul>
-  <li>mapDispatchToProps是<code class="highlighter-rouge">connect</code>的第二个参数，帮助绑定<code class="highlighter-rouge">action</code>到组件的<code class="highlighter-rouge">props</code>。</li>
+  <li>mapDispatchToProps是<code class="language-plaintext highlighter-rouge">connect</code>的第二个参数，帮助绑定<code class="language-plaintext highlighter-rouge">action</code>到组件的<code class="language-plaintext highlighter-rouge">props</code>。</li>
   <li>
     <ul>
-      <li>也就是说现在可以在组件中调用<code class="highlighter-rouge">action</code>了。</li>
+      <li>也就是说现在可以在组件中调用<code class="language-plaintext highlighter-rouge">action</code>了。</li>
     </ul>
   </li>
   <li>
     <ul>
-      <li>执行action需要dispatch，但是可以用<code class="highlighter-rouge">bindActionCreators</code>来隐藏dispatch部分。</li>
+      <li>执行action需要dispatch，但是可以用<code class="language-plaintext highlighter-rouge">bindActionCreators</code>来隐藏dispatch部分。</li>
     </ul>
   </li>
 </ul>
 
 <hr />
 
-<p>至此可以这么使用<code class="highlighter-rouge">react</code>+<code class="highlighter-rouge">redux</code>+<code class="highlighter-rouge">react-redux</code>：</p>
+<p>至此可以这么使用<code class="language-plaintext highlighter-rouge">react</code>+<code class="language-plaintext highlighter-rouge">redux</code>+<code class="language-plaintext highlighter-rouge">react-redux</code>：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">ownProps</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
@@ -226,7 +225,7 @@
 
 <hr />
 
-<p>connect后续两个参数之后再深究，其中第三个可以自定义状态如何merge到组件的<code class="highlighter-rouge">props</code>中。</p>
+<p>connect后续两个参数之后再深究，其中第三个可以自定义状态如何merge到组件的<code class="language-plaintext highlighter-rouge">props</code>中。</p>
 
 <hr />
 
@@ -248,7 +247,7 @@
   </li>
   <li>
     <ul>
-      <li>在此函数中通过第一个参数(dispatch)调用其他<code class="highlighter-rouge">action</code>，以完成异步action效果。</li>
+      <li>在此函数中通过第一个参数(dispatch)调用其他<code class="language-plaintext highlighter-rouge">action</code>，以完成异步action效果。</li>
     </ul>
   </li>
 </ul>
@@ -279,16 +278,16 @@
   </li>
   <li>
     <ul>
-      <li>个人感觉像redux专用的小<code class="highlighter-rouge">rx</code>。</li>
+      <li>个人感觉像redux专用的小<code class="language-plaintext highlighter-rouge">rx</code>。</li>
     </ul>
   </li>
 </ul>
 
 <ol>
-  <li>组件dispatch一个<code class="highlighter-rouge">ActionA</code></li>
-  <li>saga监听到<code class="highlighter-rouge">ActionA</code></li>
+  <li>组件dispatch一个<code class="language-plaintext highlighter-rouge">ActionA</code></li>
+  <li>saga监听到<code class="language-plaintext highlighter-rouge">ActionA</code></li>
   <li>执行异步逻辑</li>
-  <li>put一个<code class="highlighter-rouge">ActionB</code>到reducer</li>
+  <li>put一个<code class="language-plaintext highlighter-rouge">ActionB</code>到reducer</li>
   <li>reducer返回新状态到组件</li>
 </ol>
 
@@ -358,9 +357,5 @@
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

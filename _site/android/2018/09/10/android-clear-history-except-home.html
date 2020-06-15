@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,7 +43,7 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>Android中移除除了首页的历史Activity</h1>
-        <p>对于Android中Activity栈的操作提及比较多的是在<code class="highlighter-rouge">Intent</code>中使用这几个<code class="highlighter-rouge">Flag</code>:</p>
+        <p>对于Android中Activity栈的操作提及比较多的是在<code class="language-plaintext highlighter-rouge">Intent</code>中使用这几个<code class="language-plaintext highlighter-rouge">Flag</code>:</p>
 
 <ul>
   <li>Intent.FLAG_ACTIVITY_CLEAR_TASK</li>
@@ -52,21 +51,21 @@
   <li>Intent.FLAG_ACTIVITY_NEW_TASK</li>
 </ul>
 
-<p>其中一个使用情景是，当用户的登录状态过期后，需要清除历史纪录直接重定向到登录页，也就是当前打开页面为<code class="highlighter-rouge">A -&gt; B -&gt; C</code>时，发现登录已过期需要跳转到<code class="highlighter-rouge">D</code>，就需要:</p>
+<p>其中一个使用情景是，当用户的登录状态过期后，需要清除历史纪录直接重定向到登录页，也就是当前打开页面为<code class="language-plaintext highlighter-rouge">A -&gt; B -&gt; C</code>时，发现登录已过期需要跳转到<code class="language-plaintext highlighter-rouge">D</code>，就需要:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>val intent = Intent(Context, D)
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>val intent = Intent(Context, D)
 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 </code></pre></div></div>
-<p>这样跳转到<code class="highlighter-rouge">D</code>后整个应用只会留下<code class="highlighter-rouge">D</code>页面。</p>
+<p>这样跳转到<code class="language-plaintext highlighter-rouge">D</code>后整个应用只会留下<code class="language-plaintext highlighter-rouge">D</code>页面。</p>
 
-<p>但是靠这几个Flag做不到一件事，就是本文标题所描述的，<strong>如何从<code class="highlighter-rouge">A -&gt; B -&gt; C</code>想要跳转到<code class="highlighter-rouge">D</code>时得到<code class="highlighter-rouge">A -&gt; D</code>这样的页面栈</strong>，即在跳转到新页面时移除除了首页外的其他页面，得到从新页面返回时直接是回到首页的效果。</p>
+<p>但是靠这几个Flag做不到一件事，就是本文标题所描述的，<strong>如何从<code class="language-plaintext highlighter-rouge">A -&gt; B -&gt; C</code>想要跳转到<code class="language-plaintext highlighter-rouge">D</code>时得到<code class="language-plaintext highlighter-rouge">A -&gt; D</code>这样的页面栈</strong>，即在跳转到新页面时移除除了首页外的其他页面，得到从新页面返回时直接是回到首页的效果。</p>
 
 <p>此需求的使用场景之一就是在购物下单流程中，用户选择完商品并下单后，原先的商品或购物车页面已经不再需要，甚至如果不清除掉这些页面，当用户从订单页返回时又会回到下单前的状态，已经完成购买的商品，数量都还留在页面里。</p>
 
 <p>最终对笔者起到帮助的只有<a href="https://stackoverflow.com/questions/38879150/clear-activity-stack-except-first-activity">这个链接</a>。</p>
 
-<p>上面的链接让笔者最终决定使用的做法是：当从<code class="highlighter-rouge">C</code>跳转到<code class="highlighter-rouge">D</code>时，添加参数<code class="highlighter-rouge">putExtra("clear_top", true)</code>，并在<code class="highlighter-rouge">D</code>的<code class="highlighter-rouge">onBackPressed()</code>中判断此参数，若为<code class="highlighter-rouge">true</code>则使用上文提及的方式清除所有页面并跳转到首页，否则正常执行返回流程。此方法没有使用上文提及的几个<code class="highlighter-rouge">Flag</code>，或者说笔者没发现这几个<code class="highlighter-rouge">Flag</code>有达到此效果的能力。</p>
+<p>上面的链接让笔者最终决定使用的做法是：当从<code class="language-plaintext highlighter-rouge">C</code>跳转到<code class="language-plaintext highlighter-rouge">D</code>时，添加参数<code class="language-plaintext highlighter-rouge">putExtra("clear_top", true)</code>，并在<code class="language-plaintext highlighter-rouge">D</code>的<code class="language-plaintext highlighter-rouge">onBackPressed()</code>中判断此参数，若为<code class="language-plaintext highlighter-rouge">true</code>则使用上文提及的方式清除所有页面并跳转到首页，否则正常执行返回流程。此方法没有使用上文提及的几个<code class="language-plaintext highlighter-rouge">Flag</code>，或者说笔者没发现这几个<code class="language-plaintext highlighter-rouge">Flag</code>有达到此效果的能力。</p>
 
     </section>
     <section class="yitiblog-pager block flex">
@@ -134,9 +133,5 @@ intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>

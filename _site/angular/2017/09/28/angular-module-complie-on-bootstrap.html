@@ -31,7 +31,6 @@
 <!-- google -->
 <meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
 
-	<link rel="stylesheet" href="/assets/core/css/1.936fcd09.css" />
 </head>
 <body class="yitiblog">
     <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
@@ -44,21 +43,21 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>从源码理解angular编译AppModule的过程</h1>
-        <p>承接<a href="/jekyll/update/2017/09/25/how-angular-bootstrap-in-jit.html">上文</a>。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 <code class="highlighter-rouge">PlatformRef</code> ，以及执行平台引用提供的方法编译根模块 <code class="highlighter-rouge">AppModule</code> 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。</p>
+        <p>承接<a href="/jekyll/update/2017/09/25/how-angular-bootstrap-in-jit.html">上文</a>。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 <code class="language-plaintext highlighter-rouge">PlatformRef</code> ，以及执行平台引用提供的方法编译根模块 <code class="language-plaintext highlighter-rouge">AppModule</code> 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。</p>
 
 <h2 id="编译的起点">编译的起点</h2>
 
-<p>从外界使用的 <code class="highlighter-rouge">bootstrapModule</code> 方法入手。首先angular把皮球踢给了私有方法 <code class="highlighter-rouge">_bootstrapModuleWithZone</code> ，然后皮球又踢给了 <code class="highlighter-rouge">compileModuleAsync</code> 方法，这个方法比较调皮，直接进入是一个抽象方法，说明它有一个继承并且在前面作为服务被注入了，它就是！在创建爸爸平台 <code class="highlighter-rouge">platformCoreDynamic</code> 时注入的编译器工厂中提供的 <code class="highlighter-rouge">createCompiler</code> 方法返回的编译器实例，也就是 <code class="highlighter-rouge">JitCompiler</code> 。进入 <code class="highlighter-rouge">JitCompiler</code> 果不其然找到了 <code class="highlighter-rouge">compileModuleAsync</code> 方法的实现。</p>
+<p>从外界使用的 <code class="language-plaintext highlighter-rouge">bootstrapModule</code> 方法入手。首先angular把皮球踢给了私有方法 <code class="language-plaintext highlighter-rouge">_bootstrapModuleWithZone</code> ，然后皮球又踢给了 <code class="language-plaintext highlighter-rouge">compileModuleAsync</code> 方法，这个方法比较调皮，直接进入是一个抽象方法，说明它有一个继承并且在前面作为服务被注入了，它就是！在创建爸爸平台 <code class="language-plaintext highlighter-rouge">platformCoreDynamic</code> 时注入的编译器工厂中提供的 <code class="language-plaintext highlighter-rouge">createCompiler</code> 方法返回的编译器实例，也就是 <code class="language-plaintext highlighter-rouge">JitCompiler</code> 。进入 <code class="language-plaintext highlighter-rouge">JitCompiler</code> 果不其然找到了 <code class="language-plaintext highlighter-rouge">compileModuleAsync</code> 方法的实现。</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// 启动过程中就是用这个异步编译模块
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// 启动过程中就是用这个异步编译模块
 compileModuleAsync&lt;T&gt;(moduleType: Type&lt;T&gt;): Promise&lt;NgModuleFactory&lt;T&gt;&gt; {
     return Promise.resolve(this._compileModuleAndComponents(moduleType, false));
 }
 </code></pre></div></div>
 
-<p>坏消息是皮球现在踢给了私有方法 <code class="highlighter-rouge">_compileModuleAndComponents</code> :</p>
+<p>坏消息是皮球现在踢给了私有方法 <code class="language-plaintext highlighter-rouge">_compileModuleAndComponents</code> :</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// 这个就是最底层编译模块的方法
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// 这个就是最底层编译模块的方法
 private _compileModuleAndComponents&lt;T&gt;(
     moduleType: Type&lt;T&gt;,
     isSync: boolean
@@ -77,7 +76,7 @@ private _compileModuleAndComponents&lt;T&gt;(
 
 <p>稍微感受一下这个 SyncAsync 对象，很厉害：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export const SyncAsync = {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export const SyncAsync = {
   // 断言同步 也就是说 如果是个Promise 那就抛出 不是的话直接返回
   assertSync: &lt;T&gt;(value: SyncAsync&lt;T&gt;): T =&gt; {
     if (isPromise(value)) {
@@ -102,7 +101,7 @@ private _compileModuleAndComponents&lt;T&gt;(
 
 <p>现在看来，模块编译的重头戏就在这三个方法里面了:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_loadModules 负责加载模块元数据
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_loadModules 负责加载模块元数据
 _compileComponents 负责编译组件
 _compileModule 负责编译模块
 </code></pre></div></div>
@@ -111,7 +110,7 @@ _compileModule 负责编译模块
 
 <p>加载过程是这样的:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>private _loadModules(mainModule: any, isSync: boolean): SyncAsync&lt;any&gt; {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>private _loadModules(mainModule: any, isSync: boolean): SyncAsync&lt;any&gt; {
     const loading: Promise&lt;any&gt;[] = []; // 最终会把所有任务放到这里 用SyncAsync 串起来执行
     // 拿到模块元数据 里面包含了所有模块 以及模块涉及的服务 指令 管道
     const mainNgModule = this._metadataResolver.getNgModuleMetadata(mainModule) !;
@@ -141,7 +140,7 @@ _compileModule 负责编译模块
 <ol>
   <li>执行 getNgModuleMetadata 拿到模块元数据
     <ul>
-      <li>执行 _ngModuleResolver.resolve 拿到模块本身的注解信息(即 <code class="highlighter-rouge">@NgModule({})</code> 中的配置信息)</li>
+      <li>执行 _ngModuleResolver.resolve 拿到模块本身的注解信息(即 <code class="language-plaintext highlighter-rouge">@NgModule({})</code> 中的配置信息)</li>
       <li>遍历注解中的 imports 部分 将模块所有引入的元数据添加到 importedModules，并收集了里面的服务 providers (这一步会递归调用 getNgModuleMetadata 来获得模块元数据，保证除了懒加载模块外所有与根模块关联的元数据都遍历到)</li>
       <li>遍历注解中的 exports 部分 将所有Ng类(模块、组件、指令) 元数据收集到 exportedModules</li>
       <li>新建一个 transitiveModule 用来放所有导入、导出的Ng类的元数据 据注释说是写法要改所以单独拷贝一份</li>
@@ -182,7 +181,7 @@ _compileModule 负责编译模块
 
 <p>没有看明白的最后几行代码:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let evalResult: any;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let evalResult: any;
 if (!this._compilerConfig.useJit) {
     evalResult = interpretStatements(outputContext.statements);
 } else {
@@ -198,7 +197,7 @@ template.compiled(viewClass, rendererType);
 
 <p>不明觉厉的 jitStatements 方法:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function evalExpression(
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function evalExpression(
   sourceUrl: string,
   ctx: EmitterVisitorContext,
   vars: {[key: string]: any}
@@ -239,7 +238,7 @@ export function jitStatements(sourceUrl: string, statements: o.Statement[]): {[k
 
 <p>前面执行 _loadModules 仅是加载了整个模块树的元数据，现在要正式编译它们了:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>private _compileModule&lt;T&gt;(moduleType: Type&lt;T&gt;): NgModuleFactory&lt;T&gt; {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>private _compileModule&lt;T&gt;(moduleType: Type&lt;T&gt;): NgModuleFactory&lt;T&gt; {
     // 从缓存拿到模块工厂
     let ngModuleFactory = this._compiledNgModuleCache.get(moduleType) !;
     if (!ngModuleFactory) { // 缓存中没有
@@ -359,9 +358,5 @@ export function jitStatements(sourceUrl: string, statements: o.Statement[]): {[k
   		s.parentNode.insertBefore(mta, s);
   	})();
 </script>
-    <script defer type="module" src="https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js"></script>
-    <script defer type="module" src="https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js"></script>
-	<script defer src="/assets/core/js/1.vendor.js"></script>
-	<script defer src="/assets/core/js/index.936fcd09.js"></script>
 </body>
 </html>
