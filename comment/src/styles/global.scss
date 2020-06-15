@@ -1,9 +1,0 @@
-.flex {
-    display: flex;
-    & > * {
-        flex-shrink: 0;
-    }
-}
-.flex-1 {
-    flex: 1;
-}
