@@ -35,7 +35,8 @@ exclude: [
   comment,
   core,
   dist-core,
-  README.md
+  README.md,
+  deploy
 ]
 
 plugins: [jekyll-seo-tag, jekyll-sitemap, jekyll-paginate]

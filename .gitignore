@@ -3,6 +3,7 @@
 .jekyll-cache
 
 dist-core
+release
 
 node_modules
 yarn-error.log
