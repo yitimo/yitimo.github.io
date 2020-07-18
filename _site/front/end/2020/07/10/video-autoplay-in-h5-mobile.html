@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>移动端h5音/视频自动播放兼容 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>移动端h5音/视频自动播放兼容</h1>
+        <h2 id="主流浏览器的做法">主流浏览器的做法</h2>
+
+<p>如果视频设置了静音, 则可以自动播放。
+然后通过用户点击来手动将视频取消静音, 则视频可以带声音继续正常播放。</p>
+
+<blockquote>
+  <p>但是如果没有用户交互, 先将视频静音然后直接通过setTimeout来取消静音, 视频会被暂停。</p>
+</blockquote>
+
+<h2 id="微信内兼容">微信内兼容</h2>
+
+<p>目前(截止2020-07-18)微信浏览器内的表现又和系统浏览器不同。其表现为:</p>
+
+<ol>
+  <li>即使视频设置了静音, 也可能不能自动播放, 而且直接黑屏, 什么事件都不会触发。</li>
+  <li>页面加载完成后动态插入的video标签都不能播放, 一律黑屏, 除非手动交互。</li>
+</ol>
+
+<p>最终调研得到的结论是:</p>
+
+<ol>
+  <li>微信浏览器内可监听 <code class="language-plaintext highlighter-rouge">WeixinJSBridgeReady</code> 事件, 事件回调中 <code class="language-plaintext highlighter-rouge">1秒</code> 内插入的所有video标签都能够直接执行 <code class="language-plaintext highlighter-rouge">play()</code> 做到自动播放(甚至不用静音)。</li>
+  <li>用户点击事件后 <code class="language-plaintext highlighter-rouge">1秒</code> 内可以执行视频的 <code class="language-plaintext highlighter-rouge">play()</code> 做到播放控制, 要是等待超过1秒也是没用的。</li>
+</ol>
+
+<h2 id="最佳实践">最佳实践</h2>
+
+<p>最终兼容移动端包括微信H5、小程序webview的视频自动播放方案如下:</p>
+
+<ol>
+  <li>页面上同时存在5个video标签, 超过5个视频播放需求时, 动态切换video的src实现(动态切换src后仍可以控制播放, 但动态插入就不行了)
+    <ul>
+      <li>比如短视频上下滑动切换的场景, 实际是5个video不断的改变位置和src来实现</li>
+    </ul>
+  </li>
+  <li>视频的 <code class="language-plaintext highlighter-rouge">play()</code> 会返回一个 Promise, 发现播放失败时, 将视频暂停(微信内暂停, 非X5内核浏览器可以选择将视频静音)</li>
+  <li>初始化时最快速度准备好视频标签添加到页面上</li>
+  <li>利用 <code class="language-plaintext highlighter-rouge">WeixinJSBridgeReady</code> 事件, 回调后等待尽可能久(比如950毫秒), 然后用<code class="language-plaintext highlighter-rouge">getElementById</code>等方式找到页面中需要自动播放的video标签, 将其播放</li>
+</ol>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * 尽可能早的监听微信环境 自动播放页面中的视频
+ * - 如果不是微信浏览器 此事件永不触发 需要手动 .play()
+ */</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">WeixinJSBridgeReady</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="dl">'</span><span class="s1">请在1000毫秒内添加video标签</span><span class="dl">'</span><span class="p">)</span>
+  <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">played</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="kd">let</span> <span class="nx">preLoaded</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="kd">const</span> <span class="nx">videos</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">video</span><span class="dl">'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">videos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">video</span> <span class="o">=</span> <span class="nx">videos</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">video</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// eslint-disable-next-line no-continue</span>
+        <span class="k">continue</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">video</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1">playing</span><span class="dl">'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 这里通过特定的class名判断是否需要自动播放 可以改用自己想要的方式判断</span>
+        <span class="nx">video</span><span class="p">.</span><span class="nx">play</span><span class="p">()</span>
+        <span class="nx">played</span> <span class="o">=</span> <span class="kc">true</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// 对于不需要播放的视频 还可以进行预加载</span>
+        <span class="nx">video</span><span class="p">.</span><span class="nx">load</span><span class="p">()</span>
+        <span class="nx">preLoaded</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">`自动播放</span><span class="p">${</span><span class="nx">played</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">'</span><span class="s1">失败</span><span class="dl">'</span><span class="p">}</span><span class="s2">, 预加载了</span><span class="p">${</span><span class="nx">preLoaded</span><span class="p">}</span><span class="s2">个视频`</span><span class="p">)</span>
+  <span class="p">},</span> <span class="mi">950</span><span class="p">)</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="相关链接">相关链接</h2>
+
+<ul>
+  <li><a href="https://developers.weixin.qq.com/community/develop/doc/000cec6061c9f846e07929c7551400">ios 7.0.8 公众号页面无法自动播放 audio了？</a></li>
+  <li><a href="https://www.v2ex.com/t/638103">微信 H5 页面在安卓环境下 video 无法自动播放视频，该如何解决？</a></li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/nodejs/2020/06/28/chinese-support-in-docker-node-alpine.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                Docker node alpine 容器内支持中文字体
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    // var _hmt = _hmt || [];
+    // (function() {
+    //     var hm = document.createElement("script");
+    //     hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+    //     var s = document.getElementsByTagName("script")[0]; 
+    //     s.parentNode.insertBefore(hm, s);
+    // })();
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+    var _mtac = {};
+  	(function() {
+  		var mta = document.createElement("script");
+  		mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  		mta.setAttribute("name", "MTAH5");
+  		mta.setAttribute("sid", "500707646");
+  		var s = document.getElementsByTagName("script")[0];
+  		s.parentNode.insertBefore(mta, s);
+  	})();
+</script>
+</body>
+</html>
