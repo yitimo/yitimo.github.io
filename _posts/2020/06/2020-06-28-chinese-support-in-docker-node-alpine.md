@@ -30,7 +30,7 @@ description: Chinese support in docker node alpine.
 - 镜像内分阶段构建 第一阶段处理npm依赖 第二阶段实际部署
 - 注意在第二阶段才复制字体文件到系统路径下
 
-``` Dockerfile
+``` sh
 # 第一阶段构建
 FROM node:12.13.1-alpine as builder
 

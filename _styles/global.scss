@@ -125,7 +125,7 @@ a:hover, a:active, a:checked {
 }
 .article ul, .article ol {
     font-weight: 600;
-    
+    padding: 0 15px;
 }
 .article hr {
     margin: 30px 0;
@@ -151,6 +151,7 @@ a:hover, a:active, a:checked {
 .article p {
     margin-top: 5px;
     margin-bottom: 5px;
+    line-height: 1.5;
 }
 .article img {
     display: block;

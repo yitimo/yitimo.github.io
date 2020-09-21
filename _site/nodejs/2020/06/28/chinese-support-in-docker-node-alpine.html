@@ -68,37 +68,37 @@
   <li>注意在第二阶段才复制字体文件到系统路径下</li>
 </ul>
 
-<pre><code class="language-Dockerfile"># 第一阶段构建
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 第一阶段构建</span>
 FROM node:12.13.1-alpine as builder
 
-ENV NODE_ENV=development EGG_SERVER_ENV=local
-ENV npm_config_sharp_binary_host="https://npm.taobao.org/mirrors/sharp"
-ENV npm_config_sharp_libvips_binary_host "https://npm.taobao.org/mirrors/sharp-libvips"
+ENV <span class="nv">NODE_ENV</span><span class="o">=</span>development <span class="nv">EGG_SERVER_ENV</span><span class="o">=</span><span class="nb">local
+</span>ENV <span class="nv">npm_config_sharp_binary_host</span><span class="o">=</span><span class="s2">"https://npm.taobao.org/mirrors/sharp"</span>
+ENV npm_config_sharp_libvips_binary_host <span class="s2">"https://npm.taobao.org/mirrors/sharp-libvips"</span>
 
-# 代码目录
+<span class="c"># 代码目录</span>
 WORKDIR /usr/src/app
-# 依赖相关
-COPY package*.json ./
-# 安装依赖 使用淘宝镜像
-RUN npm ci --only=production --registry=https://registry.npm.taobao.org --unsafe-perm
-# 将代码复制进容器
-COPY . .
+<span class="c"># 依赖相关</span>
+COPY package<span class="k">*</span>.json ./
+<span class="c"># 安装依赖 使用淘宝镜像</span>
+RUN npm ci <span class="nt">--only</span><span class="o">=</span>production <span class="nt">--registry</span><span class="o">=</span>https://registry.npm.taobao.org <span class="nt">--unsafe-perm</span>
+<span class="c"># 将代码复制进容器</span>
+COPY <span class="nb">.</span> <span class="nb">.</span>
 
-# 第二阶段构建
+<span class="c"># 第二阶段构建</span>
 FROM node:12.13.1-alpine
-ENV NODE_ENV=development EGG_SERVER_ENV=local
+ENV <span class="nv">NODE_ENV</span><span class="o">=</span>development <span class="nv">EGG_SERVER_ENV</span><span class="o">=</span><span class="nb">local
 
-WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app .
+</span>WORKDIR /usr/src/app
+COPY <span class="nt">--from</span><span class="o">=</span>builder /usr/src/app <span class="nb">.</span>
 
-# 使用字体文件(中文宋体)
-RUN mkdir -p /usr/share/fonts/win
-RUN mv fonts/simsun.ttf /usr/share/fonts/win/simsun.ttf
+<span class="c"># 使用字体文件(中文宋体)</span>
+RUN <span class="nb">mkdir</span> <span class="nt">-p</span> /usr/share/fonts/win
+RUN <span class="nb">mv </span>fonts/simsun.ttf /usr/share/fonts/win/simsun.ttf
 
-# 启动
+<span class="c"># 启动</span>
 EXPOSE 7001
-CMD [ "npm", "run", "start" ]
-</code></pre>
+CMD <span class="o">[</span> <span class="s2">"npm"</span>, <span class="s2">"run"</span>, <span class="s2">"start"</span> <span class="o">]</span>
+</code></pre></div></div>
 
 <h2 id="参考">参考</h2>
 
