@@ -43,6 +43,12 @@
     </header>
     <section class="yitiblog-content block article">
         <h1>Android图片裁剪工具封装</h1>
+        <p class="time"><i>修改于: 2019-01-03 15:19</i></p>
+        
+        
+        
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
         <p>笔者从零开始开发Android，而且是跳过java直接使用kotlin开发，这其中的好处是可以避开java这门传统语言诸多的潜规则，难处是相比资深Android开发者少了许多可以现用的工具库。比如Android对图片的支持就非常开放，换言之就是非常依赖一个成熟的工具库(比如Glide)，(相比web里<img />标签就安全易用很多)。</p>
 
 <p>包括本文将实现的工具在内，笔者目前也收集了整整2个成熟好用的图片相关工具类，一个就是<a href="https://github.com/bumptech/glide">Glide</a>，另一个是<a href="https://github.com/davemorrissey/subsampling-scale-image-view">Subsampling Scale Image View</a>，并且膨胀地以为不再需要其他任何图片相关的工具库了。这个想法差点被动摇的一次就是现在需要加一个图片裁剪功能了，一想到网上现有的那些酷炫的工具库，就担心起要不要用和用哪个的问题，但是当笔者看了这篇文章——<a href="https://yalantis.com/blog/how-we-created-ucrop-our-own-image-cropping-library-for-android/">How We Created uCrop</a>，就对引入第三方图片裁剪库更加抵触了，思来想去自己内心的想法都是：

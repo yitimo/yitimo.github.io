@@ -111,11 +111,23 @@ a:hover, a:active, a:checked {
     -webkit-user-select: text;
 }
 .article h1 {
-    margin: 64px auto;
+    margin: 64px auto 16px auto;
     // width: 70%;
     // max-width: 768px;
     // min-width: 200px;
-}.article h2 {
+}
+.article .time {
+    text-align: right;
+    margin: 16px;
+    font-size: 14px;
+}
+.article .outdated {
+    text-align: right;
+    margin: 16px;
+    font-size: 14px;
+    color: orange;
+}
+.article h2 {
     margin-bottom: 10px;
     margin-top: 60px;
 }
