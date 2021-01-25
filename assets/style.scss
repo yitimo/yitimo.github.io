@@ -17,7 +17,7 @@
     }
 }
 .yitiblog-header {
-    height: 60px;
+    height: $header-height-l;
     width: 100%;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -27,7 +27,8 @@
     position: fixed;
     top: 0;
     left: 0;
-    background: $color-font;
+    background: rgba($color: $color-dark, $alpha: 0.8);
+    backdrop-filter: blur(5px);
     color: $color-default;
     
     .flex {
@@ -42,7 +43,8 @@
     }
 }
 .yitiblog-content {
-    padding-top: 60px;
+    padding-top: $header-height-l;
+    padding-bottom: $header-height-l * 2;
 }
 
 .yitiblog-footer {
@@ -156,14 +158,14 @@
 //         }   
 //     }
 // }
-@media (max-width: 1280px) {
+@media (max-width: 1150px) {
     .yitiblog {
         .block {
             max-width: $max-width-md;
         }
     }
     .yitiblog-header {
-        height: 40px;
+        height: $header-height;
 
         .avatar {
             height: 32px;
@@ -174,6 +176,9 @@
 }
 
 @media (max-width: 812px) {
+    .yitiblog-header {
+        height: $header-height-m;
+    }
     .yitiblog-footer {
         .flex {
             display: block;

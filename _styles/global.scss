@@ -9,12 +9,12 @@ html, body {
     color: $color-font;
     font-size: $font;
     min-height: 100%;width: 100%;
-    font-family: Consolas, "Courier New", monospace;
+    font-family: "SF Pro SC","SF Pro Display","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
 }
 * {
     box-sizing: border-box;
     word-break: break-all;
-    line-height: 1;
+    // line-height: 1;
     outline: none;
 }
 // *:focus,*:checked,*:active {
@@ -61,21 +61,6 @@ a:hover, a:active, a:checked {
     font-size: $font-md;
 }
 
-@media (max-width: 812px) {
-    body {
-        font-size: $font-md;
-    }
-    .font-l {
-        font-size: $font-lg - 4px;
-    }
-    .font {
-        font-size: $font-md;
-    }
-    .font-m {
-        font-size: $font-md - 2px;
-    }
-}
-
 .flex {
     display: -moz-box;
     display: -webkit-box;
@@ -98,11 +83,14 @@ a:hover, a:active, a:checked {
 }
 
 .article {
-    color: #4f4f4f;
+    color: $color-font;
     max-width: 727px;margin: 0 auto;
     padding: 15px;
-    font-size: 15px;
+    font-size: $font + 5px;
     line-height: 1.5;
+}
+.article pre {
+    margin: 0;
 }
 .article .highlighter-rouge *, code.highlighter-rouge {
     user-select: text;
@@ -111,34 +99,40 @@ a:hover, a:active, a:checked {
     -webkit-user-select: text;
 }
 .article h1 {
-    margin: 64px auto 16px auto;
-    // width: 70%;
-    // max-width: 768px;
-    // min-width: 200px;
+    font-size: 46px;
+    line-height: 1.2;
+    text-align: center;
+    margin: 2em auto 1em auto;
+    width: 80%;
+    max-width: 812px;
+    min-width: 260px;
 }
 .article .time {
     text-align: right;
-    margin: 16px;
-    font-size: 14px;
+    margin: 1em;
+    font-size: $font;
 }
 .article .outdated {
     text-align: right;
-    margin: 16px;
-    font-size: 14px;
+    margin: 1em;
+    font-size: $font;
     color: orange;
 }
 .article h2 {
-    margin-bottom: 10px;
-    margin-top: 60px;
+    font-size: 32px;
+    margin-bottom: 1em;
+    margin-top: 2em;
 }
 .article h3, .article h4, .article h5, .article h6 {
     margin-bottom: 5px;
     margin-top: 30px;
 }
 .article ul, .article ol {
-    font-weight: 600;
     padding: 0 15px;
 }
+// .article > ul, .article > ol {
+//     background: rgba($color: $color-primary, $alpha: 0.1);
+// }
 .article hr {
     margin: 30px 0;
     border-color: #00000033;
@@ -159,11 +153,20 @@ a:hover, a:active, a:checked {
 }
 .article li {
     padding: 5px 0;
+    line-height: 1.5;
+}
+.article blockquote {
+    margin: 1em 0;
+    padding: 0.8em;
+    font-size: $font;
+    border-left: 0.5em solid $color-primary;
+    background: rgba($color: $color-primary, $alpha: 0.1);
 }
 .article p {
     margin-top: 5px;
     margin-bottom: 5px;
     line-height: 1.5;
+    font-weight: 400;
 }
 .article img {
     display: block;
@@ -201,17 +204,18 @@ a:hover, a:active, a:checked {
     border-radius: 2px;
 }
 .article div.highlighter-rouge {
-    margin: 15px 0;
-    padding: 10px 15px;
-    background: #f3f3f3;
+    margin: 2em 0;
+    padding: 20px;
+    font-size: $font;
+    background: rgb(242, 242, 242);
     color: #000000;
     border-radius: 4px;
     white-space: nowrap;
 }
 .article .highlighter-rouge > .highlight::-webkit-scrollbar
 {
-    width: 10px;
-    height: 10px;
+    width: 5px;
+    height: 5px;
 }
 /*定义滚动条轨道 内阴影+圆角*/
 .article .highlighter-rouge > .highlight::-webkit-scrollbar-track
@@ -221,9 +225,9 @@ a:hover, a:active, a:checked {
 /*定义滑块 内阴影+圆角*/
 .article .highlighter-rouge > .highlight::-webkit-scrollbar-thumb
 {
-    height: 10px;width: 10px;
+    height: 5px;width: 5px;
     border-radius: 2px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.2);
 }
 .article table {
     margin: 15px auto;
@@ -250,13 +254,17 @@ a:hover, a:active, a:checked {
     padding: 6px 13px;
     border: 1px solid #dfe2e5;
 }
-.article code {
-    font-weight: 500;
-}
+// .article code {
+//     font-weight: 500;
+// }
 .article a {
     color: #0099ff;
-    text-decoration: underline;
     cursor: pointer;
+    margin: 0 0.2em;
+
+    // &:hover {
+    //     text-decoration: underline;
+    // }
 }
 
 .article .language-shell.highlighter-rouge {
@@ -339,4 +347,28 @@ a:hover, a:active, a:checked {
 }
 .article .language-kotlin code .c1,.language-kotlin  code .cm {
     color: #008000;
+}
+
+@media (max-width: 812px) {
+    body {
+        font-size: $font-md;
+    }
+    .font-l {
+        font-size: $font-lg - 4px;
+    }
+    .font {
+        font-size: $font-md;
+    }
+    .font-m {
+        font-size: $font-md - 2px;
+    }
+    .article h1 {
+        font-size: 32px;
+    }
+    .article h2 {
+        font-size: 28px;
+    }
+    .article {
+        font-size: $font + 2px;
+    }
 }
