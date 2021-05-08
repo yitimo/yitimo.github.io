@@ -47,6 +47,8 @@
         
         
         
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
         <p>七十年代早期，从UNIX系统诞生开始，它就变得越来越流行了。这段时间它已经发展出了不同的分枝版本，比如Ultrix，AIX，Xenix，SunOS以及Linux。从小型计算机和主机开始，它转移向了桌面工作站甚至是工作或家庭使用的个人电脑。不再局限于学术和计算机专业的大学和研究机构，UNIX也在许多商业、学校和家庭中使用了。随着时间推移，还有更多人会开始于UNIX接触。</p>
 
 <p>你可能在学校、办公室、家里使用过UNIX来运行你的应用程序，打印文档或者阅读电子邮件。但是你有没有想过当你输入指令并按下回车时它都做了什么处理？</p>
@@ -170,13 +172,14 @@
     <div id="core-mta"></div>
 <script>
     // // baidu统计
-    // var _hmt = _hmt || [];
-    // (function() {
-    //     var hm = document.createElement("script");
-    //     hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
-    //     var s = document.getElementsByTagName("script")[0]; 
-    //     s.parentNode.insertBefore(hm, s);
-    // })();
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
     // // baidu 站长
     // (function(){
     //     var bp = document.createElement('script');
@@ -190,15 +193,17 @@
     //     var s = document.getElementsByTagName("script")[0];
     //     s.parentNode.insertBefore(bp, s);
     // })();
-    var _mtac = {};
-  	(function() {
-  		var mta = document.createElement("script");
-  		mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-  		mta.setAttribute("name", "MTAH5");
-  		mta.setAttribute("sid", "500707646");
-  		var s = document.getElementsByTagName("script")[0];
-  		s.parentNode.insertBefore(mta, s);
-  	})();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
 </script>
 </body>
 </html>

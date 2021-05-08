@@ -47,6 +47,8 @@
         
         
         
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
         <p><a href="https://ant.design/docs/react/customize-theme-cn">Ant Design</a>官网介绍了其主题色能力，并且相对模糊的提到了通过less来动态切换主题色的方案(底部<a href="https://medium.com/@mzohaib.qc/ant-design-dynamic-runtime-theme-1f9a1a030ba0">社区教程</a>中)。而<a href="https://ant.design">ant.design</a>本身看起来也是用同一方案实现了动态主题色切换。本文将介绍并配置此动态主题方案，即侧重<code class="language-plaintext highlighter-rouge">antd-theme-webpack-plugin</code>这个插件配合<code class="language-plaintext highlighter-rouge">antd</code>+<code class="language-plaintext highlighter-rouge">react</code>的使用，以后再另行介绍<code class="language-plaintext highlighter-rouge">less</code>的<code class="language-plaintext highlighter-rouge">modifyVars</code>原理。</p>
 
 <h2 id="项目准备">项目准备</h2>
@@ -173,13 +175,14 @@
     <div id="core-mta"></div>
 <script>
     // // baidu统计
-    // var _hmt = _hmt || [];
-    // (function() {
-    //     var hm = document.createElement("script");
-    //     hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
-    //     var s = document.getElementsByTagName("script")[0]; 
-    //     s.parentNode.insertBefore(hm, s);
-    // })();
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
     // // baidu 站长
     // (function(){
     //     var bp = document.createElement('script');
@@ -193,15 +196,17 @@
     //     var s = document.getElementsByTagName("script")[0];
     //     s.parentNode.insertBefore(bp, s);
     // })();
-    var _mtac = {};
-  	(function() {
-  		var mta = document.createElement("script");
-  		mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-  		mta.setAttribute("name", "MTAH5");
-  		mta.setAttribute("sid", "500707646");
-  		var s = document.getElementsByTagName("script")[0];
-  		s.parentNode.insertBefore(mta, s);
-  	})();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
 </script>
 </body>
 </html>

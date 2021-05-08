@@ -47,6 +47,8 @@
         
         
         
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
         <p>原文链接：<a href="https://developer.chrome.com/extensions/getstarted">Getting Started Tutorial</a></p>
 
 <p>Chrome插件(以下简称插件)由不同但有凝聚力的组件组成。这些组件包括 <a href="https://developer.chrome.com/background_pages.html">background scripts</a>，<a href="https://developer.chrome.com/content_scripts.html">content scripts</a>，<a href="https://developer.chrome.com/optionsV2">options page</a>，<a href="https://developer.chrome.com/user_interface.html">UI elements</a>，以及许多的具体逻辑页面。插件组件使用web开发技术实现：HTML、JS和CSS。一个插件要实现的功能决定了它将使用到哪些组件，而不是全都会用到。</p>
@@ -358,13 +360,14 @@
     <div id="core-mta"></div>
 <script>
     // // baidu统计
-    // var _hmt = _hmt || [];
-    // (function() {
-    //     var hm = document.createElement("script");
-    //     hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
-    //     var s = document.getElementsByTagName("script")[0]; 
-    //     s.parentNode.insertBefore(hm, s);
-    // })();
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
     // // baidu 站长
     // (function(){
     //     var bp = document.createElement('script');
@@ -378,15 +381,17 @@
     //     var s = document.getElementsByTagName("script")[0];
     //     s.parentNode.insertBefore(bp, s);
     // })();
-    var _mtac = {};
-  	(function() {
-  		var mta = document.createElement("script");
-  		mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
-  		mta.setAttribute("name", "MTAH5");
-  		mta.setAttribute("sid", "500707646");
-  		var s = document.getElementsByTagName("script")[0];
-  		s.parentNode.insertBefore(mta, s);
-  	})();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
 </script>
 </body>
 </html>
