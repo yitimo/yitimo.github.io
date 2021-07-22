@@ -49,6 +49,14 @@
         
         <p>此为基于自己的 <code class="language-plaintext highlighter-rouge">AX88U</code> 路由器刷上梅林改固件后的一个备忘总结。</p>
 
+<ul>
+  <li>wire the router</li>
+  <li>set as an aimesh node</li>
+  <li>disable smart connect</li>
+  <li>set different SSIDs</li>
+  <li>fixed channels</li>
+</ul>
+
 <h2 id="固件升级">固件升级</h2>
 
 <p>迫于koolshare论坛于本月提高了其一些固件帖子的可阅读权限, 用户必须拿到50积分才能阅读, 而笔者的万年潜水账号只有可怜的1分, 上传头像后分数终于高达3分, 预计还需要每日签到至一个半月后才有浏览资格:(
@@ -60,7 +68,7 @@
   <li>在 <code class="language-plaintext highlighter-rouge">系统管理 &gt; 系统设置</code> 内勾选 <code class="language-plaintext highlighter-rouge">Format JFFS partition at next boot</code> 和 <code class="language-plaintext highlighter-rouge">Enable JFFS custom scripts and configs</code> &gt; 点击应用本页面设置 &gt; 成功后重启路由器</li>
 </ol>
 
-<p><strong>一些注意事项</strong></p>
+<h3 id="一些注意事项">一些注意事项</h3>
 
 <ul>
   <li>以上仅为官方固件刷梅林改的方式</li>
@@ -72,56 +80,9 @@
 
 <h2 id="概念梳理">概念梳理</h2>
 
-<p><em>大量梳理自wiki</em></p>
+<p>已迁移至 <a href="../07/network-knowledge-for-home-use.html">家用网络知识梳理</a></p>
 
-<p><strong>固件</strong></p>
-
-<blockquote>
-  <p>类比成PC的操作系统(严格来说是BIOS)</p>
-</blockquote>
-
-<p>是一种嵌入在硬件设备中的软件。通常它是位于特殊应用集成电路（ASIC）或可编程逻辑器件（PLD）之中的闪存或EEPROM或PROM里，有的可以让用户更新。可以应用在非常广泛的电子产品中，从遥控器、计算器到电脑中的键盘、硬盘，甚至工业机器人中都可见到它的身影。
-顾名思义，固件的所在是位于软件和硬件之间的。像软件一样，他是一个被电脑所运行的程序。然而它是对于硬件内部而言更加贴近以及更加重要的部分，而对于外在的世界而言较无重要的意义。</p>
-
-<p><strong>软件中心</strong></p>
-
-<p>支持安装各种功能的插件到路由器里, 而官方固件不支持. KoolShare自带了一些, 也可以自行开发.</p>
-
-<p><strong>Wi-Fi</strong></p>
-
-<p>一个基于IEEE 802.11标准的无线局域网技术.</p>
-
-<ul>
-  <li>Wi-Fi 6: 以IEEE 802.11ax为准, 工作频段为2.4GHz和5GHz</li>
-  <li>Wi-Fi 5: 以IEEE 802.11ac为准, 工作频段为5GHz</li>
-  <li>Wi-Fi 4: 以IEEE 802.11n为准, 工作频段为2.4GHz和5GHz</li>
-</ul>
-
-<p><strong>网线</strong></p>
-
-<p>双绞线:</p>
-
-<ul>
-  <li>1类(CAT-1): 主要用于传输语音，用于数据传输。</li>
-  <li>2类(CAT-2): 传输频率为1MHz，用于语音传输和最高传输速率4Mbps的数据传输，常见于使用4Mbps规范令牌传递协议的旧的令牌环。</li>
-  <li>3类(CAT-3): 指目前在ANSI和EIA/TIA568标准中指定的电缆。该电缆的传输频率为16MHz，用于语音传输及最高传输速率为10Mbps的数据传输，主要用于10BASE-T。</li>
-  <li>4类(CAT-4): 该类电缆的传输频率为20MHz,用于语音传输和最高传输速率16Mbps的数据传输，主要用于基于令牌的局域网和10BASE-T/100BASE-T。</li>
-  <li>5类(CAT-5): 该类电缆增加了绕线密度，外套一种高质量的绝缘材料，传输频率为100MHz,用于语音传输和最高传输速率为100Mbps的数据传输，主要用于100BASE-T和10BASE-T网络，这是最常用的以太网电缆。</li>
-  <li>超5类(CAT-5e): 超5类具有衰减小，串扰少，并且具有更高的衰减与串扰的比值（ACR）和信噪比（Structural Return Loss）、更小的时延误差，性能得到很大提高。</li>
-  <li>6类(CAT-6): 10BASE-T/100BASE-T/1000BASE-T。传输频率为250MHz传输速度为1Gbps标准外径6mm。</li>
-  <li>扩展6类(CAT-6A): 10GBASE-T。传输频率为500MHz传输速度为10Gbps标准外径9mm。</li>
-  <li>扩展6类(CAT-6e): 传输频率为500MHz传输速度为10Gbps标准外径6mm。</li>
-  <li>7类(CAT-7): 传输频率为600MHz传输速度为10Gbps单线标准外径8mm多芯线标准外径6mm。</li>
-  <li>8类(CAT-8): 40GBASE-T。传输频率为2000MHz传输速度为40Gbps。</li>
-</ul>
-
-<p><strong>同轴电缆</strong></p>
-
-<p>短距离的同轴电缆一般也会用于家用影音器材或是业余无线电设备中。此外，也曾经被广泛使用在以太网的连接，直至被双绞线和光纤所取代.</p>
-
-<hr />
-
-<p><em>更多待补充</em></p>
+<p>TODO: 更多待补充</p>
 
 <h2 id="相关链接">相关链接</h2>
 
@@ -139,6 +100,11 @@
             </a>
         
         <div class="flex-1"></div>
+        
+            <a class="block next" href="/network/2021/07/22/network-knowledge-for-home-use.html">
+                家用网络知识梳理
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
         
     </section>
     <footer class="yitiblog-footer">
