@@ -36,7 +36,9 @@ exclude: [
   core,
   dist-core,
   README.md,
-  deploy
+  deploy,
+  Dockerfile,
+  TODO.md
 ]
 
 plugins: [jekyll-seo-tag, jekyll-sitemap, jekyll-paginate]
