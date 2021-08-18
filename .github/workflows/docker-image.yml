@@ -1,18 +1,31 @@
 name: Docker Image CI
 
 on:
+  # 响应以下分支的push请求
   push:
     branches: [ master ]
+  # 响应以下分支的PR
   pull_request:
     branches: [ master ]
 
 jobs:
 
   build:
-
+    # 基于哪个环境运行
     runs-on: ubuntu-latest
 
     steps:
+    # 内置的checkout行为
     - uses: actions/checkout@v2
+    # 基于当前分支创建docker镜像
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag yitiblog:$(date +%s)
+      run: docker build . --file Dockerfile --tag yitimo/yitiblog:latest
+    # 登录到docker hub
+    - name: Login to DockerHub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKER_USER_NAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    # push建好的镜像到docker hub
+    - name: Publish image to public docker hub
+      run: docker push yitimo/yitiblog:latest
