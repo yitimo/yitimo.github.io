@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用dockerhub和GitHub action来自动化部署你的博客 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>使用dockerhub和GitHub action来自动化部署你的博客</h1>
+        <p class="time"><i>修改于: 2020-08-24 20:00</i></p>
+        
+        
+        
+        <h2 id="docker做了什么">Docker做了什么</h2>
+
+<p>docker是基于容器的虚拟机, 围绕着镜像和容器来工作。Dockerfile 描述了如何配置这个镜像, 比如基于哪个镜像, 复制哪些文件, 执行哪些命令。</p>
+
+<h3 id="传统的应用线上部署">传统的应用线上部署</h3>
+
+<p>大致要做这些事:</p>
+
+<ol>
+  <li>配置服务器环境</li>
+  <li>配置依赖</li>
+  <li>上传release资源到服务器</li>
+  <li>运行程序</li>
+  <li>当更换、扩展服务器时, 都要重新配置服务器环境</li>
+  <li>多个应用同时运行在宿主机, 依靠目录、用户、端口等区分</li>
+</ol>
+
+<h3 id="基于docker的应用线上部署">基于docker的应用线上部署</h3>
+
+<p>大致要做这些事:</p>
+
+<ol>
+  <li>服务器和本地各安装好docker</li>
+  <li>本地工程在 Dockerfile 里进行配置</li>
+  <li>构建应用到docker镜像并发布</li>
+  <li>在服务器上运行这个镜像</li>
+  <li>当更换、扩展服务器时, 重新安装docker即可</li>
+  <li>多个应用相互隔离, 通过容器id区分, 通过端口通信</li>
+</ol>
+
+<p>Docker常用命令:</p>
+
+<ul>
+  <li>创建本地调试用的docker镜像: <code class="language-plaintext highlighter-rouge">docker build -t [镜像名字]:[镜像tag] .</code></li>
+  <li>列出docker镜像: <code class="language-plaintext highlighter-rouge">docker image ls</code></li>
+  <li>创建docker容器: <code class="language-plaintext highlighter-rouge">docker create -p [运行在宿主机哪个端口]:80 --name [容器名字] -t [镜像名字]:[镜像tag]</code></li>
+  <li>列出docker容器: <code class="language-plaintext highlighter-rouge">docker container ls</code></li>
+  <li>运行docker容器: <code class="language-plaintext highlighter-rouge">docker container run [容器名 或 容器id前几位]</code></li>
+  <li>停止docker容器: <code class="language-plaintext highlighter-rouge">docker container stop [容器名 或 容器id前几位]</code></li>
+  <li>删除docker容器: <code class="language-plaintext highlighter-rouge">docker container rm [容器名 或 容器id前几位]</code></li>
+  <li>删除docker镜像: <code class="language-plaintext highlighter-rouge">docker image rm [镜像名+tag 或 镜像id前几位]</code></li>
+  <li>清理冗余docker镜像: <code class="language-plaintext highlighter-rouge">docker image prune -f</code></li>
+</ul>
+
+<h2 id="githubaction做了什么">GithubAction做了什么</h2>
+
+<p>支持我们指定在 <code class="language-plaintext highlighter-rouge">哪个分支</code> 发生 <code class="language-plaintext highlighter-rouge">什么事件</code> 时, 基于 <code class="language-plaintext highlighter-rouge">哪个环境</code> 执行 <code class="language-plaintext highlighter-rouge">哪些行为</code>。</p>
+
+<p>比如本博客当下的配置:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Docker Image CI</span> <span class="c1"># 名字</span>
+<span class="na">on</span><span class="pi">:</span>
+  <span class="na">push</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">master</span> <span class="pi">]</span> <span class="c1"># 响应master分支的push</span>
+  <span class="na">pull_request</span><span class="pi">:</span>
+    <span class="na">branches</span><span class="pi">:</span> <span class="pi">[</span> <span class="nv">master</span> <span class="pi">]</span> <span class="c1"># 响应master分支的PR</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span> <span class="c1"># 基于ubuntu运行</span>
+    <span class="na">steps</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span> <span class="c1"># 内置的checkout行为</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Build the Docker image</span> <span class="c1"># 基于当前分支创建docker镜像</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">docker build . --file Dockerfile --tag yitimo/yitiblog:latest</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Login to DockerHub</span> <span class="c1"># 登录到docker hub</span>
+      <span class="na">uses</span><span class="pi">:</span> <span class="s">docker/login-action@v1</span> 
+      <span class="na">with</span><span class="pi">:</span>
+        <span class="na">username</span><span class="pi">:</span> <span class="s">$</span>
+        <span class="na">password</span><span class="pi">:</span> <span class="s">$</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Publish image to public docker hub</span> <span class="c1"># push建好的镜像到docker hub</span>
+      <span class="na">run</span><span class="pi">:</span> <span class="s">docker push yitimo/yitiblog:latest</span>
+</code></pre></div></div>
+
+<h2 id="还可以做什么">还可以做什么</h2>
+
+<ul>
+  <li>docker 让我们能通过 <strong>镜像+标签</strong> 来管理线上发行版本的应用包</li>
+  <li>github action 让我们能在应用push时自动化的构建出新的 docker 镜像并发布到远程仓库</li>
+  <li>此外 docker hub 也支持 webhook, 当新的镜像push过来时, 发送事件到我们个人服务器的自动化部署服务上, 然后由我们的自动化部署服务来直接 <code class="language-plaintext highlighter-rouge">docker run</code> 最新版本的镜像 :)</li>
+  <li>对于私有应用, 而不愿意发布到公共的 docker hub 的, 可以充钱使用其私有镜像, 也可以像笔者一样有限使用阿里云的私有镜像 :)</li>
+  <li>docker应用基于端口来暴露服务到宿主机, 比如本博客运行的容器暴露了端口 xxxx, 然后还需要宿主机通过比如 nginx 来将外部域名(blog.yitimo.com)反向代理到端口 xxxx 上 :)</li>
+</ul>
+
+<h3 id="一张图总结">一张图总结</h3>
+
+<p>还没画好:)</p>
+
+<h2 id="扩展">扩展</h2>
+
+<ul>
+  <li><a href="https://www.docker.com/get-started">Docker get started</a></li>
+  <li><a href="https://docs.github.com/en/actions/quickstart">Github action</a></li>
+  <li><a href="https://www.aliyun.com/product/acr">阿里云容器镜像服务</a></li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/front/end/2020/07/10/video-autoplay-in-h5-mobile.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                移动端h5音/视频自动播放兼容
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/network/2021/06/24/asus-router-firmware-setup.html">
+                华硕路由器 AX88U 刷梅林改固件
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>
