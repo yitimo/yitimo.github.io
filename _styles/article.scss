@@ -1,1 +1,7 @@
 @import './variable.scss';
+
+.utterances {
+  max-width: none;
+  width: initial;
+  margin: $space;
+}
