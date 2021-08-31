@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】【MySQL文档@13.3.1】MySQL事务锁相关 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/mysql,/translation/2021/08/31/translation-mysql-transaction-and-lock.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>【翻译】【MySQL文档@13.3.1】MySQL事务锁相关</h1>
+        <p class="time"><i>修改于: 2021-08-31 19:31</i></p>
+        
+        
+        
+        <h2 id="start-transaction-commit-和-rollback-语法">START TRANSACTION, COMMIT, 和 ROLLBACK 语法</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">START</span> <span class="n">TRANSACTION</span>
+    <span class="p">[</span><span class="n">transaction_characteristic</span> <span class="p">[,</span> <span class="n">transaction_characteristic</span><span class="p">]</span> <span class="p">...]</span>
+
+<span class="n">transaction_characteristic</span><span class="p">:</span> <span class="err">{</span>
+    <span class="k">WITH</span> <span class="n">CONSISTENT</span> <span class="n">SNAPSHOT</span>
+  <span class="o">|</span> <span class="k">READ</span> <span class="k">WRITE</span>
+  <span class="o">|</span> <span class="k">READ</span> <span class="k">ONLY</span>
+<span class="err">}</span>
+
+<span class="k">BEGIN</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span>
+<span class="k">COMMIT</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span> <span class="p">[</span><span class="k">AND</span> <span class="p">[</span><span class="k">NO</span><span class="p">]</span> <span class="k">CHAIN</span><span class="p">]</span> <span class="p">[[</span><span class="k">NO</span><span class="p">]</span> <span class="n">RELEASE</span><span class="p">]</span>
+<span class="k">ROLLBACK</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span> <span class="p">[</span><span class="k">AND</span> <span class="p">[</span><span class="k">NO</span><span class="p">]</span> <span class="k">CHAIN</span><span class="p">]</span> <span class="p">[[</span><span class="k">NO</span><span class="p">]</span> <span class="n">RELEASE</span><span class="p">]</span>
+<span class="k">SET</span> <span class="n">autocommit</span> <span class="o">=</span> <span class="err">{</span><span class="mi">0</span> <span class="o">|</span> <span class="mi">1</span><span class="err">}</span>
+</code></pre></div></div>
+
+<p>这些语法提供了事务(transaction)相关的控制:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 或 <code class="language-plaintext highlighter-rouge">BEGIN</code>: 开始一个新事务</li>
+  <li><code class="language-plaintext highlighter-rouge">COMMIT</code>: 提交当前事务, 使其改动真正生效</li>
+  <li><code class="language-plaintext highlighter-rouge">ROLLBACK</code>: 回滚当前事务到开始之前</li>
+  <li><code class="language-plaintext highlighter-rouge">SET autocommit</code>: 开/关 当前事务的默认自动提交行为</li>
+</ul>
+
+<p>默认的 MySQL 会启用 <code class="language-plaintext highlighter-rouge">autocommit</code> 模式, 即非事务情况下所有语句都会自动提交, 就好像它们都被包了一层 <code class="language-plaintext highlighter-rouge">START TRANSACTION ... COMMIT</code>, 所以你不能使用 <code class="language-plaintext highlighter-rouge">ROLLBACK</code> 来回滚改动, 不过语句执行出错时可以实现回滚.</p>
+
+<p>可以使用 <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 语句来禁用一系列语句的自动提交:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">START</span> <span class="n">TRANSACTION</span><span class="p">;</span>
+<span class="k">SELECT</span> <span class="o">@</span><span class="n">A</span><span class="p">:</span><span class="o">=</span><span class="k">SUM</span><span class="p">(</span><span class="n">salary</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">table1</span> <span class="k">WHERE</span> <span class="k">type</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">table2</span> <span class="k">SET</span> <span class="n">summary</span><span class="o">=@</span><span class="n">A</span> <span class="k">WHERE</span> <span class="k">type</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>使用了 <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 后, 你就需要手动 <code class="language-plaintext highlighter-rouge">COMMIT</code> 或 <code class="language-plaintext highlighter-rouge">ROLLBACK</code> 来结束你的事务. 然后 自动提交模式 也会恢复原值.</p>
+
+<p><code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 语句支持一些修饰语来控制你的事务, 多个修饰语用逗号隔开:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">WITH CONSISTENT SNAPSHOT</code>: TODO: 待补充</li>
+  <li><code class="language-plaintext highlighter-rouge">READ WRITE/READ ONLY</code>: 事务的访问模式, 用来允许或禁止事务中用到的表的修改行为. <code class="language-plaintext highlighter-rouge">READ ONLY</code> 限制用到表的其他事务或非事务只能读而不能写, 当前事务本身能读写.</li>
+</ul>
+
+<p>MySQL 对 InnoDB 索引的表, 在只读事务中的查询提供了额外优化. 在不能自动识别为只读模式的情况下可以手动开启来得到这些优化.</p>
+
+<p>默认的访问模式是 <code class="language-plaintext highlighter-rouge">READ/WRITE</code> 读写模式. 同一个语句不支持同时制定只读和读写模式.</p>
+
+<p>在只读模式下, 支持使用 DML 语句来修改使用 TEMPORARY 关键词创建的临时表. DDL语句的修改、持久化表则是不被允许的.</p>
+
+<p>更多关于事务访问模式的信息详见 <strong>13.3.7</strong>.</p>
+
+<p>如果开启了只读系统变量, <code class="language-plaintext highlighter-rouge">START TRANSACTION READ WRITE</code> 语句需要<code class="language-plaintext highlighter-rouge">connection</code> 的管理权限.</p>
+
+<blockquote>
+  <p><strong>重要:</strong> 很多MySQL客户端(比如 JDBC)都封装并提供了他们自己的方法来开启事务, 而不需要直接使用 <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 语句.</p>
+</blockquote>
+
+<p>想要显式禁用自动提交模式, 使用以下语句:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">autocommit</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>当设置值为 <code class="language-plaintext highlighter-rouge">0</code> 来禁用自动提交后, 对于事务安全的表的改动都不会立即生效, 你必须手动 <code class="language-plaintext highlighter-rouge">COMMIT</code> 来使其生效, 或 <code class="language-plaintext highlighter-rouge">ROLLBACK</code> 来回滚改动.</p>
+
+<p>autocommit 是一个session级的变量, 故每个session都要设置. 想要禁用所有新连接的自动提交的话, 需要设置到 autocommit 的系统变量.</p>
+
+<p><code class="language-plaintext highlighter-rouge">BEGIN</code> 和 <code class="language-plaintext highlighter-rouge">BEGIN WORK</code> 是 <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 的别名, 用来初始化一个事务. <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 是一个标准SQL语句, 是开启一个 ad-hoc 事务和修改器的推荐方式, 而 <code class="language-plaintext highlighter-rouge">BEGIN</code> 不是.</p>
+
+<p>这里的 <code class="language-plaintext highlighter-rouge">BEGIN</code> 语法跟 <code class="language-plaintext highlighter-rouge">BEGIN ... END</code> 混用的情况不同, 后者不会开始一个事务.</p>
+
+<blockquote>
+  <p><strong>注意:</strong> 在所有存储的程序里(比如 过程、函数、触发器和事件), 会认为 <code class="language-plaintext highlighter-rouge">BEGIN</code> 是 <code class="language-plaintext highlighter-rouge">BEGIN ... END</code> 块的开始部分. 故请使用 <code class="language-plaintext highlighter-rouge">START TRANSACTION</code> 语法.</p>
+</blockquote>
+
+<p>可选的 <code class="language-plaintext highlighter-rouge">WORK</code> 关键字也支持 <code class="language-plaintext highlighter-rouge">COMMIT</code> 和 <code class="language-plaintext highlighter-rouge">ROLLBACK</code>, 用的是 <code class="language-plaintext highlighter-rouge">CHAIN</code> 和 <code class="language-plaintext highlighter-rouge">RELEASE</code>. 这两个语法用来提供事务结束阶段的更多控制. 系统变量 <code class="language-plaintext highlighter-rouge">completion type</code> 定义了默认的结束行为.</p>
+
+<p><code class="language-plaintext highlighter-rouge">AND CHAIN</code>语法能在当前事务结束时立即开启一个新事务, 新的事物和原事务拥有相同的隔离等级、读写访问权限. <code class="language-plaintext highlighter-rouge">RELEASE</code> 语法使服务在当前事务结束后断连当前session. 还有 <code class="language-plaintext highlighter-rouge">NO</code> 关键词来禁用 <code class="language-plaintext highlighter-rouge">CHAIN/RELEASE</code> 行为, 当想系统默认开启<code class="language-plaintext highlighter-rouge">completion_type</code> 配置时会用到.</p>
+
+<p>开始一个新事务会使所有正在pending的事务被提交, 详见 <strong>13.3.3</strong>.</p>
+
+<p>开始一个新事务同时还会使捕获的表锁被释放, 就好像你自己执行了 <code class="language-plaintext highlighter-rouge">UNLOCK TABLES</code>. 开启新事务不会释放全局的读锁(<code class="language-plaintext highlighter-rouge">FLUSH TABLES WITH READ LOCK</code>得到的).</p>
+
+<p>为了最好的结果, 事务应该只被单事务安全的存储引擎管理的表来使用. 否则可能会有以下问题:</p>
+
+<ul>
+  <li>如果你用到了来自不止一个单事务安全存储引擎(比如 InnoDB), 且事务隔离等级为 <code class="language-plaintext highlighter-rouge">SERIALIZABLE</code>. 当一个事务被提交, 而另一个还未完成的事务看到了被前一个事务修改的值, 此时事务的原子性得不到保证, 而产生了不一致.(如果跨引擎的事务很少用到, 你可以在需要时给每个事务单独设置隔离等级为 <code class="language-plaintext highlighter-rouge">SERIALIZABLE</code>).</li>
+  <li>如果你在一个事务里用到了非事务安全的表, 这些表的改动会直接被存储, 即又变成了自动提交模式.</li>
+  <li>如果你在一个事务里更新一个非事务表, 然后抛出 <code class="language-plaintext highlighter-rouge">ROLLBACK</code>, 此时会报 <code class="language-plaintext highlighter-rouge">ER_WARNING_NOT_COMPLETE_ROLLBACK</code> 的警告. 事务安全的表会被成功回滚, 而非事务安全的表做不到.</li>
+</ul>
+
+<p>每个事务都被存储在一个二进制日志里, 直到 <code class="language-plaintext highlighter-rouge">COMMIT</code>. 被回滚的事务不会被记录. (例外: 非事务的表不能被回滚, 如果被回滚的事务里包含了非事务表的改动, 整个事务会在 <code class="language-plaintext highlighter-rouge">ROLLBACK</code> 语句后被记录, 来确保非事务表的改动是重复的.)</p>
+
+<p>你可以用 <code class="language-plaintext highlighter-rouge">SET TRANSACTION</code> 语句来修改事务的隔离等级和访问模式. 详见 <strong>13.3.7</strong>.</p>
+
+<p>回滚是一个慢操作, 且可能发生用户意料之外的行为. 因此, <code class="language-plaintext highlighter-rouge">SHOW PROCESSLIST</code> 可以用来显示session的State列中的回滚, 这对隐式回滚和主动回滚都有效.</p>
+
+<blockquote>
+  <p><strong>注意:</strong> 在 MySQL 8.0 里, BEGIN, COMMIT 和 ROLLBACK 不受 <code class="language-plaintext highlighter-rouge">--replicate-do-db</code> 或 <code class="language-plaintext highlighter-rouge">--replicate-ignore-db</code> 规则影响.</p>
+</blockquote>
+
+<p>当 <code class="language-plaintext highlighter-rouge">InnoDB</code> 完成了一次事务的回滚, 这次事务设置的所有锁都会被释放. 如果事务里的单个SQL语句由于错误而回滚了, 这条语句里的锁会在事务还存在时保留. 这是因为 <code class="language-plaintext highlighter-rouge">InnoDB</code> 存储不知道行锁究竟是哪条语句设置的.</p>
+
+<p>如果事务里的一个select语句调用了存储方法, 且存储方法里的一条语句时报了, 这次事务会回滚. 如果后续事务又执行了<code class="language-plaintext highlighter-rouge">ROLLBACK</code>, 整个事务都会被回滚.</p>
+
+<h2 id="原文链接">原文链接</h2>
+
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/commit.html">https://dev.mysql.com/doc/refman/8.0/en/commit.html</a></p>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/deploy/2021/08/24/use-dockerhub-and-github-action-to-deploy-your-blog.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                使用dockerhub和GitHub action来自动化部署你的博客
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

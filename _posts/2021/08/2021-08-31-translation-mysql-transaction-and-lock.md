@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 【翻译】【MySQL文档@13.3.1】MySQL事务锁相关
-date: 2021-08-31 20:18:12 +0800
+date: 2021-08-31 19:31:12 +0800
 author: yitimo
 categories: mysql, translation
 tags: ["mysql", "translation"]
