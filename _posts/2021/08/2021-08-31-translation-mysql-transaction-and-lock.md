@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 【翻译】【MySQL文档@13.3.1】MySQL事务锁相关
+title: 【翻译】【MySQL文档@13.3.1】START TRANSACTION, COMMIT, 和 ROLLBACK 语法
 date: 2021-08-31 19:31:12 +0800
 author: yitimo
 categories: mysql, translation
@@ -8,10 +8,8 @@ tags: ["mysql", "translation"]
 keywords:
 - mysql,
 - translation,
-description: MySQL transaction and lock(Translation for MySQL document Ch-13.3.1).
+description: START TRANSACTION, COMMIT, and ROLLBACK Statements(Translation for MySQL document Ch-13.3.1).
 ---
-
-## START TRANSACTION, COMMIT, 和 ROLLBACK 语法
 
 ``` sql
 START TRANSACTION
