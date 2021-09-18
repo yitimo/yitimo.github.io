@@ -1,28 +1,10 @@
-# Yitimo's blog by jekyll
+# Yitimo's blog
 
-## How to setup environment
+Deployed at [blog.yitimo.com](https://blog.yitimo.com)
 
-1. install ruby
-2. install jekyll
-3. git clone
-4. bundle install
+Build with:
 
-## How to develop
-
-Run:
-
-``` shell
-yarn watch:nav
-```
-
-Then open another shell, and run:
-
-``` shell
-yarn serve
-```
-
-## What to do
-
-### Update posts
-
-1. Try update per week. At least two per months.
+- [x] [jekyll](https://jekyllrb.com/)
+- [x] [github pages](https://docs.github.com/en/pages)
+- [x] [docker hub](https://hub.docker.com/)
+- [x] [utterances](https://github.com/utterance/utterances)
