@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】Getting Started Tutorial | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/chrome-extension/2019/03/14/translate-getting-started-tutorial.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>【翻译】Getting Started Tutorial</h1>
+        <p class="time"><i>修改于: 2019-03-14 11:11</i></p>
+        
+        
+        
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
+        <p>原文链接：<a href="https://developer.chrome.com/extensions/getstarted">Getting Started Tutorial</a></p>
+
+<p>Chrome插件(以下简称插件)由不同但有凝聚力的组件组成。这些组件包括 <a href="https://developer.chrome.com/background_pages.html">background scripts</a>，<a href="https://developer.chrome.com/content_scripts.html">content scripts</a>，<a href="https://developer.chrome.com/optionsV2">options page</a>，<a href="https://developer.chrome.com/user_interface.html">UI elements</a>，以及许多的具体逻辑页面。插件组件使用web开发技术实现：HTML、JS和CSS。一个插件要实现的功能决定了它将使用到哪些组件，而不是全都会用到。</p>
+
+<p>本文将搭建一个插件，让用户可以更改<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内所有页面的背景色。它将使用到许多核心组件以便介绍他们之间的关系。</p>
+
+<p>首先创建一个新的目录来存放插件文件，完整的插件代码可以在<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started_complete.zip">这里下载</a>。</p>
+
+<h2 id="创建manifest">创建Manifest</h2>
+
+<p>插件都从它们的<code class="language-plaintext highlighter-rouge">manifest</code>起步，创建<code class="language-plaintext highlighter-rouge">manifest.json</code>包含以下内容，或直接<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/manifest.json">下载</a>：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>现在这个插件可以直接在Chrome中添加(只有单个manifest文件，连页面和图标都没有)。</p>
+
+<h2 id="添加指令">添加指令</h2>
+
+<p>尽管现在插件安装好了，它还没有任何指令。现在添加一个<code class="language-plaintext highlighter-rouge">background</code>属性，并创建相应文件(<code class="language-plaintext highlighter-rouge">background.js</code>)：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>以上代码说明插件现在包含了一个非持久化运行的后台脚本，在里面可以做一些监听事件。</p>
+
+<p>插件一旦安装就会需要一个持久化变量的信息。先在后台脚本中添加<code class="language-plaintext highlighter-rouge">runtime.onInstalled</code>事件的监听，回调中将设置一个值到storage中。并允许多个插件后续来访问和更新这个值：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chrome.runtime.onInstalled.addListener(function() {
+    chrome.storage.sync.set({color: '#3aa757'}, function() {
+        console.log("The color is green.");
+    });
+});
+</code></pre></div></div>
+
+<p>包括<code class="language-plaintext highlighter-rouge">storage</code>在内的大多数API都必须在manifest的permissions属性中声明过，像这样：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>现在刷新插件，会多出来一个<code class="language-plaintext highlighter-rouge">背景页</code>按钮，点击可以看到后台代码打出的log：”The color is green.”。</p>
+
+<h2 id="实现用户接口">实现用户接口</h2>
+
+<p>插件可以有很多形式的用户接口，本插件将用到popup(弹出式页面)。创建文件<code class="language-plaintext highlighter-rouge">popup.html</code>，包含如下代码，用于显示一个按钮用于点击来更改背景色：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+  <span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+      <span class="nt">&lt;style&gt;</span>
+        <span class="nt">button</span> <span class="p">{</span>
+          <span class="nl">height</span><span class="p">:</span> <span class="m">30px</span><span class="p">;</span>
+          <span class="nl">width</span><span class="p">:</span> <span class="m">30px</span><span class="p">;</span>
+          <span class="nl">outline</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"changeColor"</span><span class="nt">&gt;&lt;/button&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>现在在manifest的page_action属性中声明这个文件作为弹出页面：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Build an Extension!"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="nl">"background"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"background.js"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"persistent"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"page_action"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"default_popup"</span><span class="p">:</span><span class="w"> </span><span class="s2">"popup.html"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>然后继续配置插件的<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/images.zip">图标</a>，其中page_action中的图标用于在右上角显示，外部的icons中的图标用于在插件管理页中显示：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+    "name": "Getting Started Example",
+    "version": "1.0",
+    "description": "Build an Extension!",
+    "permissions": ["storage"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page_action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "images/get_started16.png",
+            "32": "images/get_started32.png",
+            "48": "images/get_started48.png",
+            "128": "images/get_started128.png"
+        }
+    },
+    "icons": {
+        "16": "images/get_started16.png",
+        "32": "images/get_started32.png",
+        "48": "images/get_started48.png",
+        "128": "images/get_started128.png"
+    },
+    "manifest_version": 2
+}
+</code></pre></div></div>
+
+<p>如果现在重载插件，将会显示一个灰色图标，但没有任何功能。因为<code class="language-plaintext highlighter-rouge">manifest</code>中定义了<code class="language-plaintext highlighter-rouge">page_actions</code>，将由插件来告诉浏览器用户合适可以和<code class="language-plaintext highlighter-rouge">popup.html交互</code>。</p>
+
+<p>现在在后台脚本中添加新功能：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">chrome</span><span class="p">.</span><span class="nx">runtime</span><span class="p">.</span><span class="nx">onInstalled</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#3aa757</span><span class="dl">'</span><span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">The color is green.</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">onPageChanged</span><span class="p">.</span><span class="nx">removeRules</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">onPageChanged</span><span class="p">.</span><span class="nx">addRules</span><span class="p">([{</span>
+                <span class="na">conditions</span><span class="p">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">PageStateMatcher</span><span class="p">({</span>
+                <span class="na">pageUrl</span><span class="p">:</span> <span class="p">{</span><span class="na">hostEquals</span><span class="p">:</span> <span class="dl">'</span><span class="s1">developer.chrome.com</span><span class="dl">'</span><span class="p">},</span>
+            <span class="p">})</span>
+            <span class="p">],</span>
+                <span class="na">actions</span><span class="p">:</span> <span class="p">[</span><span class="k">new</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeContent</span><span class="p">.</span><span class="nx">ShowPageAction</span><span class="p">()]</span>
+        <span class="p">}]);</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>现在插件将需要<code class="language-plaintext highlighter-rouge">declarativeContent</code>权限：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"declarativeContent"</span><span class="p">,</span><span class="w"> </span><span class="s2">"storage"</span><span class="p">],</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>现在当用户在<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内时插件将变成正常彩色图标，，点击时将弹出<code class="language-plaintext highlighter-rouge">popup.html</code>页面。</p>
+
+<p>弹出页面的最后一步是添加按钮颜色。创建页面脚本<code class="language-plaintext highlighter-rouge">popup.js</code>：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">color</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">changeColor</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">color</span><span class="p">;</span>
+    <span class="nx">changeColor</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">color</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>做的事情是从存储中获取颜色并设置。现在在popup.html中添加这个脚本：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    ...
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"changeColor"</span><span class="nt">&gt;&lt;/button&gt;</span>
+        <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"popup.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>重载插件你将看到一个绿色按钮。</p>
+
+<h2 id="layer-logic">Layer Logic</h2>
+
+<p>插件现在知道了弹出层要当用户在<code class="language-plaintext highlighter-rouge">developer.chrome.com</code>站内时可用，并显示一个有颜色的按钮，但还需要进一步的用户交互。更新<code class="language-plaintext highlighter-rouge">popup.js</code>：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">changeColor</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">changeColor</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="nx">changeColor</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">color</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="na">active</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="na">currentWindow</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span>
+        <span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span>
+        <span class="p">{</span><span class="na">code</span><span class="p">:</span> <span class="dl">'</span><span class="s1">document.body.style.backgroundColor = "</span><span class="dl">'</span> <span class="o">+</span> <span class="nx">color</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">";</span><span class="dl">'</span><span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>更新的代码添加了一个点击事件到按钮，将会出发一个动态注入脚本。这将把页面的背景色设为跟按钮颜色相同。使用程序注入允许用户手动触发内容脚本，而不是添加不想要的代码到web页面中。</p>
+
+<p>manifest中需要添加<code class="language-plaintext highlighter-rouge">activeTab</code>权限来允许插件临时访问<code class="language-plaintext highlighter-rouge">tabs</code>接口，以允许插件调用<code class="language-plaintext highlighter-rouge">tabs.executeScript</code>方法。</p>
+
+<p>本插件现在可用了！重载插件，刷新页面，打开popup并点击按钮来把页面变绿！然而，有些用户可能想要将背景色更改为不同的颜色。</p>
+
+<h2 id="给用户选项">给用户选项</h2>
+
+<p>插件现在只允许用户更改背景色为绿色。</p>
+
+<p>创建<code class="language-plaintext highlighter-rouge">options.html</code>页面包含如下代码：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;style&gt;</span>
+        <span class="nt">button</span> <span class="p">{</span>
+        <span class="nl">height</span><span class="p">:</span> <span class="m">30px</span><span class="p">;</span>
+        <span class="nl">width</span><span class="p">:</span> <span class="m">30px</span><span class="p">;</span>
+        <span class="nl">outline</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+        <span class="nl">margin</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"buttonDiv"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>
+            <span class="nt">&lt;p&gt;</span>Choose a different background color!<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"options.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>并在manifest中配置这个选项页面：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Getting Started Example"</span><span class="p">,</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="nl">"options_page"</span><span class="p">:</span><span class="w"> </span><span class="s2">"options.html"</span><span class="p">,</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+    </span><span class="nl">"manifest_version"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>重载插件并点击<code class="language-plaintext highlighter-rouge">详细信息</code>，点击<code class="language-plaintext highlighter-rouge">扩展程序选项</code>即可看到这个页面。现在添加<code class="language-plaintext highlighter-rouge">options.js</code>包含如下内容：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">buttonDiv</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">kButtonColors</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">#3aa757</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#e8453c</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#f9bb2d</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">#4688f1</span><span class="dl">'</span><span class="p">];</span>
+<span class="kd">function</span> <span class="nx">constructOptions</span><span class="p">(</span><span class="nx">kButtonColors</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">item</span> <span class="k">of</span> <span class="nx">kButtonColors</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">button</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">button</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="nx">item</span><span class="p">;</span>
+    <span class="nx">button</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">sync</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="nx">item</span><span class="p">},</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">color is </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">item</span><span class="p">);</span>
+        <span class="p">})</span>
+    <span class="p">});</span>
+    <span class="nx">page</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">button</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">constructOptions</span><span class="p">(</span><span class="nx">kButtonColors</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>现在有四种颜色可选了。这几个页面都共享保存在插件全局storage中的颜色值。</p>
+
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/chrome-extension/2019/03/14/translate-what-are-extensions.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                【翻译】What are extensions?
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/chrome-extension/2019/03/14/translate-overview.html">
+                【翻译】Overview
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

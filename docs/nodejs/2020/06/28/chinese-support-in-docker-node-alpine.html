@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker node alpine 容器内支持中文字体 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/nodejs/2020/06/28/chinese-support-in-docker-node-alpine.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>Docker node alpine 容器内支持中文字体</h1>
+        <p class="time"><i>修改于: 2020-06-28 20:23</i></p>
+        
+        
+        
+        <p>笔者在开发基于eggjs的nodejs服务时, 选择将其容器化部署, 对于开发流程来说和常规部署没有区别, 直到遇到新需求——需要在服务端动态绘制图片返回给前端使用。</p>
+
+<p>当绘图内容涉及中文汉字时, 本地调试是一切正常的, 因为常规PC一般都支持了大部分语言字体, 但当将其部署到docker时, 发现中文都变成了方框。才想起用的是node-alpine镜像, 自然不会自带中文字体。</p>
+
+<h2 id="下载字体文件">下载字体文件</h2>
+
+<p>以宋体为例, 随便一搜下载到字体文件 <code class="language-plaintext highlighter-rouge">simsun.ttf</code>, 大小为10M.</p>
+
+<blockquote>
+  <p>TODO: 扩展-ttf和ttc的区别</p>
+</blockquote>
+
+<blockquote>
+  <p>TODO: 扩展-emoji表情支持</p>
+</blockquote>
+
+<h2 id="微调dockerfile">微调Dockerfile</h2>
+
+<ul>
+  <li>笔者用的图片绘制库是 <code class="language-plaintext highlighter-rouge">sharp</code></li>
+  <li>设置国内镜像节省光阴(sharp@0.25.4开始对国内镜像的支持也更好了)</li>
+  <li>镜像内分阶段构建 第一阶段处理npm依赖 第二阶段实际部署</li>
+  <li>注意在第二阶段才复制字体文件到系统路径下</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 第一阶段构建</span>
+FROM node:12.13.1-alpine as builder
+
+ENV <span class="nv">NODE_ENV</span><span class="o">=</span>development <span class="nv">EGG_SERVER_ENV</span><span class="o">=</span><span class="nb">local
+</span>ENV <span class="nv">npm_config_sharp_binary_host</span><span class="o">=</span><span class="s2">"https://npm.taobao.org/mirrors/sharp"</span>
+ENV npm_config_sharp_libvips_binary_host <span class="s2">"https://npm.taobao.org/mirrors/sharp-libvips"</span>
+
+<span class="c"># 代码目录</span>
+WORKDIR /usr/src/app
+<span class="c"># 依赖相关</span>
+COPY package<span class="k">*</span>.json ./
+<span class="c"># 安装依赖 使用淘宝镜像</span>
+RUN npm ci <span class="nt">--only</span><span class="o">=</span>production <span class="nt">--registry</span><span class="o">=</span>https://registry.npm.taobao.org <span class="nt">--unsafe-perm</span>
+<span class="c"># 将代码复制进容器</span>
+COPY <span class="nb">.</span> <span class="nb">.</span>
+
+<span class="c"># 第二阶段构建</span>
+FROM node:12.13.1-alpine
+ENV <span class="nv">NODE_ENV</span><span class="o">=</span>development <span class="nv">EGG_SERVER_ENV</span><span class="o">=</span><span class="nb">local
+
+</span>WORKDIR /usr/src/app
+COPY <span class="nt">--from</span><span class="o">=</span>builder /usr/src/app <span class="nb">.</span>
+
+<span class="c"># 使用字体文件(中文宋体)</span>
+RUN <span class="nb">mkdir</span> <span class="nt">-p</span> /usr/share/fonts/win
+RUN <span class="nb">mv </span>fonts/simsun.ttf /usr/share/fonts/win/simsun.ttf
+
+<span class="c"># 启动</span>
+EXPOSE 7001
+CMD <span class="o">[</span> <span class="s2">"npm"</span>, <span class="s2">"run"</span>, <span class="s2">"start"</span> <span class="o">]</span>
+</code></pre></div></div>
+
+<h2 id="参考">参考</h2>
+
+<p>有文章提到需要安装一些依赖, 但实测不这么做也可以:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apk add font-adobe-100dpi fontconfig <span class="c"># fc-list等命令找不到就是因为需要安装 fontconfig 依赖</span>
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://blog.csdn.net/zimou5581/article/details/101368129">https://blog.csdn.net/zimou5581/article/details/101368129</a></li>
+  <li><a href="https://github.com/lovell/sharp/issues/1875">https://github.com/lovell/sharp/issues/1875</a></li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/nodejs/2020/06/12/manage-token-in-eggjs.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                在eggjs中管理微信token
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/front/end/2020/07/10/video-autoplay-in-h5-mobile.html">
+                移动端h5音/视频自动播放兼容
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

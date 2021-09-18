@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>react+redux笔记 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/react/2019/04/02/notes-on-react-redux.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>react+redux笔记</h1>
+        <p class="time"><i>修改于: 2019-04-02 16:12</i></p>
+        
+        
+        
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
+        <ul>
+  <li>react本身做的事情大体是根据编写好的组件渲染出真实的DOM。</li>
+  <li>
+    <ul>
+      <li>编写的组件可以是一个<code class="language-plaintext highlighter-rouge">es6/typescript</code>的<code class="language-plaintext highlighter-rouge">class</code>，也可以直接是个返回标签的函数。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>组件通过props接收父级传入的值，通过state维护自己内部的值。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>父级传入的props更改时会触发：<code class="language-plaintext highlighter-rouge">componentWillReceiveProps</code> -&gt; <code class="language-plaintext highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">componentWillUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">render</code> -&gt; <code class="language-plaintext highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>内部<code class="language-plaintext highlighter-rouge">state</code>更改时会触发：<code class="language-plaintext highlighter-rouge">shouldComponentUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">componentWillUpdate</code> -&gt; <code class="language-plaintext highlighter-rouge">render</code> -&gt; <code class="language-plaintext highlighter-rouge">componentDidUpdate</code>，最终更新界面值。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>组件本身通过<code class="language-plaintext highlighter-rouge">setState</code>更新<code class="language-plaintext highlighter-rouge">state</code>，以更新界面值。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>react本身封装好了标签的一些事件(<code class="language-plaintext highlighter-rouge">onClick</code>等)，也可以通过<code class="language-plaintext highlighter-rouge">ref</code>获取真实DOM的引用(<code class="language-plaintext highlighter-rouge">componentDidMount</code>中可访问到)。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>redux本身做的事情大体是帮助维护一份单例的数据集(store)。</li>
+  <li>
+    <ul>
+      <li>通过<code class="language-plaintext highlighter-rouge">subscribe</code>监听状态变化，<code class="language-plaintext highlighter-rouge">getState</code>获取当前状态。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>通过<code class="language-plaintext highlighter-rouge">reducer</code>来决定不同<code class="language-plaintext highlighter-rouge">action</code>都会如何操作数据。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>通过<code class="language-plaintext highlighter-rouge">action</code>来规范支持的操作。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>通过<code class="language-plaintext highlighter-rouge">dispatch</code>方法来传入<code class="language-plaintext highlighter-rouge">action</code>。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p>至此可以这么使用react+redux：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">createStore</span><span class="p">(...)</span>
+
+<span class="kd">class</span> <span class="nx">App</span> <span class="kd">extends</span> <span class="nx">Component</span><span class="p">{</span>
+
+  <span class="nx">componentWillMount</span><span class="p">(){</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">state</span><span class="p">)</span><span class="o">=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">state</span><span class="p">))</span>
+  <span class="p">}</span>
+  
+  <span class="nx">render</span><span class="p">(){</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">Comp</span> <span class="nx">state</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">}</span>
+        <span class="nx">onIncrease</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ACTION1</span><span class="dl">'</span><span class="p">})}</span>
+        <span class="nx">onDecrease</span><span class="o">=</span><span class="p">{()</span><span class="o">=&gt;</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span><span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ACTION2</span><span class="dl">'</span><span class="p">})}</span>
+    <span class="sr">/</span><span class="err">&gt;
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<ul>
+  <li>react-redux帮助react整合redux到自己的组件体系中。</li>
+  <li>
+    <ul>
+      <li>直接解决的问题就是不用层层传入<code class="language-plaintext highlighter-rouge">props</code>来访问<code class="language-plaintext highlighter-rouge">store</code>了。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>顶层包裹<code class="language-plaintext highlighter-rouge">Provider</code>组件并传入<code class="language-plaintext highlighter-rouge">store</code>来使用。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Provider</code>组件做的事是用<code class="language-plaintext highlighter-rouge">Context</code>维护一份store。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>需要访问store的组件用<code class="language-plaintext highlighter-rouge">connect</code>来将状态和<code class="language-plaintext highlighter-rouge">action</code>注入到<code class="language-plaintext highlighter-rouge">props</code>中。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>mapStateToProps是<code class="language-plaintext highlighter-rouge">connect</code>的第一个参数，帮助绑定状态到组件的<code class="language-plaintext highlighter-rouge">props</code>。</li>
+  <li>
+    <ul>
+      <li>此函数返回的对象会被整合到组件<code class="language-plaintext highlighter-rouge">props</code>中。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>函数第一个参数(<code class="language-plaintext highlighter-rouge">state</code>)为全局所有的<code class="language-plaintext highlighter-rouge">reducer</code>，即<code class="language-plaintext highlighter-rouge">store</code>中的数据</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>函数第二个参数(<code class="language-plaintext highlighter-rouge">ownProps</code>)为组件本身的<code class="language-plaintext highlighter-rouge">props</code>。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>每当状态更新时最先触发<code class="language-plaintext highlighter-rouge">mapStateToProps</code>，随后走组件<code class="language-plaintext highlighter-rouge">update</code>四步。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>组件本身传入的props更改不会触发<code class="language-plaintext highlighter-rouge">mapStateToProps</code>，但传入<code class="language-plaintext highlighter-rouge">ownProps</code>后就也会触发。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>mapDispatchToProps是<code class="language-plaintext highlighter-rouge">connect</code>的第二个参数，帮助绑定<code class="language-plaintext highlighter-rouge">action</code>到组件的<code class="language-plaintext highlighter-rouge">props</code>。</li>
+  <li>
+    <ul>
+      <li>也就是说现在可以在组件中调用<code class="language-plaintext highlighter-rouge">action</code>了。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>执行action需要dispatch，但是可以用<code class="language-plaintext highlighter-rouge">bindActionCreators</code>来隐藏dispatch部分。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p>至此可以这么使用<code class="language-plaintext highlighter-rouge">react</code>+<code class="language-plaintext highlighter-rouge">redux</code>+<code class="language-plaintext highlighter-rouge">react-redux</code>：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">ownProps</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
+    <span class="na">increase</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">increase</span><span class="p">,</span>
+    <span class="na">decrease</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">decrease</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">MyComp</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">(){</span>
+    <span class="kd">const</span> <span class="p">{</span><span class="nx">count</span><span class="p">,</span> <span class="nx">increase</span><span class="p">,</span> <span class="nx">decrease</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">计数</span><span class="err">：</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span><span class="nx">次</span><span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">increase</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">增加</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">decrease</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">减少</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">)
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">Comp</span> <span class="o">=</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="err">，</span> <span class="nx">mapDispatchToProps</span><span class="p">)(</span><span class="nx">MyComp</span><span class="p">);</span>
+
+</code></pre></div></div>
+
+<hr />
+
+<p>connect后续两个参数之后再深究，其中第三个可以自定义状态如何merge到组件的<code class="language-plaintext highlighter-rouge">props</code>中。</p>
+
+<hr />
+
+<p>参考链接：</p>
+
+<ul>
+  <li>上文示例代码搬迁自<a href="http://taobaofed.org/blog/2016/08/18/react-redux-connect/">这里</a>。</li>
+  <li><a href="https://medium.com/ovrsea/mapstatetoprops-and-why-you-may-not-need-mapdispatchtoprops-as-a-beginner-dd012a3da5e6">mapStateToProps, and why you may not need mapDispatchToProps when you start Redux</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>redux-thunk 异步的redux</li>
+  <li>
+    <ul>
+      <li>可接收函数作为action，也就是先dispatch这个action发起异步操作。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>在此函数中通过第一个参数(dispatch)调用其他<code class="language-plaintext highlighter-rouge">action</code>，以完成异步action效果。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>redux-saga 异步的redux</li>
+  <li>
+    <ul>
+      <li>在单独的saga模块中监听组件发起的action。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>接收到组件action后执行异步方法，执行完成后再发起action到reducer。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>reducer接收到saga发起的action后返回新state到组件。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>saga对action的监听不影响reducer直接处理这个action，可以同时触发。</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>个人感觉像redux专用的小<code class="language-plaintext highlighter-rouge">rx</code>。</li>
+    </ul>
+  </li>
+</ul>
+
+<ol>
+  <li>组件dispatch一个<code class="language-plaintext highlighter-rouge">ActionA</code></li>
+  <li>saga监听到<code class="language-plaintext highlighter-rouge">ActionA</code></li>
+  <li>执行异步逻辑</li>
+  <li>put一个<code class="language-plaintext highlighter-rouge">ActionB</code>到reducer</li>
+  <li>reducer返回新状态到组件</li>
+</ol>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/react/2019/04/01/react-with-typescript-starter.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                从零搭建 webpack+react+typescript 启动项目
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/react/2019/04/07/dynamic-antd-theme.html">
+                动态切换antd主题色配置
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .button {
+            padding: 10px;
+            outline: none;
+            border: none;
+            background: lightblue;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <button class="button" onclick="killWechat()">请使用安卓微信点击</button>
+    <script>
+        function killWechat() {
+            try {
+                Intl.PluralRules.supportedLocalesOf([])
+                alert('!!')
+            } catch(e) {
+                // alert('error ' + e.toString())
+                alert('??')
+            }
+        }
+    </script>
+</body>
+</html>
