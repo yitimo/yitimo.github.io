@@ -127,7 +127,7 @@
     .block {
         width: auto;
         max-width: 300px;
-        white-space: nowrap;
+        // white-space: nowrap;
         margin: 10px auto;
         cursor: pointer;
         display: block;
@@ -148,16 +148,6 @@
     }
 }
 
-// @media (min-width: 1281px) {
-//     .yitiblog-pager {
-//         .prev {
-//             float: left;
-//         }
-//         .next {
-//             float: right;
-//         }   
-//     }
-// }
 @media (max-width: 1150px) {
     .yitiblog {
         .block {
