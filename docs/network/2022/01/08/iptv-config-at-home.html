@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>电信宽带单线复用IPTV到电视墙方案 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/network/2022/01/08/iptv-config-at-home.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>电信宽带单线复用IPTV到电视墙方案</h1>
+        <p class="time"><i>修改于: 2022-01-08 18:59</i></p>
+        
+        
+        
+        <p>本文记录了笔者优化自家网络时遇到的一个经典问题: <strong>已知从弱电箱到电视墙只有一根网线不可动摇, 如何实现电视墙网口同时支持IPTV和互联网连接</strong>.</p>
+
+<h2 id="现状">现状</h2>
+
+<ul>
+  <li>弱电箱在入户门边墙上, 勉强能放下一个光猫, 一个路由器</li>
+  <li>弱电箱到各房间都有两根网线, 但到客厅的网线只有一根在电视墙, 另一根在餐厅, 相隔很远</li>
+  <li>接了电信宽带+IPTV, 安装当天让小哥改了桥接, 光猫 LAN1 口为网络口, LAN2 口为 IPTV 口</li>
+  <li>挣扎了一番后放弃破解光猫超级密码, 新方法不定时会河蟹, 且网络和IPTV共用LAN1口方案, 实际还是占用到了网络口带宽</li>
+</ul>
+
+<h2 id="方案">方案</h2>
+
+<h3 id="落选方案1-把预埋的同轴线抽出来换网线-从装修上解决">落选方案1: 把预埋的同轴线抽出来换网线, 从装修上解决</h3>
+
+<p>太折腾, 对自己的陈年二手房没信心.</p>
+
+<h3 id="落选方案2-把同轴线转网口直接用">落选方案2: 把同轴线转网口直接用</h3>
+
+<ul>
+  <li>太折腾, 为了给弱电箱腾空间已经把铜缆的头都剪短了, 要先重新接上头再转网口</li>
+  <li>毕竟同轴线转的, 带宽上限不高</li>
+</ul>
+
+<h3 id="落选方案3-光猫层面把iptv口和网络口绑到同一-lan-口-然后用-vlan-区分">落选方案3: 光猫层面把IPTV口和网络口绑到同一 LAN 口, 然后用 VLAN 区分</h3>
+
+<ul>
+  <li>社恐人士不愿找客服</li>
+  <li>不愿意走破解, 尽量黑箱操作</li>
+  <li>网络口和IPTV口绑在一个LAN, 物理上就占用了带宽</li>
+</ul>
+
+<hr />
+
+<h3 id="确定方案">确定方案</h3>
+
+<ul>
+  <li>光猫 LAN1 口(网口)连接网关路由器 WAN 口</li>
+  <li>网关路由器 LAN1 口连接二层交换机 LAN1 口</li>
+  <li>光猫 LAN2 口(IPTV)连接交换机A LAN2 口</li>
+  <li>交换机A LAN3 口连接电视墙网线, 接到电视墙交换机B LAN1 口</li>
+  <li>交换机B LAN2 口连接 PS5</li>
+  <li>交换机B LAN3 口连接 电视机</li>
+  <li>交换机B LAN4 口连接 光猫机顶盒</li>
+  <li>交换机A LAN2 口划到 VLAN2</li>
+  <li>交换机A LAN3 口划所有网络, 包含默认 LAN 和 VLAN2</li>
+  <li>交换机B LAN4 口划到 VLAN2</li>
+  <li><strong>完成</strong></li>
+</ul>
+
+<h3 id="设备">设备</h3>
+
+<ul>
+  <li>1台 AX88U: 作为网关路由器, 负责拨号和各种服务</li>
+  <li>2台 ubnt flex mini: 负责划分VLAN; 体积足够小, 一台挤进弱电箱, 一台放电视墙(<em>也可以是其他任何支持划分VLAN的二层交换机</em>)</li>
+</ul>
+
+<h3 id="意识流拓扑图">意识流拓扑图</h3>
+
+<p><img src="/assets/images/202201/20220119191117.jpg" alt="意识流网络拓扑" /></p>
+
+<h2 id="一些疑问">一些疑问</h2>
+
+<h3 id="还能怎么优化">还能怎么优化?</h3>
+
+<ol>
+  <li>弱电箱里的路由器关掉wifi功能, 反正信号也遮挡严重, 还能拧掉天线省空间</li>
+  <li>电视墙交换机B LAN5 口接个无线AP提供客厅wifi, 比如华硕系的AX魔方, 加入 AIMesh 并开启有线回程</li>
+</ol>
+
+<h3 id="一定要划分vlan吗">一定要划分VLAN吗?</h3>
+
+<p>其实也不用, 但实测完全不划VLAN的情况下, 机顶盒大概率要重试第二次才连接成功, 能明显感觉到流量串了</p>
+
+<h3 id="划分vlan真的有效吗">划分VLAN真的有效吗?</h3>
+
+<p>实测划好VLAN后故意插错网口 -&gt; 断网+断电视 -&gt; 证明没配错只是配得太顺利 :)</p>
+
+<h3 id="电视游戏机不是都支持无线连接吗">电视、游戏机不是都支持无线连接吗?</h3>
+
+<ul>
+  <li>电视机正常连无线用, 确实影响不大</li>
+  <li>日版游戏机, 要连5G wifi的话只能配置到 36/40 信道, 理论上信号会被常规160左右信道碾压</li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/mysql,/translation/2021/08/31/translation-mysql-transaction-and-lock.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                【翻译】【MySQL文档@13.3.1】START TRANSACTION, COMMIT, 和 ROLLBACK 语法
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+        <li><a href="https://www.jianshu.com/u/0b9eef2456ec" class="link">简书</a></li>
+        <li><a href="https://segmentfault.com/u/yitimo" class="link">SegmentFault</a></li>
+        <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
+    </ul>
+</div>
+<p class="title disable-select">
+    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
+    yitimo的个人博客@2020
+</p>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>
