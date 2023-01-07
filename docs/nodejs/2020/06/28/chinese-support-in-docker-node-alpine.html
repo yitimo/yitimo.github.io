@@ -47,6 +47,8 @@
         
         
         
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
         <p>笔者在开发基于eggjs的nodejs服务时, 选择将其容器化部署, 对于开发流程来说和常规部署没有区别, 直到遇到新需求——需要在服务端动态绘制图片返回给前端使用。</p>
 
 <p>当绘图内容涉及中文汉字时, 本地调试是一切正常的, 因为常规PC一般都支持了大部分语言字体, 但当将其部署到docker时, 发现中文都变成了方框。才想起用的是node-alpine镜像, 自然不会自带中文字体。</p>
@@ -153,10 +155,15 @@ CMD <span class="o">[</span> <span class="s2">"npm"</span>, <span class="s2">"ru
         <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
     </ul>
 </div>
-<p class="title disable-select">
-    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
-    yitimo的个人博客@2020
-</p>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人博客@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
 
         </div>
     </footer>

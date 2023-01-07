@@ -66,8 +66,17 @@
             margin: $space-m / 2 0;
         }
     }
-    .recordation {
-        margin-right: $space-l;
+    .copyright {
+        margin-top: $space;
+        text-align: center;
+
+        li {
+            display: inline-block;
+            padding: $space-m / 2 $space;
+        }
+    }
+    .recordation:hover {
+        text-decoration: underline;
     }
     a {
         cursor: pointer;
@@ -173,6 +182,12 @@
         .flex {
             display: block;
             text-align: center;
+        }
+        .copyright {
+            font-size: 14px;
+            li {
+                display: block;
+            }
         }
     }
     .yitiblog-pager.flex {

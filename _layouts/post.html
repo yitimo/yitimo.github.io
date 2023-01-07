@@ -20,9 +20,9 @@
     <section class="yitiblog-content block article">
         <h1>{{ page.title }}</h1>
         <p class="time"><i>修改于: {{ page.date | date: '%Y-%m-%d %H:%M' }}</i></p>
-        {% capture twoyearago_unix %}{{'now' | date: '%s' | minus: 63072000}}{% endcapture %}
+        {% capture monago18_unix %}{{'now' | date: '%s' | minus: 47304000}}{% endcapture %}
         {% capture posttime %}{{page.date | date: '%s'}}{% endcapture %}
-        {% if twoyearago_unix>=posttime %}
+        {% if monago18_unix>=posttime %}
             <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
         {% endif %}
         {{ content }}

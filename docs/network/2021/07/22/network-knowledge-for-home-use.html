@@ -175,10 +175,15 @@
         <li><a href="https://www.cnblogs.com/yitim/" class="link">博客园</a></li>
     </ul>
 </div>
-<p class="title disable-select">
-    <a href="http://www.beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a>
-    yitimo的个人博客@2020
-</p>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人博客@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
 
         </div>
     </footer>

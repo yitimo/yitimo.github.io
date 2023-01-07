@@ -46,10 +46,14 @@ up to date in 744ms
 
 **会link整个目录**: 常规安装npm包时, 实际上安装到node_modules内的是npm pack的产物, 会应用 npmignore 规则只安装真正被发布的子文件或目录, 而 npm link 终究只是个 symlink, 实际上会link整个目录, 包括所有子文件和目录
 
-**link 命令默认不会影响 package.json和package-lock.json**, 当认为开发完成想要取消link时, 有两种方式:
+**link 命令默认不会影响 package.json和package-lock.json**, 当认为开发完成, 并想要取消link时, 有两种方式:
 
 1. npm unlink npm包名, 实测这同时会移除 package.json 里的包依赖(如果此前安装了)
-2. npm i -S npm包名, 也就是重新装一次这个npm包, 这会把link的包挤掉, 前提是此npm包此前已经发过版本了能安装上
+2. npm i -S npm包名, 也就是重新装一次这个npm包, 这样做会把link的包挤掉, 前提是此npm包此前已经发过版本了能安装上
+
+**使用ts开发的工程, link后使用的应该(should)是编译后的js模块, 而不是原始的ts模块**, 按照一般的tsconfig配置, 会忽略node_modules内的ts模块, 而使用编译后的commonjs模块, 这就需要npm包工程在link后, 继续改动ts模块时, 还要记得重新进行tsc编译, 生成最新的js模块供宿主工程使用.
+
+或者也可以专门配置宿主工程的tsconfig, 来包含node_modules中这个npm包的ts模块, **但更建议的方式是写一个脚本监听相关文件改动, 然后自动编译ts到js**.
 
 ---
 
