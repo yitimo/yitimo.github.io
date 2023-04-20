@@ -49,12 +49,15 @@ up to date in 744ms
 **link 命令默认不会影响 package.json和package-lock.json**, 当认为开发完成, 并想要取消link时, 有两种方式:
 
 1. npm unlink npm包名, 实测这同时会移除 package.json 里的包依赖(如果此前安装了)
-2. npm i -S npm包名, 也就是重新装一次这个npm包, 这样做会把link的包挤掉, 前提是此npm包此前已经发过版本了能安装上
+2. npm i -S npm包名, 也就是重新装一次这个npm包, 这样做会把link的包挤掉, 安装回 package.json 内声明好的版本
+3. npm i 效果同2, 将重新安装依赖
 
 **使用ts开发的工程, link后使用的应该(should)是编译后的js模块, 而不是原始的ts模块**, 按照一般的tsconfig配置, 会忽略node_modules内的ts模块, 而使用编译后的commonjs模块, 这就需要npm包工程在link后, 继续改动ts模块时, 还要记得重新进行tsc编译, 生成最新的js模块供宿主工程使用.
 
 或者也可以专门配置宿主工程的tsconfig, 来包含node_modules中这个npm包的ts模块, **但更建议的方式是写一个脚本监听相关文件改动, 然后自动编译ts到js**.
 
----
+## 还要注意哪些?
 
-TODO: 待完成
+- **npm link 支持多个包**: 在包1和包2各自``npm link``后, 在包3里 ``npm link 包1 包2`` 即可同时 link 两个包
+- **工程化项目如何判断某个包是link状态**: ``fs.lstatSync('包所在的node_modules下的目录').isSymbolicLink()``
+- ...

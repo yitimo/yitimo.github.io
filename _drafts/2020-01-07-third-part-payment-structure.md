@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 第三方支付架构浅谈
+title: 第三方支付流程梳理
 date:   2020-01-07 10:20:12 +0800
 author: yitimo
 categories: payment
