@@ -3,7 +3,7 @@ layout: post
 title:  自己搭建ngrok服务器代理本地服务
 date:   2019-09-03 15:32:13 +0800
 author: yitimo
-categories: javascript
+categories: frontend
 tags: ["ngrok", "nginx"]
 keywords:
 - ngrok,

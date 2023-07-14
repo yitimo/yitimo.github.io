@@ -3,10 +3,10 @@ layout: post
 title: 移动端h5音/视频自动播放兼容
 date: 2020-07-10 17:20:12 +0800
 author: yitimo
-categories: front end
-tags: ["front end"]
+categories: frontend
+tags: ["frontend"]
 keywords:
-- front end,
+- frontend,
 description: Audio/video autoplay in h5 mobile.
 ---
 

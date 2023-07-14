@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>动态切换antd主题色配置 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/frontend/2019/04/07/dynamic-antd-theme.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+        <div class="block flex">
+            <img src="/assets/images/yitimo.jpg" class="avatar" />
+<span class="font-l">再见二丁目</span>
+
+        </div>
+    </header>
+    <section class="yitiblog-content block article">
+        <h1>动态切换antd主题色配置</h1>
+        <p class="time"><i>修改于: 2019-04-07 13:22</i></p>
+        
+        
+        
+            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
+        
+        <p><a href="https://ant.design/docs/react/customize-theme-cn">Ant Design</a>官网介绍了其主题色能力，并且相对模糊的提到了通过less来动态切换主题色的方案(底部<a href="https://medium.com/@mzohaib.qc/ant-design-dynamic-runtime-theme-1f9a1a030ba0">社区教程</a>中)。而<a href="https://ant.design">ant.design</a>本身看起来也是用同一方案实现了动态主题色切换。本文将介绍并配置此动态主题方案，即侧重<code class="language-plaintext highlighter-rouge">antd-theme-webpack-plugin</code>这个插件配合<code class="language-plaintext highlighter-rouge">antd</code>+<code class="language-plaintext highlighter-rouge">react</code>的使用，以后再另行介绍<code class="language-plaintext highlighter-rouge">less</code>的<code class="language-plaintext highlighter-rouge">modifyVars</code>原理。</p>
+
+<h2 id="项目准备">项目准备</h2>
+
+<p>首先准备两个less文件用于定义全局的主题样式，比如笔者放在了<code class="language-plaintext highlighter-rouge">src/styles</code>下：</p>
+
+<p><img src="/assets/images/201904/0701.png" alt="Add global less" /></p>
+
+<p>在<code class="language-plaintext highlighter-rouge">_var.less</code>中引入antd默认样式：</p>
+
+<pre><code class="language-less">@import '~antd/lib/style/themes/default.less';
+</code></pre>
+
+<p>除此之外项目中的其他自定义变量都可以在这里定义。</p>
+
+<p>在<code class="language-plaintext highlighter-rouge">global.less</code>中引入<code class="language-plaintext highlighter-rouge">_var.less</code>，这里面定义所有的全局样式，比如先来一个class：</p>
+
+<pre><code class="language-less">@import './_var.less';
+/**
+ * 此处定义整个应用所有组件的主题样式
+ * 组件自己的less(即其他所有less)均无法使用定制主题色，而是使用默认主题色
+ */
+
+.primary {
+    background: @primary-color;
+}
+</code></pre>
+
+<p>然后记得在应用中引入<code class="language-plaintext highlighter-rouge">global.less</code>，比如<code class="language-plaintext highlighter-rouge">index.js</code>中：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">React</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">ReactDOM</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-dom</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="dl">'</span><span class="s1">./styles/global.less</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">App</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./App</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">root</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<h2 id="webpack配置">webpack配置</h2>
+
+<p>在webpack配置中需要新增一个plugin即一开始安装的<code class="language-plaintext highlighter-rouge">antd-theme-webpack-plugin</code>。在<code class="language-plaintext highlighter-rouge">HtmlWebpackPlugin</code>之后添加这个插件：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nx">AntDesignThemePlugin</span><span class="p">({</span>
+    <span class="na">indexFileName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">index.html</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">antDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../node_modules/antd</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">stylesDir</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">varFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles/_var.less</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">mainLessFile</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">../src/styles/global.less</span><span class="dl">'</span><span class="p">),</span>
+    <span class="na">themeVariables</span><span class="p">:</span> <span class="p">[</span>
+        <span class="dl">'</span><span class="s1">@primary-color</span><span class="dl">'</span>
+    <span class="p">],</span>
+<span class="p">}),</span>
+</code></pre></div></div>
+
+<p>根据不同项目需要各自指定正确的路径配置，其中<code class="language-plaintext highlighter-rouge">antDir</code>、<code class="language-plaintext highlighter-rouge">stylesDir</code>、<code class="language-plaintext highlighter-rouge">varFile</code>、<code class="language-plaintext highlighter-rouge">mainLessFile</code>各自对应<code class="language-plaintext highlighter-rouge">antd</code>依赖位置、上面定义的<code class="language-plaintext highlighter-rouge">styles</code>目录位置、变量less位置、全局less位置。</p>
+
+<p><code class="language-plaintext highlighter-rouge">themeVariables</code>用于指定需要替换颜色的变量名，根据自己需求配置。</p>
+
+<h3 id="indexfilename">indexFileName</h3>
+
+<p>配置中的<code class="language-plaintext highlighter-rouge">indexFileName</code>字段为<code class="language-plaintext highlighter-rouge">index.html</code>，实际上当项目的<code class="language-plaintext highlighter-rouge">index.html</code>位置变化时，都必须指定正确的路径，此配置的作用是由插件来自动注入全局less到<code class="language-plaintext highlighter-rouge">index.html</code>，如果找不到或者为指定这个字段，则需要手动往项目的<code class="language-plaintext highlighter-rouge">index.html</code>中添加这样的配置：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet/less"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href=</span><span class="s">"color.less"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;script&gt;</span><span class="nb">window</span><span class="p">.</span><span class="nx">less</span> <span class="o">=</span> <span class="p">{</span> <span class="na">async</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="na">env</span><span class="p">:</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">,</span> <span class="na">javascriptEnabled</span><span class="p">:</span> <span class="kc">true</span> <span class="p">};</span><span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"assets/less.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>这三行代码做的事情是：</p>
+
+<ol>
+  <li>引入一个<code class="language-plaintext highlighter-rouge">color.less</code>，此文件由之后less生成。</li>
+  <li>配置全局less，如果是3.x版本需要配置<code class="language-plaintext highlighter-rouge">javascriptEnabled: true</code>，<code class="language-plaintext highlighter-rouge">antd-theme-webpack-plugin</code>自动生成的话目前使用的是2.7.2版本的CDN。</li>
+  <li>全局引入less，与项目中自行配置的less不同，此less专门用于指定的这两个less和antd内部样式，而项目中的less则用于具体组件样式(所以只有antd内部和指定的<code class="language-plaintext highlighter-rouge">_var.less</code>和<code class="language-plaintext highlighter-rouge">global.less</code>支持动态更改主题色)。</li>
+</ol>
+
+<p>换句话说，你只要检查最终生成的<code class="language-plaintext highlighter-rouge">index.html</code>有没有自动注入这三行less配置(或者手动配置)就能判断是否配置成功。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>关于使用，做法是在需要初始化或切换主题色的地方通过<code class="language-plaintext highlighter-rouge">window.less.modifyVars({antd主题色名: 自定义颜色值})</code>来设置主题色。</p>
+
+<p>至此最简单的支持动态切换主题的antd项目已经配置好了，以下是笔者发现的几个坑点：</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">indexFileName</code>一定要路径正确才能成功自动注入全局less，可以跟项目中<code class="language-plaintext highlighter-rouge">HtmlWebpackPlugin</code>的<code class="language-plaintext highlighter-rouge">filename</code>保持一致即可。</li>
+  <li>项目中所有需要主题色的样式，都要集中到<code class="language-plaintext highlighter-rouge">_var.less</code>跟<code class="language-plaintext highlighter-rouge">global.less</code>中，否则访问到的主题色是antd默认的，而不是自定义好的。</li>
+  <li>配置会自动生成<code class="language-plaintext highlighter-rouge">color.less</code>文件，但路径不一定就在<code class="language-plaintext highlighter-rouge">index.html</code>同级(根据项目配置)导致无法访问到，此时需要在插件配置中添加<code class="language-plaintext highlighter-rouge">publicPath</code>配置，值与<code class="language-plaintext highlighter-rouge">webpack</code>的<code class="language-plaintext highlighter-rouge">output.publicPath</code>保持一致即可。</li>
+  <li>ChromeExtension不允许html中内联js脚本，此时不能再使用<code class="language-plaintext highlighter-rouge">indexFileName</code>自动注入less，而必须另外想办法来手动配置全局less。</li>
+  <li>手动配置的less，需要注意2/3版本less的区别以及自己管理好publicPath(需要正确访问到color.less)。</li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/frontend/2019/04/02/notes-on-react-redux.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                react+redux笔记
+            </a>
+        
+        <div class="flex-1"></div>
+        
+            <a class="block next" href="/frontend/2019/05/04/es-module.html">
+                JavaScript模块化编程整理
+                <img class="next" src="/assets/images/next.svg" alt="next post" />
+            </a>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+    </ul>
+</div>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人博客@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

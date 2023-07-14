@@ -3,8 +3,8 @@ layout: post
 title:  react+redux笔记
 date:   2019-04-02 16:12:13 +0800
 author: yitimo
-categories: react
-tags: ["react"]
+categories: frontend
+tags: ["frontend", "react"]
 keywords:
 - react,
 - redux,

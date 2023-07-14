@@ -3,8 +3,8 @@ layout: post
 title:  从零搭建 webpack+react+typescript 启动项目
 date:   2019-04-01 09:45:13 +0800
 author: yitimo
-categories: react
-tags: ["react"]
+categories: frontend
+tags: ["frontend", "react"]
 keywords:
 - react,
 - typescript,

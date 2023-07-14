@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>在eggjs中管理微信token | yitimo的个人博客</title>
+    <title>自己搭建ngrok服务器代理本地服务 | yitimo的个人博客</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="HandheldFriendly" content="True" />
@@ -14,7 +14,7 @@
 <meta property="og:locale" content="zh_CN" />
 <meta name="description" content="yitimo的个人博客" />
 <meta property="og:description" content="yitimo的个人博客" />
-<link rel="canonical" href="https://blog.yitimo.com/nodejs/2020/06/12/manage-token-in-eggjs.html" />
+<link rel="canonical" href="https://blog.yitimo.com/frontend/2019/09/03/build-your-own-ngrok-server.html" />
 <meta property="og:url" content="https://blog.yitimo.com" />
 <meta property="og:site_name" content="再見二丁目" />
 <script type="application/ld+json">
@@ -42,92 +42,79 @@
         </div>
     </header>
     <section class="yitiblog-content block article">
-        <h1>在eggjs中管理微信token</h1>
-        <p class="time"><i>修改于: 2020-06-12 15:32</i></p>
+        <h1>自己搭建ngrok服务器代理本地服务</h1>
+        <p class="time"><i>修改于: 2019-09-03 15:32</i></p>
         
         
         
             <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
         
-        <p>本文基于eggjs的<a href="https://eggjs.org/zh-cn/core/cluster-and-ipc.html">多进程</a>来梳理如何妥善管理会失效的第三方token(如微信平台accessToken)。</p>
+        <h2 id="ngrok做了什么">ngrok做了什么</h2>
 
-<p>eggjs运行后会有3种进程在工作:</p>
+<p>正常的网络拓扑下，一般通过 <code class="language-plaintext highlighter-rouge">255.255.255.0</code> 掩码区分不同网段，即IP的前三段都相同视为同一网段，若想要让两个网段通信，则需要通过路由器来完成，通过在路由器中配置路由表，使两个不同网段的IP建立映射关系。</p>
 
-<ol>
-  <li><strong>master进程</strong> 统筹整个应用, 只做顶层调度工作, 如果master挂了, 即代表应用挂了</li>
-  <li><strong>agent进程</strong> 做一些必须单例进行的工作, 比如写本地文件, 比如请求获取最新的外部访问令牌(如果让worker来做那不同worker的最新token会相互冲突)</li>
-  <li><strong>worker进程</strong> 做日常业务, 可以支持高并发, 可以复制多个一起工作, 其中一个挂了或在工作中就换另一个</li>
-</ol>
+<p>一般我们请求某个服务器地址时，显然本地局域网地址和远程服务器地址不在同一网段，我们是本地通过连接到本地网关，然后连接至互联网，然后连接至远程服务器。</p>
 
-<h2 id="微信开发">微信开发</h2>
+<p>但是反过来就不行了，想象一下远程服务器该如何请求到一个本地的局域网地址？</p>
 
-<p>微信服务的接口调用大都依赖一个会失效的的访问令牌(accessToken), 这个token一般过期时间为2小时, 并且存在一个机制:</p>
+<p>答案是NAT技术。</p>
 
-<blockquote>
-  <p>当token快过期时, 可以请求获取最新的token, 这时新老token都有效, 老token5分钟后失效。</p>
-</blockquote>
+<p>个人版的NAT技术的粗暴理解：类比一下本地请求远程时，客户端是如何接收到远程服务器响应的。对于远程服务器来说，其实只知道有另一个外网地址请求了自己，并给了他响应，这个外网地址即本地网关的外网地址，再由本地网关将这个来自服务器的响应精准的返回给本地地址。即本地网关把一个来自外网服务器的响应转发给了一个本地地址。</p>
 
-<p>此时如果我们简单的在代码中维护这个token的话会遇到一些问题:</p>
-
-<ul>
-  <li>一开始一切正常, 5分钟后接口开始偶现请求失败</li>
-  <li>一天内accessToken的获取次数量很大(如果加了失效重试机制, 那大概每5分钟就会有一大波刷新token的请求)</li>
-  <li>如果运气好, 使用了单核的docker容器, eggjs也随之只分配一个worker进程, 那似乎使用上一切正常, 但日后一旦给容器增加worker数, 问题就会开始出现</li>
-</ul>
-
-<h2 id="正确使用">正确使用</h2>
-
-<p>为了不让多个worker进程的accessToken相互冲突, 必须只由单个进程来做token更新的工作, 并同步给所有的worker进程, 保证大家都能使用同一份最新的token。</p>
-
-<p>比较合适的就是在agent进程中做这件事:</p>
+<p>所以有哪些简单的方法可以做到：在本地运行一个站点，请求一个外网地址访问到这个站点？</p>
 
 <ol>
-  <li>agent进程维护accessToken和过期时间, 并同步给所有worker(发消息)</li>
-  <li>worker发现token已经快过期, 发消息通知agent, agent更新token并再次同步给所有worker</li>
-  <li>可能会有多个worker同时通知agent需要更新token, 要做好保护, 利用好新老token可共存5分钟这个特性</li>
+  <li>直接给本地分配一个外网IP</li>
+  <li>通过一个连接至外网的路由器进行NAT</li>
+  <li>通过ngrok</li>
 </ol>
 
-<h2 id="使用定时任务">使用定时任务</h2>
+<p>ngrok的内部做法和NAT不一样(目测其建立了一个C/S连接来实时监听并转发请求，而NAT只需一张映射表被动的转发请求)，但做的事情类似，远程服务器请求的是我们拥有外网地址的网关(运行了ngrok server的个人服务器)，然后由 ngrock server 来映射至建立好连接的本地 ngrok client，并根据 ngrok client 配置好的规则转发至特定端口。总结：整个ngrok(包括运行在本地的client)都属于负责转发请求的网关，这整个过程成为内网穿透。</p>
 
-<p>在由worker主动通知agent来更新accessToken的基础上, 还可以增加定时任务来更新accessToken, 比如定时每10分钟检查一次token是否快过期了, 如果快过期了就随机指派一个worker进程进行更新, 并同步给所有worker。</p>
-
-<h2 id="终极方案">终极方案</h2>
-
-<p><img src="/assets/images/202006/20200612151756.jpg" alt="终极方案" /></p>
+<h2 id="ngrok能做什么">ngrok能做什么</h2>
 
 <ul>
-  <li>由agent来单例地持久化存储accessTtoken, 启动时也可以恢复并同步给所有worker</li>
-  <li>定时任务定期检查accessToken, 更新并通知所有worker(包括agent)</li>
-  <li>worker更新token后正常使用, agent还要将其持久化存储起来, 方便外部调试、跨应用等</li>
-  <li>遇到意外导致token中途失效时, worker可以主动通知agent进程, 由agent来主动执行一次定时任务(如果多个worker同时做这件事, 也能靠agent待操作来节流)</li>
+  <li>本地调试微信授权</li>
+  <li>本地调试 github hook</li>
+  <li>任何需要接收外网回调的调试场景</li>
 </ul>
 
-<h2 id="一定要这么做吗">一定要这么做吗</h2>
-
-<p><strong>mysql</strong></p>
-
-<p>mysql数据库本身支持多个连接, 所以应用大可以给每个worker都建立一个到mysql的连接, 这样可以提高数据库操作效率。</p>
-
-<p><strong>总结</strong></p>
+<h2 id="使用ngrok需要自己准备什么">使用ngrok需要自己准备什么</h2>
 
 <ul>
-  <li>多进程间的生命周期完全独立, 所以除了进程间通信之外没有办法共用变量和实例。</li>
-  <li>对于部分外部token来说, 同时获取两个必有一个会冲突, 那就必须只由单个进程维护, 并同步给所有进程, 而不是所有进程各自抢占资源。</li>
-  <li>对于支持多连接的场景, 则可以每个进程各自拥有一个连接, 以享受并发带来的效率提升。</li>
+  <li>外网服务器</li>
+  <li>已备案域名</li>
+  <li>想要在本地调试开放平台回调等</li>
+  <li>感到ngrok官方自带的不够用</li>
 </ul>
+
+<h2 id="使用ngrok需要如何配置">使用ngrok需要如何配置</h2>
+
+<ul>
+  <li>git clone 源码</li>
+  <li>生成 根证书</li>
+  <li>编译服务端 用生成的根证书</li>
+  <li>编译客户端 用生成的根证书 选实际客户端的平台比如mac</li>
+  <li>服务端配置 服务器http端口 服务器https端口 ngrok服务运行端口</li>
+  <li>云服务器存在安全组记得放开ngrok的服务器端口 比如4443</li>
+  <li>客户端配置 本地端口 远程服务器端口</li>
+  <li>nginx配置 隐藏远程端口而使用泛域名</li>
+</ul>
+
+<p><em>此文章还在更新中</em></p>
 
     </section>
     <section class="yitiblog-pager block flex">
         
-            <a class="block prev" href="/frontend/2020/02/27/use-ui-unit-test-to-help-coding.html">
+            <a class="block prev" href="/frontend/2019/05/04/es-module.html">
                 <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
-                测试react组件
+                JavaScript模块化编程整理
             </a>
         
         <div class="flex-1"></div>
         
-            <a class="block next" href="/nodejs/2020/06/28/chinese-support-in-docker-node-alpine.html">
-                Docker node alpine 容器内支持中文字体
+            <a class="block next" href="/frontend/2019/11/21/web-performance.html">
+                使用 RAIL 模型评估性能
                 <img class="next" src="/assets/images/next.svg" alt="next post" />
             </a>
         

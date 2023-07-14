@@ -3,8 +3,8 @@ layout: post
 title:  动态切换antd主题色配置
 date:   2019-04-07 13:22:13 +0800
 author: yitimo
-categories: react
-tags: ["react", "antd", "dynamic theme"]
+categories: frontend
+tags: ["frontend", "react", "antd", "dynamic theme"]
 keywords:
 - react,
 - antd,

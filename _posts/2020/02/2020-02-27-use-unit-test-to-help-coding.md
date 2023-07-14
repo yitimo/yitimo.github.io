@@ -3,10 +3,10 @@ layout: post
 title: 使用单元测试来帮助前端开发
 date: 2020-02-27 22:35:12 +0800
 author: yitimo
-categories: front end
-tags: ["front end", "unit test", "jest"]
+categories: frontend
+tags: ["frontend", "unit test", "jest"]
 keywords:
-- front end,
+- frontend,
 - unit test,
 - jest,
 description: use unit test to help front end develop.

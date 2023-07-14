@@ -3,10 +3,10 @@ layout: post
 title: 测试react组件
 date: 2020-02-27 22:35:12 +0800
 author: yitimo
-categories: front end
-tags: ["front end", "unit test", "jest", "react"]
+categories: frontend
+tags: ["frontend", "unit test", "jest", "react"]
 keywords:
-- front end,
+- frontend,
 - unit test,
 - jest,
 - react,

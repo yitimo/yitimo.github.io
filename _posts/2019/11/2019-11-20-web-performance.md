@@ -3,7 +3,7 @@ layout: post
 title:  使用 RAIL 模型评估性能
 date:   2019-11-21 13:32:13 +0800
 author: yitimo
-categories: javascript
+categories: frontend
 tags: ["前端性能优化"]
 keywords:
 - 前端性能优化
