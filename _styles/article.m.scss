@@ -1,0 +1,21 @@
+@import './variable.scss';
+
+@media (max-width: 812px) {
+    .article {
+        font-size: $font + 2px;
+
+        h1 {
+            font-size: 32px;
+        }
+        h2 {
+            font-size: 28px;
+        }
+        .outdated {
+            text-align: center;
+        }
+        .highlighter-rouge .highlight::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+    }
+}

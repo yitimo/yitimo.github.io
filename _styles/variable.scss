@@ -1,10 +1,11 @@
-$color-default: #ffffff;
-$color-dark: #000000;
-$color-light: #ffffff;
-$color-font: rgb(41, 41, 41);
-$color-gray: #969696;
-
-$color-primary: #FFBE00;
+// base color value
+$color-black: #010409;
+$color-dark: #0d1117;
+$color-white: #ffffff;
+$color-light: #e6edf3;
+$color-orange: #FFBE00;
+$color-orange-dark: #e2aa00;
+$color-gray: #7d8590;
 
 $header-height-l: 80px;
 $header-height: 72px;
@@ -14,9 +15,12 @@ $font-lg: 28px;
 $font: 20px;
 $font-md: 18px;
 
-$space: 15px;
+$border-radius-s: 2px;
+$border-radius: 5px;
+
 $space-s: 5px;
 $space-m: 10px;
+$space: 15px;
 $space-l: 20px;
 
 $max-width: 1024px;

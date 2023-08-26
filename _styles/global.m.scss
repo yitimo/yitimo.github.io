@@ -1,0 +1,16 @@
+@import './variable.scss';
+
+@media (max-width: 812px) {
+    body {
+        font-size: $font-md;
+    }
+    .font-l {
+        font-size: $font-lg - 4px;
+    }
+    .font {
+        font-size: $font-md;
+    }
+    .font-m {
+        font-size: $font-md - 2px;
+    }
+}

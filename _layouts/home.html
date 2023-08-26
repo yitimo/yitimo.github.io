@@ -7,16 +7,13 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/assets/theme.js"></script>
     <link rel="stylesheet" href="/assets/style.css">
     {% include seo.html %}
 </head>
-<body class="yitiblog">
+<body class="yitiblog theme-dark">
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
-    <header class="yitiblog-header">
-        <div class="block flex">
-            {% include header.html %}
-        </div>
-    </header>
+    {% include header.html %}
     <section class="yitiblog-content block">
         {{content}}
     </section>

@@ -24,7 +24,7 @@ added 1 package in 495ms
 
 或者这样的:
 
-``` test
+``` text
 up to date in 744ms
 ```
 

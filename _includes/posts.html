@@ -1,6 +1,6 @@
 {% for post in site.posts %}
-    <a class="post-block {{post.categories}} flex" href="{{ post.url }}">
-        <div class="post-block-info flex-1">
+    <a class="post-item {{post.categories}} flex" href="{{ post.url }}">
+        <div class="post-item-info flex-1">
             <p>{{ post.title }}</p>
             <p class="font-m">
                 {% for tag in post.tags %}
@@ -8,7 +8,7 @@
                 {% endfor %}
             </p>
         </div>
-        <div class="post-block-time">
+        <div class="post-item-time">
             <p class="date">{{ post.date | date:'%d' }} {{ post.date | date:'%b' }}</p>
             <p class="month font-m">{{ post.date | date:'%Y' }}</p>
         </div>

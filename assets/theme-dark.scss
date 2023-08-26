@@ -1,0 +1,14 @@
+---
+---
+
+@import './variable.scss';
+
+:root {
+    --theme-color-background: #{$color-black};
+    --theme-color-on-background: #{$color-light};
+    --theme-color-primary: #{$color-dark};
+    --theme-color-on-primary: #{$color-light};
+    --theme-color-secondary: #{$color-orange-dark};
+    --theme-color-on-secondary: #{$color-light};
+    --theme-color-outline: #{$color-gray};
+}
