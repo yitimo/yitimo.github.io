@@ -21,6 +21,7 @@ description: 个人研究angular(v4.3)源码，对其在JIT模式下的启动引
 * XXX-Ref: 引用 ( *工厂创建出的所有类都是一个引用，通过引用来进行控制* )
 
 ### 启动过程的实现目标
+
 首先不直接查看angular源代码，而是从实际项目的启动代码入手，一般的实际项目通过这样的代码启动:
 
 ``` javascript
@@ -39,6 +40,7 @@ platformBrowserDynamic()
 接下来就要利用好TypeScript究极智能代码提示到处F12来进入angular的源代码了。
 
 ### 得到平台引用 PlatformRef
+
 首先在 /packages/platform-browser-dynamic/src/platform-browser-dynamic.ts 下找到 platformBrowserDynamic 方法的定义:
 
 ``` javascript
@@ -155,6 +157,7 @@ export function createPlatform(injector: Injector): PlatformRef {
 看完 createPlatform，没错angular又继续踢皮球了，回忆创建爷爷平台时注入的那一堆服务中，就有个 PlatformRef，可不就是平台引用吗~
 
 ### 使用创建的平台引用启动根模块
+
 上面的爷爷平台注入了一个平台引用，其实现是 PlatformRef_，其提供了启动模块的一些方法，将在两部曲的第二步中用到。
 首先径直在 /packages/core/src/application_ref.ts 下的 PlatformRef_ 中找到 bootstrapModule 方法:
 
@@ -251,6 +254,7 @@ bootstrap: [ AppComponent ]
 至此模块引用也彻底创建好了，也就是说angular项目终于是启动成功了，当然其中模块以及组件编译过程还深不可测，值得细细研究。
 
 ## 总结
+
 * 回顾angular项目的启动，分为平台的创建和模块的创建两步
 * 可以认为平台就是一个服务，平台的创建做的事情就是创建一个对象，一个注入了一大堆服务的对象
 * 一个angular应用只能有一个平台，或者说此平台被视为angular应用本身，由此平台来编译模块，管理服务等

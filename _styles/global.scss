@@ -178,8 +178,8 @@ a:hover, a:active, a:checked {
         font-size: $font;
         background: rgb(242, 242, 242);
         color: #000000;
-        border-radius: 4px;
-        white-space: nowrap;
+        border-radius: 6px;
+        // white-space: nowrap;
 
         &::selection, &::-moz-selection, &::-webkit-selection {
             background: rgba(50, 50, 50, 0.7);
@@ -188,23 +188,27 @@ a:hover, a:active, a:checked {
         }
         & > .highlight {
             overflow-x: auto;
+            padding-bottom: 5px;
         }
         .highlight::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 12px;
+            height: 12px;
         }
         .highlight::-webkit-scrollbar-track {
             background: none;
         }
         .highlight::-webkit-scrollbar-thumb {
             height: 5px;width: 5px;
-            border-radius: 2px;
+            border-radius: 5px;
             background: rgba(0, 0, 0, 0.2);
+        }
+        .highlight::-webkit-scrollbar-thumb:active {
+            background: rgba(0, 0, 0, 0.3);
         }
     }
     div.highlighter-rouge {
         margin: 15px auto;
-        padding: 15px;
+        padding: 15px 15px 10px;
     }
     table {
         margin: 15px auto;
@@ -241,6 +245,8 @@ a:hover, a:active, a:checked {
         color: #ffffff;
     }
     code {
+        font-family: Consolas, "Courier New", monospace;
+
         .highlighter-rouge {
             background: rgba(250,250,210,.8);
             color: #000;
@@ -298,5 +304,13 @@ a:hover, a:active, a:checked {
     }
     .article {
         font-size: $font + 2px;
+        .outdated {
+            text-align: center;
+        }
+        .highlighter-rouge .highlight::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
     }
+    
 }

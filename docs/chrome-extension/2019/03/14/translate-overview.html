@@ -119,18 +119,18 @@
 <p>如果<code class="language-plaintext highlighter-rouge">tabs.query</code>方法是同步的，做法可能是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE DOESN'T WORK</span>
-<span class="kd">var</span> <span class="nx">tab</span> <span class="o">=</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span> <span class="c1">//WRONG!!!</span>
-<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span><span class="nx">newUrl</span><span class="p">});</span>
-<span class="nx">someOtherFunction</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">tab</span> <span class="o">=</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nf">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">});</span> <span class="c1">//WRONG!!!</span>
+<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span><span class="nx">newUrl</span><span class="p">});</span>
+<span class="nf">someOtherFunction</span><span class="p">();</span>
 </code></pre></div></div>
 
 <p>上面的代码会失败因为<code class="language-plaintext highlighter-rouge">query()</code>是一个异步方法，正确的做法是这样：</p>
 
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//THIS CODE WORKS</span>
-<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span> <span class="nx">newUrl</span><span class="p">});</span>
+<span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nf">query</span><span class="p">({</span><span class="dl">'</span><span class="s1">active</span><span class="dl">'</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nf">update</span><span class="p">(</span><span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="na">url</span><span class="p">:</span> <span class="nx">newUrl</span><span class="p">});</span>
 <span class="p">});</span>
-<span class="nx">someOtherFunction</span><span class="p">();</span>
+<span class="nf">someOtherFunction</span><span class="p">();</span>
 </code></pre></div></div>
 
 <h2 id="页面间交互">页面间交互</h2>
@@ -145,11 +145,11 @@
 
 <p>可以检查<code class="language-plaintext highlighter-rouge">tabs.Tab</code>的<code class="language-plaintext highlighter-rouge">incognito</code>属性来检查是否处于匿名模式下，或者<code class="language-plaintext highlighter-rouge">windows.Window</code>。</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">saveTabData</span><span class="p">(</span><span class="nx">tab</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">incognito</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">saveTabData</span><span class="p">(</span><span class="nx">tab</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">tab</span><span class="p">.</span><span class="nx">incognito</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="kd">set</span><span class="p">({</span><span class="na">data</span><span class="p">:</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">});</span>
+        <span class="nx">chrome</span><span class="p">.</span><span class="nx">storage</span><span class="p">.</span><span class="nx">local</span><span class="p">.</span><span class="nf">set</span><span class="p">({</span><span class="na">data</span><span class="p">:</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">});</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>

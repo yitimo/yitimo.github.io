@@ -188,10 +188,10 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 <span class="c1">// webpack DefinePlugin 注入的变量，需要声明，否则编辑器会报错</span>
 <span class="kr">declare</span> <span class="kd">var</span> <span class="nx">ENV</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="nx">ENV</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">enableProdMode</span><span class="p">();</span>
+<span class="k">if </span><span class="p">(</span><span class="nx">ENV</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">enableProdMode</span><span class="p">();</span>
 <span class="p">}</span>
-<span class="nx">platformBrowserDynamic</span><span class="p">().</span><span class="nx">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span>
+<span class="nf">platformBrowserDynamic</span><span class="p">().</span><span class="nf">bootstrapModule</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p><strong>index.html：</strong></p>
@@ -227,7 +227,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
     <span class="na">providers</span><span class="p">:</span> <span class="p">[],</span>
     <span class="na">bootstrap</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppComponent</span><span class="p">],</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nc">AppModule</span> <span class="p">{</span> <span class="p">}</span>
 </code></pre></div></div>
 
 <p><strong>app.component.ts：</strong></p>
@@ -239,7 +239,7 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
     <span class="na">templateUrl</span><span class="p">:</span> <span class="dl">'</span><span class="s1">app.component.html</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">styleUrls</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">app.component.css</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">app.component.scss</span><span class="dl">'</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppComponent</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nc">AppComponent</span> <span class="p">{</span> <span class="p">}</span>
 </code></pre></div></div>
 
 <p><strong>app.component.html：</strong></p>
@@ -307,24 +307,24 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
 
 <p>最终一个完整的webpack配置像这样：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path</span><span class="dl">'</span><span class="p">);</span>
 
-<span class="kd">const</span> <span class="nx">DefinePlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">webpack/lib/DefinePlugin</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">const</span> <span class="nx">HtmlWebpackPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">html-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">const</span> <span class="nx">MiniCssExtractPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">mini-css-extract-plugin</span><span class="dl">'</span><span class="p">);</span>
-<span class="kd">const</span> <span class="nx">AngularCompilerPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@ngtools/webpack</span><span class="dl">'</span><span class="p">).</span><span class="nx">AngularCompilerPlugin</span><span class="p">;</span>
-<span class="kd">const</span> <span class="nx">UglifyJsPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">uglifyjs-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">DefinePlugin</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">webpack/lib/DefinePlugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">HtmlWebpackPlugin</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">html-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">MiniCssExtractPlugin</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">mini-css-extract-plugin</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">AngularCompilerPlugin</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@ngtools/webpack</span><span class="dl">'</span><span class="p">).</span><span class="nx">AngularCompilerPlugin</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">UglifyJsPlugin</span> <span class="o">=</span> <span class="nf">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">uglifyjs-webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
 <span class="kd">const</span> <span class="nx">ENV</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
     <span class="na">mode</span><span class="p">:</span> <span class="nx">ENV</span><span class="p">,</span>
     <span class="na">devtool</span><span class="p">:</span> <span class="dl">'</span><span class="s1">source-map</span><span class="dl">'</span><span class="p">,</span>
     <span class="na">entry</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">polyfills</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/polyfills.ts</span><span class="dl">'</span><span class="p">),</span>
-        <span class="na">main</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/main.ts</span><span class="dl">'</span><span class="p">)</span>
+        <span class="na">polyfills</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/polyfills.ts</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">main</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/main.ts</span><span class="dl">'</span><span class="p">)</span>
     <span class="p">},</span>
     <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
+        <span class="na">path</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">wwwroot</span><span class="dl">'</span><span class="p">),</span>
         <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[chunkhash].bundle.js</span><span class="dl">'</span><span class="p">,</span>
         <span class="na">sourceMapFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[file].map</span><span class="dl">'</span><span class="p">,</span>
         <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name].[chunkhash].chunk.js</span><span class="dl">'</span>
@@ -337,27 +337,27 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">css$/</span><span class="p">,</span>
                 <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">to-string-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">],</span>
-                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">scss$/</span><span class="p">,</span>
                 <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">to-string-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sass-loader</span><span class="dl">'</span><span class="p">],</span>
-                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">css$/</span><span class="p">,</span>
                 <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="nx">MiniCssExtractPlugin</span><span class="p">.</span><span class="nx">loader</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">],</span>
-                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">scss$/</span><span class="p">,</span>
                 <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="nx">MiniCssExtractPlugin</span><span class="p">.</span><span class="nx">loader</span><span class="p">,</span> <span class="dl">'</span><span class="s1">css-loader</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">sass-loader</span><span class="dl">'</span><span class="p">],</span>
-                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
+                <span class="na">include</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/styles</span><span class="dl">'</span><span class="p">)]</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">html$/</span><span class="p">,</span>
                 <span class="na">use</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">raw-loader</span><span class="dl">'</span><span class="p">],</span>
-                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/index.html</span><span class="dl">'</span><span class="p">)]</span>
+                <span class="na">exclude</span><span class="p">:</span> <span class="p">[</span><span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./src/index.html</span><span class="dl">'</span><span class="p">)]</span>
             <span class="p">},</span>
             <span class="p">{</span>
                 <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.(</span><span class="sr">jpg|png|gif|pdf|eot|woff2</span><span class="se">?</span><span class="sr">|svg|ttf</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span>
@@ -384,28 +384,28 @@ yarn add <span class="nt">--dev</span> html-webpack-plugin to-string-loader css-
         <span class="p">]</span>
     <span class="p">},</span>
     <span class="na">plugins</span><span class="p">:</span> <span class="p">[</span>
-        <span class="k">new</span> <span class="nx">HtmlWebpackPlugin</span><span class="p">({</span>
+        <span class="k">new</span> <span class="nc">HtmlWebpackPlugin</span><span class="p">({</span>
             <span class="na">template</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./src/index.html</span><span class="dl">'</span><span class="p">,</span>
             <span class="na">inject</span><span class="p">:</span> <span class="dl">'</span><span class="s1">body</span><span class="dl">'</span><span class="p">,</span>
             <span class="na">xhtml</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="na">minify</span><span class="p">:</span> <span class="kc">true</span>
         <span class="p">}),</span>
-        <span class="k">new</span> <span class="nx">DefinePlugin</span><span class="p">({</span>
+        <span class="k">new</span> <span class="nc">DefinePlugin</span><span class="p">({</span>
             <span class="dl">'</span><span class="s1">isDevServer</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">false</span><span class="dl">'</span><span class="p">,</span>
-            <span class="dl">'</span><span class="s1">ENV</span><span class="dl">'</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">ENV</span><span class="p">)</span>
+            <span class="dl">'</span><span class="s1">ENV</span><span class="dl">'</span><span class="p">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nf">stringify</span><span class="p">(</span><span class="nx">ENV</span><span class="p">)</span>
         <span class="p">}),</span>
-        <span class="k">new</span> <span class="nx">AngularCompilerPlugin</span><span class="p">({</span>
+        <span class="k">new</span> <span class="nc">AngularCompilerPlugin</span><span class="p">({</span>
             <span class="na">tsConfigPath</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./tsconfig.json</span><span class="dl">'</span><span class="p">,</span>
             <span class="na">entryModule</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./src/app/app.module#AppModule</span><span class="dl">'</span>
         <span class="p">}),</span>
-        <span class="k">new</span> <span class="nx">MiniCssExtractPlugin</span><span class="p">({</span> <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[hash].css</span><span class="dl">'</span><span class="p">,</span> <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[chunkhash].css</span><span class="dl">'</span> <span class="p">})</span>
+        <span class="k">new</span> <span class="nc">MiniCssExtractPlugin</span><span class="p">({</span> <span class="na">filename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[hash].css</span><span class="dl">'</span><span class="p">,</span> <span class="na">chunkFilename</span><span class="p">:</span> <span class="dl">'</span><span class="s1">[name]-[chunkhash].css</span><span class="dl">'</span> <span class="p">})</span>
     <span class="p">],</span>
     <span class="na">optimization</span><span class="p">:</span> <span class="p">{</span>
         <span class="na">minimizer</span><span class="p">:</span> <span class="p">[</span>
-            <span class="k">new</span> <span class="nx">UglifyJsPlugin</span><span class="p">({</span>
+            <span class="k">new</span> <span class="nc">UglifyJsPlugin</span><span class="p">({</span>
                 <span class="na">sourceMap</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
                 <span class="na">parallel</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="na">cache</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">webpack-cache/uglify-cache</span><span class="dl">'</span><span class="p">),</span>
+                <span class="na">cache</span><span class="p">:</span> <span class="nx">path</span><span class="p">.</span><span class="nf">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">webpack-cache/uglify-cache</span><span class="dl">'</span><span class="p">),</span>
                 <span class="na">uglifyOptions</span><span class="p">:</span> <span class="p">{</span>
                     <span class="na">compress</span><span class="p">:</span> <span class="p">{</span>
                         <span class="na">pure_getters</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
