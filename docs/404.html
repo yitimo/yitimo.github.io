@@ -7,8 +7,10 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
     <script src="/assets/theme.js"></script>
     <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/assets/iconfont.css">
     <!-- Begin Jekyll SEO tag v2.4.0 -->
 <meta name="generator" content="Jekyll v3.7.2" />
 <meta property="og:title" content="再見二丁目" />
@@ -40,9 +42,17 @@
         <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
         <a href="/"><span class="title font-l">再见二丁目</span></a>
         <div class="flex-1"></div>
-        <button id="theme-switch-test-btn" onclick="switchTheme(this)">切换主题</button>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
     </div>
 </header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>
 
     <section class="yitiblog-content block">
         <style type="text/css" media="screen">

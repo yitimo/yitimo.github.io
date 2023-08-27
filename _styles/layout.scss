@@ -12,17 +12,17 @@
     }
 }
 .yitiblog-header {
-    height: $header-height-l;
+    height: var(--header-height);
     width: 100%;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    z-index: 1;
+    z-index: 10;
     position: fixed;
     top: 0;
     left: 0;
-    background: var(--theme-color-primary); // rgba($color: var(--theme-color-primary), $alpha: 0.8);
+    background: color-mix(in srgb, var(--theme-color-primary) 80%, transparent);
     backdrop-filter: blur(5px);
     color: var(--theme-color-on-primary);
     
@@ -40,16 +40,25 @@
     }
     .title {
         margin-left: $space;
+        transition: 0.2s linear;
+    }
+    .theme-btn {
+        font-size: $font-lg;
+        transition: 0.2s linear;
+        cursor: pointer;
+    }
+    .theme-btn:hover {
+        color: var(--theme-color-on-background);
     }
 }
 .yitiblog-content {
-    padding-top: $header-height-l;
-    padding-bottom: $header-height-l * 2;
+    padding-top: var(--header-height);
+    // padding-bottom: var(--header-height) * 2;
 }
 
 .yitiblog-footer {
     padding: $space-l*2 0;
-    background: var(--theme-color-primary); // rgba($color: var(--theme-color-primary), $alpha: 0.8);
+    background: color-mix(in srgb, var(--theme-color-primary) 20%, transparent);
     backdrop-filter: blur(5px);
     color: var(--theme-color-outline);
 
@@ -90,17 +99,26 @@
 
 .post-item {
     padding: $space;
-    margin: 0 $space;
-    transition: 0.3s;
-    border-left: 3px solid transparent;
+    transition: 0.2s linear;
+    position: relative;
     align-items: center;
+    box-sizing: content-box;
 
-    &:hover {
-        // background: var(--theme-color-secondary); // rgba($color: var(--theme-color-secondary), $alpha: 0.05);
-        border-left: 3px solid var(--theme-color-secondary);
+    &::before {
+        content: '';
+        transition: 0.2s linear;
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background: transparent;
     }
-    &:first-of-type {
-        margin-top: $space;
+    &:hover {
+        background: color-mix(in srgb, var(--theme-color-background) 95%, var(--theme-color-on-background));
+    }
+    &:hover::before {
+        background: var(--theme-color-secondary);
     }
     &:not(:first-of-type) {
         border-top: 1px solid var(--theme-color-primary);
@@ -113,6 +131,7 @@
     &-time {
         color: var(--theme-color-outline);
         text-align: center;
+        margin-left: $space-m;
         .date {
             font-weight: 600;
         }

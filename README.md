@@ -4,9 +4,9 @@ Deployed at [blog.yitimo.com](https://blog.yitimo.com)
 
 ## Prepare
 
-0. *suggested* Install rvm
+0. Install rvm *(suggested)*
 1. Install ruby(by rvm or global)
-2. Install jekyll
+2. Install jekyll and bundle
 
 ## Commands
 

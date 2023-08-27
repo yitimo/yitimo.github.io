@@ -3,6 +3,14 @@
         <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
         <a href="/"><span class="title font-l">再见二丁目</span></a>
         <div class="flex-1"></div>
-        <button id="theme-switch-test-btn" onclick="switchTheme(this)">切换主题</button>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
     </div>
 </header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>

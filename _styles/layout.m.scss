@@ -7,8 +7,6 @@
         }
     }
     .yitiblog-header {
-        height: $header-height;
-
         .avatar {
             height: 32px;
             width: 32px;
@@ -17,9 +15,6 @@
 }
 
 @media (max-width: 812px) {
-    .yitiblog-header {
-        height: $header-height-m;
-    }
     .yitiblog-footer {
         .flex {
             display: block;

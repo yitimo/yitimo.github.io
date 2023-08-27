@@ -2,8 +2,9 @@
 
 .article {
   color: var(--theme-color-on-background);
-  max-width: 727px;margin: 0 auto;
-  padding: 15px;
+  max-width: 727px;
+  margin: 0 auto;
+  padding: $space;
   font-size: $font + 5px;
   line-height: 1.5;
 
@@ -35,6 +36,41 @@
       margin: 1em;
       font-size: $font;
       color: orange;
+  }
+  h1, h2, h3 {
+    position: relative;
+    .anchor-a {
+        opacity: 0;
+        transition: 0.2s linear;
+        position: absolute;
+        left: -$font;
+        margin-left: -$space-m;
+        top: 50%;
+        margin-top: calc(-1 * $font / 2);
+        line-height: 1;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+    &:hover .anchor-a {
+        opacity: 1;
+    }
+    .anchor-i {
+        font-size: $font;
+        display: block;
+        color: var(--theme-color-outline);
+    }
+  }
+  h2, h3 {
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 1em;
+        height: 1px;
+        background: color-mix(in srgb, var(--theme-color-outline) 20%, transparent);
+    }
   }
   h2 {
       font-size: 32px;
@@ -80,7 +116,7 @@
       border-radius: $border-radius;
       font-size: $font;
       border-left: 0.5em solid var(--theme-color-secondary);
-      background: var(--theme-color-background); // darken(, 2%);
+      background: color-mix(in srgb, var(--theme-color-secondary) 5%, transparent);
   }
   & > p {
     text-indent: 2em;
@@ -99,7 +135,7 @@
       margin: 0 3px;
       padding: 3px 6px;
       font-size: $font;
-      background: var(--theme-color-primary); // darken(#{var(--theme-color-background-hex)}, 5%);
+      background: color-mix(in srgb, var(--theme-color-background) 90%, var(--theme-color-on-background));
       border-radius: $border-radius;
 
       &::selection, &::-moz-selection, &::-webkit-selection {
@@ -122,10 +158,10 @@
           height: 5px;
           width: 5px;
           border-radius: $border-radius;
-          background: var(--theme-color-outline);
+          background: color-mix(in srgb, var(--theme-color-outline) 50%, transparent);
       }
       .highlight::-webkit-scrollbar-thumb:active {
-          background: var(--theme-color-outline);
+          background: color-mix(in srgb, var(--theme-color-outline) 70%, transparent);
       }
   }
   div.highlighter-rouge {
@@ -158,9 +194,13 @@
       border: 1px solid #dfe2e5;
   }
   a {
-      color: #0099ff;
+      color: color-mix(in srgb, var(--theme-color-secondary) 80%, var(--theme-color-on-background));
       cursor: pointer;
       margin: 0 0.2em;
+
+      &:hover {
+        text-decoration: underline;
+      }
   }
   .language-shell.highlighter-rouge {
       background: #4f4f4f;
@@ -182,25 +222,25 @@
         margin: 0 3px;
     }
     .kd, .k, .kc, .s {
-        color: #0000ff;
+        color: color-mix(in srgb, #0000ff 60%, var(--theme-color-on-background));
     }
     .s1, .s2 {
-        color: #a31515;
+        color: color-mix(in srgb, #a31515 60%, var(--theme-color-on-background));
     }
     .mi {
-        color: #098658;
+        color: color-mix(in srgb, #098658 60%, var(--theme-color-on-background));
     }
     .c, .c1, .cm {
-        color: #008000;
+        color: color-mix(in srgb, #008000 60%, var(--theme-color-on-background));
     }
     .na {
-        color: #800000;
+        color: color-mix(in srgb, #800000 60%, var(--theme-color-on-background));
     }
     .nt, .nl {
-        color: #ff0000;
+        color: color-mix(in srgb, #ff0000 60%, var(--theme-color-on-background));
     }
     .m {
-        color: #0451a5;
+        color: color-mix(in srgb, #0451a5 60%, var(--theme-color-on-background));
     }
   }
 }

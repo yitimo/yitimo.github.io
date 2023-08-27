@@ -7,15 +7,17 @@
     <meta name="HandheldFriendly" content="True" />
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
     <script src="/assets/theme.js"></script>
     <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/iconfont.css">
     {% include seo.html %}
 </head>
 <body class="yitiblog theme-dark">
     <h1 style="display: none;">{{ site.title }} | {{site.description}}</h1>
     {% include header.html %}
     <section class="yitiblog-content block article">
-        <h1>{{ page.title }}</h1>
+        <h1 id="{{page.title}}">{{ page.title }}</h1>
         <p class="time"><i>修改于: {{ page.date | date: '%Y-%m-%d %H:%M' }}</i></p>
         {% capture monago18_unix %}{{'now' | date: '%s' | minus: 47304000}}{% endcapture %}
         {% capture posttime %}{{page.date | date: '%s'}}{% endcapture %}
@@ -50,6 +52,34 @@
             async
         ></script>
     </section>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            var h1s = document.getElementsByTagName('h1')
+            var h2s = document.getElementsByTagName('h2')
+            var h3s = document.getElementsByTagName('h3')
+            for (var i = 0; i < h1s.length; i += 1) {
+                addAnchorNode(h1s.item(i))
+            }
+            for (var i = 0; i < h2s.length; i += 1) {
+                addAnchorNode(h2s.item(i))
+            }
+            for (var i = 0; i < h3s.length; i += 1) {
+                addAnchorNode(h3s.item(i))
+            }
+            function addAnchorNode(target) {
+                if (!target || !target.id) {
+                    return
+                }
+                var linkADOM = document.createElement('a')
+                linkADOM.classList = 'anchor-a'
+                linkADOM.href = '#' + target.id
+                var linkIDOM = document.createElement('i')
+                linkIDOM.classList = 'anchor-i iconfont icon-anchor'
+                linkADOM.appendChild(linkIDOM)
+                target.appendChild(linkADOM)
+            }
+        })
+    </script>
     <footer class="yitiblog-footer">
         <div class="block font-m">
             {% include footer.html %}

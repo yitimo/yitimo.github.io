@@ -1,5 +1,13 @@
 @import './variable.scss';
 
+@media (max-width: 1150px) {
+    .article {
+        h2, h3 {
+            margin-left: 1em;
+        }
+    }
+}
+
 @media (max-width: 812px) {
     .article {
         font-size: $font + 2px;
