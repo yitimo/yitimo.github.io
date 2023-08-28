@@ -70,11 +70,11 @@
 <span class="k">import</span> <span class="nx">Link</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">../Link.react</span><span class="dl">'</span><span class="p">;</span>
 <span class="k">import</span> <span class="nx">renderer</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-test-renderer</span><span class="dl">'</span><span class="p">;</span>
 
-<span class="nf">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">renders correctly</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">const</span> <span class="nx">tree</span> <span class="o">=</span> <span class="nx">renderer</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span>
+<span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">renders correctly</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">tree</span> <span class="o">=</span> <span class="nx">renderer</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
     <span class="o">&lt;</span><span class="nx">Link</span> <span class="nx">page</span><span class="o">=</span><span class="dl">"</span><span class="s2">http://www.facebook.com</span><span class="dl">"</span><span class="o">&gt;</span><span class="nx">Facebook</span><span class="o">&lt;</span><span class="sr">/Link</span><span class="err">&gt;
-</span>  <span class="p">).</span><span class="nf">toJSON</span><span class="p">();</span>
-  <span class="nf">expect</span><span class="p">(</span><span class="nx">tree</span><span class="p">).</span><span class="nf">toMatchSnapshot</span><span class="p">();</span>
+</span>  <span class="p">).</span><span class="nx">toJSON</span><span class="p">();</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">tree</span><span class="p">).</span><span class="nx">toMatchSnapshot</span><span class="p">();</span>
 <span class="p">});</span>
 </code></pre></div></div>
 
@@ -107,7 +107,7 @@
 
 <p>测试应该是固定不变的。意思是，多次运行同一个未经修改的组件的测试，都应该得到相同的快照产出。你需要保证不要将一些动态字段加入快照，比如时间戳等，可能每次运行都会不同，此时需要对其进行模拟:</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nf">fn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="mi">1482363367071</span><span class="p">);</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nx">fn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="mi">1482363367071</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>这样模拟了时间函数后，每次运行测试用例，时间值都会是固定的，也就能得到相同的快照了。</p>
@@ -157,10 +157,10 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">shallow</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">enzyme</span><span class="dl">'</span><span class="p">;</span>
 
-<span class="nf">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">Enzyme Shallow</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">()</span> <span class="p">{</span>
-  <span class="nf">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">App</span><span class="se">\'</span><span class="s1">s title should be Todos</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="nf">shallow</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span><span class="o">/&gt;</span><span class="p">);</span>
-    <span class="nf">expect</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="dl">'</span><span class="s1">h1</span><span class="dl">'</span><span class="p">).</span><span class="nf">text</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nf">equal</span><span class="p">(</span><span class="dl">'</span><span class="s1">Todos</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">Enzyme Shallow</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">App</span><span class="se">\'</span><span class="s1">s title should be Todos</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">shallow</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span><span class="o">/&gt;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">app</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="dl">'</span><span class="s1">h1</span><span class="dl">'</span><span class="p">).</span><span class="nx">text</span><span class="p">()).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="dl">'</span><span class="s1">Todos</span><span class="dl">'</span><span class="p">);</span>
   <span class="p">});</span>
 <span class="p">};</span>
 </code></pre></div></div>

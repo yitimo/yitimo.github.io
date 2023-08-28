@@ -80,33 +80,33 @@
     <span class="nx">config</span><span class="p">?:</span> <span class="nx">MatDialogConfig</span>
 <span class="p">):</span> <span class="nx">MatDialogRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="c1">// 防止重复打开</span>
-    <span class="kd">const</span> <span class="nx">inProgressDialog</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="nx">dialog</span> <span class="o">=&gt;</span> <span class="nx">dialog</span><span class="p">.</span><span class="nf">_isAnimating</span><span class="p">());</span>
-    <span class="k">if </span><span class="p">(</span><span class="nx">inProgressDialog</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">inProgressDialog</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">dialog</span> <span class="o">=&gt;</span> <span class="nx">dialog</span><span class="p">.</span><span class="nx">_isAnimating</span><span class="p">());</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">inProgressDialog</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">return</span> <span class="nx">inProgressDialog</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="c1">// 组合配置</span>
-    <span class="nx">config</span> <span class="o">=</span> <span class="nf">_applyConfigDefaults</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="nx">config</span> <span class="o">=</span> <span class="nx">_applyConfigDefaults</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
     <span class="c1">// 防止id冲突</span>
-    <span class="k">if </span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nf">getDialogById</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">throw</span> <span class="nc">Error</span><span class="p">(</span><span class="s2">`Dialog with id "</span><span class="p">${</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2">" exists already. The dialog id must be unique.`</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDialogById</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">`Dialog with id "</span><span class="p">${</span><span class="nx">config</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2">" exists already. The dialog id must be unique.`</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="c1">// 第一步：创建弹出层</span>
-    <span class="kd">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">_createOverlay</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">overlayRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createOverlay</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
     <span class="c1">// 第二步：在弹出层上添加弹窗容器</span>
-    <span class="kd">const</span> <span class="nx">dialogContainer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">_attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">dialogContainer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attachDialogContainer</span><span class="p">(</span><span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="c1">// 第三步：把传入的组件添加到创建的弹出层中创建的弹窗容器中</span>
-    <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">_attachDialogContent</span><span class="p">(</span><span class="nx">componentOrTemplateRef</span><span class="p">,</span> <span class="nx">dialogContainer</span><span class="p">,</span> <span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attachDialogContent</span><span class="p">(</span><span class="nx">componentOrTemplateRef</span><span class="p">,</span> <span class="nx">dialogContainer</span><span class="p">,</span> <span class="nx">overlayRef</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="c1">// 首次弹窗要添加键盘监听</span>
-    <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keydown</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_boundKeydown</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">keydown</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_boundKeydown</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="c1">// 添加进队列</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">openDialogs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">);</span>
     <span class="c1">// 默认添加一个关闭的订阅 关闭时要移除此弹窗</span>
     <span class="c1">// 当是最后一个弹窗时触发全部关闭的订阅并移除键盘监听</span>
-    <span class="nx">dialogRef</span><span class="p">.</span><span class="nf">afterClosed</span><span class="p">().</span><span class="nf">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nf">_removeOpenDialog</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">));</span>
+    <span class="nx">dialogRef</span><span class="p">.</span><span class="nx">afterClosed</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_removeOpenDialog</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">));</span>
     <span class="c1">// 触发打开的订阅</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">afterOpen</span><span class="p">.</span><span class="nf">next</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">afterOpen</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">);</span>
     <span class="k">return</span> <span class="nx">dialogRef</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -128,35 +128,35 @@
 
 <p>找到弹出层的创建代码如下:</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">create</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">OverlayConfig</span> <span class="o">=</span> <span class="nx">defaultConfig</span><span class="p">):</span> <span class="nx">OverlayRef</span> <span class="p">{</span>
-    <span class="kd">const</span> <span class="nx">pane</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">_createPaneElement</span><span class="p">();</span> <span class="c1">// 弹出层DOM 将被添加到宿主DOM中</span>
-    <span class="kd">const</span> <span class="nx">portalHost</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nf">_createPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">);</span> <span class="c1">// 宿主DOM 将被添加到&lt;body&gt;末端</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nc">OverlayRef</span><span class="p">(</span><span class="nx">portalHost</span><span class="p">,</span> <span class="nx">pane</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ngZone</span><span class="p">);</span> <span class="c1">// 弹出层的引用</span>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">create</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="nx">OverlayConfig</span> <span class="o">=</span> <span class="nx">defaultConfig</span><span class="p">):</span> <span class="nx">OverlayRef</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">pane</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createPaneElement</span><span class="p">();</span> <span class="c1">// 弹出层DOM 将被添加到宿主DOM中</span>
+    <span class="kd">const</span> <span class="nx">portalHost</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">);</span> <span class="c1">// 宿主DOM 将被添加到&lt;body&gt;末端</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">OverlayRef</span><span class="p">(</span><span class="nx">portalHost</span><span class="p">,</span> <span class="nx">pane</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_ngZone</span><span class="p">);</span> <span class="c1">// 弹出层的引用</span>
 <span class="p">}</span>
-<span class="k">private</span> <span class="nf">_createPaneElement</span><span class="p">():</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">pane</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+<span class="k">private</span> <span class="nx">_createPaneElement</span><span class="p">():</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">pane</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
     <span class="nx">pane</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s2">`cdk-overlay-</span><span class="p">${</span><span class="nx">nextUniqueId</span><span class="o">++</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
-    <span class="nx">pane</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="dl">'</span><span class="s1">cdk-overlay-pane</span><span class="dl">'</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_overlayContainer</span><span class="p">.</span><span class="nf">getContainerElement</span><span class="p">().</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">pane</span><span class="p">);</span> <span class="c1">// 将创建好的带id的弹出层添加到宿主</span>
+    <span class="nx">pane</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="dl">'</span><span class="s1">cdk-overlay-pane</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_overlayContainer</span><span class="p">.</span><span class="nx">getContainerElement</span><span class="p">().</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">pane</span><span class="p">);</span> <span class="c1">// 将创建好的带id的弹出层添加到宿主</span>
     <span class="k">return</span> <span class="nx">pane</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="k">private</span> <span class="nf">_createPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">:</span> <span class="nx">HTMLElement</span><span class="p">):</span> <span class="nx">DomPortalHost</span> <span class="p">{</span>
+<span class="k">private</span> <span class="nx">_createPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">:</span> <span class="nx">HTMLElement</span><span class="p">):</span> <span class="nx">DomPortalHost</span> <span class="p">{</span>
     <span class="c1">// 创建宿主</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nc">DomPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_injector</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">DomPortalHost</span><span class="p">(</span><span class="nx">pane</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_injector</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>其中最关键的方法其实是 <code class="language-plaintext highlighter-rouge">getContainerElement()</code> , material2把最”丑”最不angular的操作放在了这里面，看看其实现:</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">getContainerElement</span><span class="p">():</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
-    <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_containerElement</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nf">_createContainer</span><span class="p">();</span> <span class="p">}</span>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">getContainerElement</span><span class="p">():</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_containerElement</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createContainer</span><span class="p">();</span> <span class="p">}</span>
     <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_containerElement</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="k">protected</span> <span class="nf">_createContainer</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
-    <span class="kd">let</span> <span class="nx">container</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
-    <span class="nx">container</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="dl">'</span><span class="s1">cdk-overlay-container</span><span class="dl">'</span><span class="p">);</span>
+<span class="k">protected</span> <span class="nx">_createContainer</span><span class="p">():</span> <span class="k">void</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">container</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">container</span><span class="p">.</span><span class="nx">classList</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="dl">'</span><span class="s1">cdk-overlay-container</span><span class="dl">'</span><span class="p">);</span>
 
-    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="nx">container</span><span class="p">);</span> <span class="c1">// 在body下创建顶层的宿主 姑且称之为弹出层容器(OverlayContainer)</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">container</span><span class="p">);</span> <span class="c1">// 在body下创建顶层的宿主 姑且称之为弹出层容器(OverlayContainer)</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_containerElement</span> <span class="o">=</span> <span class="nx">container</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -176,11 +176,11 @@
 </ol>
 
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">private</span> <span class="nx">服务</span><span class="p">;</span>
-<span class="nf">constructor</span><span class="p">(</span>
+<span class="kd">constructor</span><span class="p">(</span>
     <span class="k">private</span> <span class="nx">injector</span><span class="p">:</span> <span class="nx">Injector</span>
     <span class="c1">// private 服务: 服务类 // 这样是无效的</span>
 <span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">服务</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">服务类名</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">服务</span> <span class="o">=</span> <span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">服务类名</span><span class="dl">'</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -195,27 +195,27 @@
 <p>创建弹窗容器的核心方法在 <code class="language-plaintext highlighter-rouge">dom-portal-host.ts</code> 中:</p>
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">attachComponentPortal</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">portal</span><span class="p">:</span> <span class="nx">ComponentPortal</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="c1">// 创建工厂</span>
-    <span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">.</span><span class="nf">resolveComponentFactory</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">component</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">.</span><span class="nx">resolveComponentFactory</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">component</span><span class="p">);</span>
     <span class="kd">let</span> <span class="na">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
-    <span class="k">if </span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">.</span><span class="nf">createComponent</span><span class="p">(</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span>
             <span class="nx">componentFactory</span><span class="p">,</span>
             <span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
             <span class="nx">portal</span><span class="p">.</span><span class="nx">injector</span> <span class="o">||</span> <span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">parentInjector</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nf">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">componentRef</span><span class="p">.</span><span class="nf">destroy</span><span class="p">());</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">componentRef</span><span class="p">.</span><span class="nx">destroy</span><span class="p">());</span>
         <span class="c1">// 暂不知道为何有指定宿主后面还要把它添加到宿主元素DOM中</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">componentFactory</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">injector</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defaultInjector</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">.</span><span class="nf">attachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nf">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">.</span><span class="nf">detachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span><span class="p">);</span>
-            <span class="nx">componentRef</span><span class="p">.</span><span class="nf">destroy</span><span class="p">();</span>
+        <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">componentFactory</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">injector</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defaultInjector</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">.</span><span class="nx">attachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_appRef</span><span class="p">.</span><span class="nx">detachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span><span class="p">);</span>
+            <span class="nx">componentRef</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
         <span class="p">});</span>
         <span class="c1">// 到这一步创建出了经angular处理的DOM</span>
     <span class="p">}</span>
     <span class="c1">// 将创建的弹窗容器组件直接append到弹出层DOM中</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_hostDomElement</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">_getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">));</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_hostDomElement</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">));</span>
     <span class="c1">// 返回组件的引用</span>
     <span class="k">return</span> <span class="nx">componentRef</span><span class="p">;</span>
 <span class="p">}</span>
@@ -235,7 +235,7 @@
 <p>从上文可以知道，得到的弹窗容器组件中存在一个宿主指令，实际上是在这个宿主指令中创建弹窗内容组件。进入宿主指令的代码可以找到 <code class="language-plaintext highlighter-rouge">attachComponentPortal</code> 方法:</p>
 
 <div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">attachComponentPortal</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">portal</span><span class="p">:</span> <span class="nx">ComponentPortal</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="nx">portal</span><span class="p">.</span><span class="nf">setAttachedHost</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="nx">portal</span><span class="p">.</span><span class="nx">setAttachedHost</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
     <span class="c1">// If the portal specifies an origin, use that as the logical location of the component</span>
     <span class="c1">// in the application tree. Otherwise use the location of this PortalHost.</span>
@@ -245,13 +245,13 @@
         <span class="nx">portal</span><span class="p">.</span><span class="nx">viewContainerRef</span> <span class="p">:</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_viewContainerRef</span><span class="p">;</span>
     <span class="c1">// 在宿主上动态创建组件的代码</span>
-    <span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">.</span><span class="nf">resolveComponentFactory</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">component</span><span class="p">);</span>
-    <span class="kd">let</span> <span class="nx">ref</span> <span class="o">=</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nf">createComponent</span><span class="p">(</span> <span class="c1">// 使用 ViewContainerRef 动态创建组件到当前视图容器(也就是弹窗容器指令)</span>
+    <span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_componentFactoryResolver</span><span class="p">.</span><span class="nx">resolveComponentFactory</span><span class="p">(</span><span class="nx">portal</span><span class="p">.</span><span class="nx">component</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">ref</span> <span class="o">=</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span> <span class="c1">// 使用 ViewContainerRef 动态创建组件到当前视图容器(也就是弹窗容器指令)</span>
         <span class="nx">componentFactory</span><span class="p">,</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
         <span class="nx">portal</span><span class="p">.</span><span class="nx">injector</span> <span class="o">||</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">parentInjector</span>
     <span class="p">);</span>
 
-    <span class="k">super</span><span class="p">.</span><span class="nf">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">ref</span><span class="p">.</span><span class="nf">destroy</span><span class="p">());</span>
+    <span class="k">super</span><span class="p">.</span><span class="nx">setDisposeFn</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">ref</span><span class="p">.</span><span class="nx">destroy</span><span class="p">());</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_portal</span> <span class="o">=</span> <span class="nx">portal</span><span class="p">;</span>
 
     <span class="k">return</span> <span class="nx">ref</span><span class="p">;</span>
@@ -278,40 +278,40 @@
 
 <p>其中需要关注的就是material2在容器组件中添加了一个动画叫 <code class="language-plaintext highlighter-rouge">slideDialog</code> ，并为其设置了动画事件，现在关注动画完成事件的回调:</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">_onAnimationDone</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if </span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">enter</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nf">_trapFocus</span><span class="p">();</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">exit</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nf">_restoreFocus</span><span class="p">();</span>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">_onAnimationDone</span><span class="p">(</span><span class="nx">event</span><span class="p">:</span> <span class="nx">AnimationEvent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">enter</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_trapFocus</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">exit</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_restoreFocus</span><span class="p">();</span>
     <span class="p">}</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_animationStateChanged</span><span class="p">.</span><span class="nf">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_animationStateChanged</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_isAnimating</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <p>这里发射了这个事件，并在 <code class="language-plaintext highlighter-rouge">MatDialogRef</code> 中订阅:</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">constructor</span><span class="p">(</span>
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">constructor</span><span class="p">(</span>
     <span class="k">private</span> <span class="nx">_overlayRef</span><span class="p">:</span> <span class="nx">OverlayRef</span><span class="p">,</span>
     <span class="k">private</span> <span class="nx">_containerInstance</span><span class="p">:</span> <span class="nx">MatDialogContainer</span><span class="p">,</span>
     <span class="k">public</span> <span class="k">readonly</span> <span class="nx">id</span><span class="p">:</span> <span class="kr">string</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">mat-dialog-</span><span class="dl">'</span> <span class="o">+</span> <span class="p">(</span><span class="nx">uniqueId</span><span class="o">++</span><span class="p">)</span>
 <span class="p">)</span> <span class="p">{</span>
     <span class="c1">// 添加弹窗开启的订阅 这里的 RxChain 是material2自己对rxjs的工具类封装</span>
     <span class="nx">RxChain</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">_containerInstance</span><span class="p">.</span><span class="nx">_animationStateChanged</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">done</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">enter</span><span class="dl">'</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_afterOpen</span><span class="p">.</span><span class="nf">next</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_afterOpen</span><span class="p">.</span><span class="nf">complete</span><span class="p">();</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">done</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">enter</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_afterOpen</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_afterOpen</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
     <span class="p">});</span>
     <span class="c1">// 添加弹窗关闭的订阅，并且需要在收到回调后销毁弹窗</span>
     <span class="nx">RxChain</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">_containerInstance</span><span class="p">.</span><span class="nx">_animationStateChanged</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">done</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">exit</span><span class="dl">'</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_overlayRef</span><span class="p">.</span><span class="nf">dispose</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_afterClosed</span><span class="p">.</span><span class="nf">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_result</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_afterClosed</span><span class="p">.</span><span class="nf">complete</span><span class="p">();</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">done</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">toState</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">exit</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_overlayRef</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_afterClosed</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_result</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_afterClosed</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">componentInstance</span> <span class="o">=</span> <span class="kc">null</span><span class="o">!</span><span class="p">;</span>
     <span class="p">});</span>
 <span class="p">}</span>
@@ -321,20 +321,20 @@
 * 所做的事情是添加beforeClose的订阅并执行 _startExitAnimation 以开始关闭动画
 * 底层做的事是 改变了弹窗容器中 slideDialog 的状态值
 */</span>
-<span class="nf">close</span><span class="p">(</span><span class="nx">dialogResult</span><span class="p">?:</span> <span class="kr">any</span><span class="p">):</span> <span class="k">void</span> <span class="p">{</span>
+<span class="nx">close</span><span class="p">(</span><span class="nx">dialogResult</span><span class="p">?:</span> <span class="kr">any</span><span class="p">):</span> <span class="k">void</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_result</span> <span class="o">=</span> <span class="nx">dialogResult</span><span class="p">;</span> <span class="c1">// 把传入的结果赋值给私有变量 _result 以便在上面的 this._afterClosed.next(this._result) 中使用</span>
 
     <span class="c1">// Transition the backdrop in parallel to the dialog.</span>
     <span class="nx">RxChain</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_containerInstance</span><span class="p">.</span><span class="nx">_animationStateChanged</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">start</span><span class="dl">'</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_beforeClose</span><span class="p">.</span><span class="nf">next</span><span class="p">(</span><span class="nx">dialogResult</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_beforeClose</span><span class="p">.</span><span class="nf">complete</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_overlayRef</span><span class="p">.</span><span class="nf">detachBackdrop</span><span class="p">();</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">filter</span><span class="p">,</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">phaseName</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">start</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">first</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_beforeClose</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">dialogResult</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_beforeClose</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_overlayRef</span><span class="p">.</span><span class="nx">detachBackdrop</span><span class="p">();</span>
     <span class="p">});</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">_containerInstance</span><span class="p">.</span><span class="nf">_startExitAnimation</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_containerInstance</span><span class="p">.</span><span class="nx">_startExitAnimation</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
