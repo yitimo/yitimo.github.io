@@ -54,7 +54,7 @@ up to date in 744ms
 
 但本地``link``默认不会改变``package.json``文件内容, 即如果``package.json``里之前有该包且版本号为``^1.0.0``, link本地包时**并不会**被修改为 ``file://../path/to/pkg-utils``.
 
-> TODO: 本地``link``默认不会修改``package.json``, 那会修改``package-lock.json``吗?
+> 如果link了原本未安装的新包, 则``package-lock.json``会被改变, 如果原来已经安装了, 则也不会改变
 
 最终效果也就是``pkg-utils``包所在的本地目录被软链到了``pkg-host``工程的 ``node_modules``中, 然后可以像使用常规``npm i``安装的包一样来使用:
 
@@ -86,10 +86,6 @@ up to date in 744ms
 - **link 某个包后 publish**: 这样做是可以的, 但需要把link的包列在``bundleDependencies``里, 如果此前没安装这个包, 还需要执行``npm install <dep> --package-lock-only``, 然后在pkg-host里运行``npm publish``会将目前link的``pkg-utils``内容一起打包进``npm pack``产物里. 但个人**不建议**这么做, link应该只用在本地调试
 - ...
 
-## 都有哪些配置参数?
-
-TODO: ...
-
 ## 拓展阅读
 
 **什么是synlink?** 一图流解释:
@@ -97,3 +93,5 @@ TODO: ...
 ![symlink](/assets/images/202206/symlink.jpg)
 
 [**什么是bundleDependencies?**](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#bundledependencies)
+
+**yarn和pnpm** 都有自己的link实现方式, 要避免混用

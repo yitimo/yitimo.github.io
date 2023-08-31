@@ -107,7 +107,7 @@
 <p>但本地<code class="language-plaintext highlighter-rouge">link</code>默认不会改变<code class="language-plaintext highlighter-rouge">package.json</code>文件内容, 即如果<code class="language-plaintext highlighter-rouge">package.json</code>里之前有该包且版本号为<code class="language-plaintext highlighter-rouge">^1.0.0</code>, link本地包时<strong>并不会</strong>被修改为 <code class="language-plaintext highlighter-rouge">file://../path/to/pkg-utils</code>.</p>
 
 <blockquote>
-  <p>TODO: 本地<code class="language-plaintext highlighter-rouge">link</code>默认不会修改<code class="language-plaintext highlighter-rouge">package.json</code>, 那会修改<code class="language-plaintext highlighter-rouge">package-lock.json</code>吗?</p>
+  <p>如果link了原本未安装的新包, 则<code class="language-plaintext highlighter-rouge">package-lock.json</code>会被改变, 如果原来已经安装了, 则也不会改变</p>
 </blockquote>
 
 <p>最终效果也就是<code class="language-plaintext highlighter-rouge">pkg-utils</code>包所在的本地目录被软链到了<code class="language-plaintext highlighter-rouge">pkg-host</code>工程的 <code class="language-plaintext highlighter-rouge">node_modules</code>中, 然后可以像使用常规<code class="language-plaintext highlighter-rouge">npm i</code>安装的包一样来使用:</p>
@@ -144,10 +144,6 @@
   <li>…</li>
 </ul>
 
-<h2 id="都有哪些配置参数">都有哪些配置参数?</h2>
-
-<p>TODO: …</p>
-
 <h2 id="拓展阅读">拓展阅读</h2>
 
 <p><strong>什么是synlink?</strong> 一图流解释:</p>
@@ -155,6 +151,8 @@
 <p><img src="/assets/images/202206/symlink.jpg" alt="symlink" /></p>
 
 <p><a href="https://docs.npmjs.com/cli/v9/configuring-npm/package-json#bundledependencies"><strong>什么是bundleDependencies?</strong></a></p>
+
+<p><strong>yarn和pnpm</strong> 都有自己的link实现方式, 要避免混用</p>
 
     </section>
     <section class="yitiblog-pager block flex">
