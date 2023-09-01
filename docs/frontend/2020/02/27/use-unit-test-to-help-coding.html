@@ -141,20 +141,20 @@
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">模块</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/模块</span><span class="dl">'</span>
 
-<span class="nx">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">这个单元测试的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">一个测试用例的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nf">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">这个单元测试的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nf">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">一个测试用例的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="c1">// 直接匹配</span>
-        <span class="nx">expect</span><span class="p">(</span><span class="nx">需要验证的值</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">需要匹配的值</span><span class="p">)</span>
+        <span class="nf">expect</span><span class="p">(</span><span class="nx">需要验证的值</span><span class="p">).</span><span class="nf">toEqual</span><span class="p">(</span><span class="nx">需要匹配的值</span><span class="p">)</span>
         <span class="c1">// 匹配列表中的对象</span>
-        <span class="nx">expect</span><span class="p">(</span><span class="nx">需要验证的列表</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expect</span><span class="p">.</span><span class="nx">arrayContaining</span><span class="p">([</span>
-            <span class="nx">expect</span><span class="p">.</span><span class="nx">objectContaining</span><span class="p">({</span>
+        <span class="nf">expect</span><span class="p">(</span><span class="nx">需要验证的列表</span><span class="p">).</span><span class="nf">toEqual</span><span class="p">(</span><span class="nx">expect</span><span class="p">.</span><span class="nf">arrayContaining</span><span class="p">([</span>
+            <span class="nx">expect</span><span class="p">.</span><span class="nf">objectContaining</span><span class="p">({</span>
                 <span class="na">列表中包含的object的某个key</span><span class="p">:</span> <span class="nx">value</span><span class="p">,</span>
             <span class="p">})</span>
         <span class="p">]))</span>
         <span class="c1">// 匹配抛出错误</span>
-        <span class="nx">expect</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nf">expect</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
             <span class="nx">执行应该抛出错误的逻辑</span>
-        <span class="p">}).</span><span class="nx">toThrow</span><span class="p">()</span>
+        <span class="p">}).</span><span class="nf">toThrow</span><span class="p">()</span>
     <span class="p">})</span>
 <span class="p">})</span>
 </code></pre></div></div>
@@ -165,11 +165,11 @@
 
 <p>对于异步模块你可能还需要在jest的初始化脚本中引入 <code class="language-plaintext highlighter-rouge">babel-polyfill</code>, 配置好后即可正常进行 <code class="language-plaintext highlighter-rouge">async/await</code> 等异步语法测试:</p>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">这个单元测试的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">一个测试用例的名字</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">这个单元测试的名字</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nf">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">一个测试用例的名字</span><span class="dl">'</span><span class="p">,</span> <span class="k">async </span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">执行模块</span>
-        <span class="nx">expect</span><span class="p">(</span><span class="nx">res</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expect</span><span class="p">.</span><span class="nx">arrayContaining</span><span class="p">([</span>
-            <span class="nx">expect</span><span class="p">.</span><span class="nx">objectContaining</span><span class="p">({</span>
+        <span class="nf">expect</span><span class="p">(</span><span class="nx">res</span><span class="p">).</span><span class="nf">toEqual</span><span class="p">(</span><span class="nx">expect</span><span class="p">.</span><span class="nf">arrayContaining</span><span class="p">([</span>
+            <span class="nx">expect</span><span class="p">.</span><span class="nf">objectContaining</span><span class="p">({</span>
                 <span class="na">列表中包含的object的某个key</span><span class="p">:</span> <span class="nx">value</span><span class="p">,</span>
             <span class="p">})</span>
         <span class="p">]))</span>
@@ -204,15 +204,15 @@
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">billAction</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/billAction</span><span class="dl">'</span>
 <span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">billApi</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/billApi</span><span class="dl">'</span>
 
-<span class="nx">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">billAction</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">success</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="kd">const</span> <span class="nx">spy</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nx">spyOn</span><span class="p">(</span><span class="nx">billApi</span><span class="p">,</span> <span class="dl">'</span><span class="s1">default</span><span class="dl">'</span><span class="p">)</span>
-        <span class="nx">spy</span><span class="p">.</span><span class="nx">mockResolvedValue</span><span class="p">({</span>
+<span class="nf">describe</span><span class="p">(</span><span class="dl">'</span><span class="s1">billAction</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nf">it</span><span class="p">(</span><span class="dl">'</span><span class="s1">success</span><span class="dl">'</span><span class="p">,</span> <span class="k">async </span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">spy</span> <span class="o">=</span> <span class="nx">jest</span><span class="p">.</span><span class="nf">spyOn</span><span class="p">(</span><span class="nx">billApi</span><span class="p">,</span> <span class="dl">'</span><span class="s1">default</span><span class="dl">'</span><span class="p">)</span>
+        <span class="nx">spy</span><span class="p">.</span><span class="nf">mockResolvedValue</span><span class="p">({</span>
             <span class="p">...</span><span class="nx">需要模拟返回的数据</span>
         <span class="p">})</span>
         <span class="c1">// billAction函数内部会调用billApi 通过spyOn进行了mock</span>
-        <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">billAction</span><span class="p">()</span>
-        <span class="nx">expect</span><span class="p">(</span><span class="nx">res</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+        <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nf">billAction</span><span class="p">()</span>
+        <span class="nf">expect</span><span class="p">(</span><span class="nx">res</span><span class="p">).</span><span class="nf">toEqual</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
     <span class="p">})</span>
 <span class="p">})</span>
 </code></pre></div></div>

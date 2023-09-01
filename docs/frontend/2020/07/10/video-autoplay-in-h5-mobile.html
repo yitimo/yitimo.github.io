@@ -106,29 +106,29 @@
  * 尽可能早的监听微信环境 自动播放页面中的视频
  * - 如果不是微信浏览器 此事件永不触发 需要手动 .play()
  */</span>
-<span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">WeixinJSBridgeReady</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="dl">'</span><span class="s1">请在1000毫秒内添加video标签</span><span class="dl">'</span><span class="p">)</span>
-  <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nb">document</span><span class="p">.</span><span class="nf">addEventListener</span><span class="p">(</span><span class="dl">'</span><span class="s1">WeixinJSBridgeReady</span><span class="dl">'</span><span class="p">,</span> <span class="k">async </span><span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nf">warn</span><span class="p">(</span><span class="dl">'</span><span class="s1">请在1000毫秒内添加video标签</span><span class="dl">'</span><span class="p">)</span>
+  <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">played</span> <span class="o">=</span> <span class="kc">false</span>
     <span class="kd">let</span> <span class="nx">preLoaded</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="kd">const</span> <span class="nx">videos</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">video</span><span class="dl">'</span><span class="p">)</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">videos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">const</span> <span class="nx">video</span> <span class="o">=</span> <span class="nx">videos</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">video</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">videos</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nf">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">video</span><span class="dl">'</span><span class="p">)</span>
+    <span class="k">for </span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">videos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">video</span> <span class="o">=</span> <span class="nx">videos</span><span class="p">.</span><span class="nf">item</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+      <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="nx">video</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// eslint-disable-next-line no-continue</span>
         <span class="k">continue</span>
       <span class="p">}</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">video</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1">playing</span><span class="dl">'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if </span><span class="p">(</span><span class="nx">video</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nf">indexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1">playing</span><span class="dl">'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// 这里通过特定的class名判断是否需要自动播放 可以改用自己想要的方式判断</span>
-        <span class="nx">video</span><span class="p">.</span><span class="nx">play</span><span class="p">()</span>
+        <span class="nx">video</span><span class="p">.</span><span class="nf">play</span><span class="p">()</span>
         <span class="nx">played</span> <span class="o">=</span> <span class="kc">true</span>
       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="c1">// 对于不需要播放的视频 还可以进行预加载</span>
-        <span class="nx">video</span><span class="p">.</span><span class="nx">load</span><span class="p">()</span>
+        <span class="nx">video</span><span class="p">.</span><span class="nf">load</span><span class="p">()</span>
         <span class="nx">preLoaded</span> <span class="o">+=</span> <span class="mi">1</span>
       <span class="p">}</span>
     <span class="p">}</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s2">`自动播放</span><span class="p">${</span><span class="nx">played</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">'</span><span class="s1">失败</span><span class="dl">'</span><span class="p">}</span><span class="s2">, 预加载了</span><span class="p">${</span><span class="nx">preLoaded</span><span class="p">}</span><span class="s2">个视频`</span><span class="p">)</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nf">warn</span><span class="p">(</span><span class="s2">`自动播放</span><span class="p">${</span><span class="nx">played</span> <span class="p">?</span> <span class="dl">'</span><span class="s1">成功</span><span class="dl">'</span> <span class="p">:</span> <span class="dl">'</span><span class="s1">失败</span><span class="dl">'</span><span class="p">}</span><span class="s2">, 预加载了</span><span class="p">${</span><span class="nx">preLoaded</span><span class="p">}</span><span class="s2">个视频`</span><span class="p">)</span>
   <span class="p">},</span> <span class="mi">950</span><span class="p">)</span>
 <span class="p">},</span> <span class="kc">false</span><span class="p">)</span>
 </code></pre></div></div>

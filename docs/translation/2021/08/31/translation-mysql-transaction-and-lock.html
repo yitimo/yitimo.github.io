@@ -65,16 +65,16 @@
         <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">START</span> <span class="n">TRANSACTION</span>
     <span class="p">[</span><span class="n">transaction_characteristic</span> <span class="p">[,</span> <span class="n">transaction_characteristic</span><span class="p">]</span> <span class="p">...]</span>
 
-<span class="n">transaction_characteristic</span><span class="p">:</span> <span class="err">{</span>
+<span class="n">transaction_characteristic</span><span class="p">:</span> <span class="p">{</span>
     <span class="k">WITH</span> <span class="n">CONSISTENT</span> <span class="n">SNAPSHOT</span>
   <span class="o">|</span> <span class="k">READ</span> <span class="k">WRITE</span>
   <span class="o">|</span> <span class="k">READ</span> <span class="k">ONLY</span>
-<span class="err">}</span>
+<span class="p">}</span>
 
 <span class="k">BEGIN</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span>
 <span class="k">COMMIT</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span> <span class="p">[</span><span class="k">AND</span> <span class="p">[</span><span class="k">NO</span><span class="p">]</span> <span class="k">CHAIN</span><span class="p">]</span> <span class="p">[[</span><span class="k">NO</span><span class="p">]</span> <span class="n">RELEASE</span><span class="p">]</span>
 <span class="k">ROLLBACK</span> <span class="p">[</span><span class="k">WORK</span><span class="p">]</span> <span class="p">[</span><span class="k">AND</span> <span class="p">[</span><span class="k">NO</span><span class="p">]</span> <span class="k">CHAIN</span><span class="p">]</span> <span class="p">[[</span><span class="k">NO</span><span class="p">]</span> <span class="n">RELEASE</span><span class="p">]</span>
-<span class="k">SET</span> <span class="n">autocommit</span> <span class="o">=</span> <span class="err">{</span><span class="mi">0</span> <span class="o">|</span> <span class="mi">1</span><span class="err">}</span>
+<span class="k">SET</span> <span class="n">autocommit</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="o">|</span> <span class="mi">1</span><span class="p">}</span>
 </code></pre></div></div>
 
 <p>这些语法提供了事务(transaction)相关的控制:</p>
