@@ -21,7 +21,7 @@
       font-size: 46px;
       line-height: 1.2;
       text-align: center;
-      margin: 2em auto 1em auto;
+      margin: 4em auto 2em auto;
       width: 80%;
       max-width: 812px;
       min-width: 260px;
@@ -39,6 +39,7 @@
   }
   h1, h2, h3 {
     position: relative;
+    padding-bottom: 0.3em;
     .anchor-a {
         opacity: 0;
         transition: 0.2s linear;
@@ -61,7 +62,7 @@
         color: var(--theme-color-outline);
     }
   }
-  h2, h3 {
+  h2 {
     &::after {
         content: '';
         position: absolute;
@@ -75,11 +76,11 @@
   h2 {
       font-size: 32px;
       margin-bottom: 1em;
-      margin-top: 2em;
+      margin-top: 3em;
   }
   h3, h4, h5, h6 {
-      margin-bottom: 5px;
-      margin-top: 30px;
+      margin-bottom: 0.5em;
+      margin-top: 1.5em;
   }
   ul, ol {
       padding: 0;
