@@ -18,7 +18,11 @@
     {% include header.html %}
     <section class="yitiblog-content block article">
         <h1 id="{{page.title}}">{{ page.title }}</h1>
-        <p class="time"><i>修改于: {{ page.date | date: '%Y-%m-%d %H:%M' }}</i></p>
+        {% if page.updateDate %}
+        <p class="time"><i>修改于: {{ page.updateDate | date: '%Y-%m-%d %H:%M' }}</i></p>
+        {% else %}
+        <p class="time"><i>发布于: {{ page.date | date: '%Y-%m-%d %H:%M' }}</i></p>
+        {% endif %}
         {% capture monago18_unix %}{{'now' | date: '%s' | minus: 47304000}}{% endcapture %}
         {% capture posttime %}{{page.date | date: '%s'}}{% endcapture %}
         {% if monago18_unix>=posttime %}
