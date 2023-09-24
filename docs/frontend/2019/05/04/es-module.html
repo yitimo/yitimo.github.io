@@ -57,14 +57,22 @@
     <section class="yitiblog-content block article">
         <h1 id="JavaScript模块化编程整理">JavaScript模块化编程整理</h1>
         
-        <p class="time"><i>发布于: 2019-05-04 15:21</i></p>
+            
+            <p class="time"><i>修改于: 2023-09-24 20:34</i></p>
         
         
         
-        
-            <p class="outdated">此文章久未修订，请自行甄别内容准确性。</p>
-        
-        <p>在上古时期(<code class="language-plaintext highlighter-rouge">ES3</code>)我们用<strong>直接在html中引入script</strong>的方式来开发web项目，而现在我们用比如webpack这样的工具来帮助我们做这件事。这让我们能更专注于实际项目代码的开发而不是忙于项目依赖、兼容性和代码压缩等重复性的工作。</p>
+        <p>模块化是为了避免所有代码逻辑都集中在同一个片段下, 而是拆分到多个模块下, 最后通过某种方式编译打包并运行. 这样做能使工程更易维护, 应用整体运行更可控. JS前端项目有非常多种模块化的方式:</p>
+
+<ul>
+  <li><strong>拆分成多个 script 标签, 每个 script 标签就是一个模块</strong>, 缺点是实际上每个script标签是共用上下文的, 并没有真正的隔离, 只算是同一个模块拆分成了多个片段</li>
+  <li><strong>自执行函数</strong>, 即 <code class="language-plaintext highlighter-rouge">(function() { /* 模块实现逻辑 */ })()</code> 这样的方式, 这真正做到了模块之间的隔离, 缺点是模块之间被完全隔离, 只能通过共同的全局作用域来通信, 而做不到模块间的引用</li>
+  <li>然后就是前端工程化后冒出来的各种”奇妙”名词了: <code class="language-plaintext highlighter-rouge">AMD/UMD/CommonJS/ES Module</code>, 下文将详细描述这些概念</li>
+</ul>
+
+<p><em>TODO: 继续重新修订</em></p>
+
+<hr />
 
 <p>本文将主要围绕<strong>webpack如何处理我们的JS代码</strong>这个问题来对JavaScript模块化编程进行梳理，包括以下几点:</p>
 

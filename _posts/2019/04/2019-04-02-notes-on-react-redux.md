@@ -77,10 +77,13 @@ class App extends Component{
 至此可以这么使用``react``+``redux``+``react-redux``：
 
 ``` javascript
+const mapStateToProps = (state) => ({
+  count: state.count,
+})
 const mapDispatchToProps = (dispatch, ownProps) => {
   return bindActionCreators({
     increase: action.increase,
-    decrease: action.decrease
+    decrease: action.decrease,
   });
 }
 
@@ -95,7 +98,7 @@ class MyComp extends Component {
   }
 }
 
-const Comp = connect(mapStateToProps， mapDispatchToProps)(MyComp);
+const Comp = connect(mapStateToProps, mapDispatchToProps)(MyComp);
 
 ```
 

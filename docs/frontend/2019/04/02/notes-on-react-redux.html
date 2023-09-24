@@ -57,8 +57,8 @@
     <section class="yitiblog-content block article">
         <h1 id="react+redux笔记">react+redux笔记</h1>
         
-        <p class="time"><i>发布于: 2019-04-02 16:12</i></p>
-        
+            
+            <p class="time"><i>发布于: 2019-04-02 16:12</i></p>
         
         
         
@@ -222,10 +222,13 @@
 
 <p>至此可以这么使用<code class="language-plaintext highlighter-rouge">react</code>+<code class="language-plaintext highlighter-rouge">redux</code>+<code class="language-plaintext highlighter-rouge">react-redux</code>：</p>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">ownProps</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span>
+  <span class="na">count</span><span class="p">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">count</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="kd">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">ownProps</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nf">bindActionCreators</span><span class="p">({</span>
     <span class="na">increase</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">increase</span><span class="p">,</span>
-    <span class="na">decrease</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">decrease</span>
+    <span class="na">decrease</span><span class="p">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">decrease</span><span class="p">,</span>
   <span class="p">});</span>
 <span class="p">}</span>
 
@@ -240,7 +243,7 @@
 </span>  <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">const</span> <span class="nx">Comp</span> <span class="o">=</span> <span class="nf">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="err">，</span> <span class="nx">mapDispatchToProps</span><span class="p">)(</span><span class="nx">MyComp</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">Comp</span> <span class="o">=</span> <span class="nf">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">,</span> <span class="nx">mapDispatchToProps</span><span class="p">)(</span><span class="nx">MyComp</span><span class="p">);</span>
 
 </code></pre></div></div>
 
