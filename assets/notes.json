@@ -1,0 +1,20 @@
+[
+    "这里是一些简短的笔记, 如果有值得输出成一篇文章的, 则会详细展开和深入",
+    [
+        "tsconfig.json 里的 allowSyntheticDefaultImports 和 esModuleInterop 是否重复",
+        "有网友解释是在VSCode下其实配了 esModuleInterop 就够了, 而 VS 里可能不够, 都配上更全面",
+        "都能用来支持以 default 方式引入非 ES Module模块的, 前者支持 CommonJS, 后者 AMD/CommonJS ?"
+    ],
+    [
+        "NextJS 功能多于 CRA, 还包含了 node 服务等能力, 差不多是个全栈框架",
+        "隔壁 vue 家的叫 NuxtJS",
+        "还有个主打后端的 nodejs 框架叫 NestJS",
+        "各种中外前端轮子库, 名字真多, 还有敢叫 father 的 :)"
+    ],
+    [
+        "为什么react里 {0 && 'something'} 会展示 0 而不是空",
+        "在 js 里 {0 && 'something'} 表达式得到的是 0 而不是 false",
+        "仅类型为 null/undefined/boolean 时不会渲染, !!0 虽然为 false, 但 0 是 number",
+        "深入源码里实际会直接判断 typeof children, 当是 'undefined' 或 'boolean' 时设为 null"
+    ]
+]
