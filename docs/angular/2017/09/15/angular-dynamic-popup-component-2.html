@@ -99,34 +99,34 @@
 <span class="k">import</span> <span class="p">{</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="nx">ComponentType</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./popup.ref</span><span class="dl">'</span><span class="p">;</span>
 
 <span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nc">DialogService</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">DialogService</span> <span class="p">{</span>
     <span class="kr">private</span> <span class="nx">loadRef</span><span class="p">:</span> <span class="nx">YupRef</span><span class="o">&lt;</span><span class="nx">LoadComponent</span><span class="o">&gt;</span><span class="p">;</span>
-    <span class="nf">constructor</span><span class="p">(</span>
+    <span class="kd">constructor</span><span class="p">(</span>
         <span class="kr">private</span> <span class="nx">appRef</span><span class="p">:</span> <span class="nx">ApplicationRef</span><span class="p">,</span>
         <span class="kr">private</span> <span class="nx">compFactRes</span><span class="p">:</span> <span class="nx">ComponentFactoryResolver</span>
     <span class="p">)</span> <span class="p">{}</span>
     <span class="c1">// 创建一个组件，组件通过泛型传入以做到通用</span>
     <span class="kr">public</span> <span class="nx">open</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">component</span><span class="p">:</span> <span class="nx">ComponentType</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">config</span><span class="p">:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// 创建组件工厂</span>
-        <span class="kd">const</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">compFactRes</span><span class="p">.</span><span class="nf">resolveComponentFactory</span><span class="p">(</span><span class="nx">component</span><span class="p">);</span>
+        <span class="kd">const</span> <span class="nx">factory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">compFactRes</span><span class="p">.</span><span class="nx">resolveComponentFactory</span><span class="p">(</span><span class="nx">component</span><span class="p">);</span>
         <span class="c1">// 创建一个新的弹窗引用</span>
-        <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">YupRef</span><span class="p">(</span><span class="nx">factory</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+        <span class="kd">const</span> <span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YupRef</span><span class="p">(</span><span class="nx">factory</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
         <span class="c1">// 将创建好的组件引用(由弹窗引用创建并返回)append到body标签下</span>
-        <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nf">getComponentRootNode</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nf">componentRef</span><span class="p">()));</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">componentRef</span><span class="p">()));</span>
         <span class="c1">// 加入angular脏检查</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">appRef</span><span class="p">.</span><span class="nf">attachView</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nf">componentRef</span><span class="p">().</span><span class="nx">hostView</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">appRef</span><span class="p">.</span><span class="nx">attachView</span><span class="p">(</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">componentRef</span><span class="p">().</span><span class="nx">hostView</span><span class="p">);</span>
         <span class="c1">// 将创建的弹窗引用返回给外界</span>
         <span class="k">return</span> <span class="nx">dialogRef</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="c1">// 参考自Material2，将ComponentRef类型的组件引用转换为DOM节点</span>
-    <span class="kr">private</span> <span class="nf">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
-        <span class="k">return </span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span> <span class="k">as</span> <span class="nx">EmbeddedViewRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">).</span><span class="nx">rootNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+    <span class="kr">private</span> <span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span> <span class="k">as</span> <span class="nx">EmbeddedViewRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">).</span><span class="nx">rootNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">HTMLElement</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">// 参考自Material2 用于作为传入组件的类型</span>
 <span class="k">export</span> <span class="kr">interface</span> <span class="nx">ComponentType</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
-    <span class="k">new </span><span class="p">(...</span><span class="na">args</span><span class="p">:</span> <span class="nx">any</span><span class="p">[]):</span> <span class="nx">T</span><span class="p">;</span>
+    <span class="k">new</span> <span class="p">(...</span><span class="na">args</span><span class="p">:</span> <span class="nx">any</span><span class="p">[]):</span> <span class="nx">T</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 <h3 id="弹窗的引用对象">弹窗的引用对象</h3>
@@ -137,35 +137,35 @@
 <span class="c1">// 用于注入自定义数据到创建的组件中</span>
 <span class="k">export</span> <span class="kd">const</span> <span class="nx">YUP_DATA</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InjectionToken</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">'</span><span class="s1">YUPPopupData</span><span class="dl">'</span><span class="p">);</span>
 
-<span class="k">export</span> <span class="kd">class</span> <span class="nc">YupRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">YupRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{</span>
     <span class="c1">// 弹窗关闭的订阅</span>
     <span class="kr">private</span> <span class="nx">afterClose</span><span class="na">$</span><span class="p">:</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="c1">// 弹窗引用变量</span>
     <span class="kr">private</span> <span class="na">dialogRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
-    <span class="nf">constructor</span><span class="p">(</span>
+    <span class="kd">constructor</span><span class="p">(</span>
         <span class="kr">private</span> <span class="na">factory</span><span class="p">:</span> <span class="nx">ComponentFactory</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span>
         <span class="kr">private</span> <span class="na">config</span><span class="p">:</span> <span class="nx">any</span> <span class="c1">// 传入的自定义数据</span>
     <span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Subject</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">factory</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span>
-            <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nf">resolveAndCreate</span><span class="p">([</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">factory</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+            <span class="nx">ReflectiveInjector</span><span class="p">.</span><span class="nx">resolveAndCreate</span><span class="p">([</span>
                 <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">YUP_DATA</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="nx">config</span><span class="p">},</span> <span class="c1">// 注入自定义数据</span>
                 <span class="p">{</span><span class="na">provide</span><span class="p">:</span> <span class="nx">YupRef</span><span class="p">,</span> <span class="na">useValue</span><span class="p">:</span> <span class="k">this</span><span class="p">}</span> <span class="c1">// 注入自身，这样就可以在创建的组件里控制组件的关闭等</span>
             <span class="p">])</span>
         <span class="p">);</span>
     <span class="p">}</span>
     <span class="c1">// 提供给外界的对窗口关闭的订阅</span>
-    <span class="kr">public</span> <span class="nf">afterClose</span><span class="p">():</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nf">asObservable</span><span class="p">();</span>
+    <span class="kr">public</span> <span class="nx">afterClose</span><span class="p">():</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">();</span>
     <span class="p">}</span>
     <span class="c1">// 关闭方法，将销毁组件</span>
-    <span class="kr">public</span> <span class="nf">close</span><span class="p">(</span><span class="nx">data</span><span class="p">?:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nf">next</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nf">complete</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nf">destroy</span><span class="p">();</span>
+    <span class="kr">public</span> <span class="nx">close</span><span class="p">(</span><span class="nx">data</span><span class="p">?:</span> <span class="nx">any</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">afterClose$</span><span class="p">.</span><span class="nx">complete</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
     <span class="p">}</span>
     <span class="c1">// 提供给弹窗服务以帮助添加到DOM中</span>
-    <span class="kr">public</span> <span class="nf">componentRef</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">public</span> <span class="nx">componentRef</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -192,7 +192,7 @@
     <span class="na">styles</span><span class="p">:</span> <span class="p">[</span><span class="s2">`这里省略一堆样式`</span><span class="p">]</span>
     <span class="na">animations</span><span class="p">:</span> <span class="p">[</span><span class="nx">mask</span><span class="p">,</span> <span class="nx">dialog</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nc">DialogComponent</span> <span class="p">{</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">DialogComponent</span> <span class="p">{</span>
     <span class="kr">public</span> <span class="nx">data</span><span class="p">:</span> <span class="p">{</span>
         <span class="nx">title</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
         <span class="nx">msg</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
@@ -202,21 +202,21 @@
     <span class="p">};</span>
     <span class="kr">public</span> <span class="nx">dialogRef</span><span class="p">:</span> <span class="nx">YupRef</span><span class="o">&lt;</span><span class="nx">DialogComponent</span><span class="o">&gt;</span><span class="p">;</span>
     <span class="kr">public</span> <span class="nx">disp</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
-    <span class="nf">constructor</span><span class="p">(</span>
+    <span class="kd">constructor</span><span class="p">(</span>
         <span class="kr">private</span> <span class="nx">injector</span><span class="p">:</span> <span class="nx">Injector</span>
     <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="nx">YUP_DATA</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="nx">YupRef</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">YUP_DATA</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">injector</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">YupRef</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">init</span><span class="dl">'</span><span class="p">;</span>
-        <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">on</span><span class="dl">'</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="p">}</span>
-    <span class="kr">public</span> <span class="nf">close</span><span class="p">(</span><span class="nx">comfirm</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">public</span> <span class="nx">close</span><span class="p">(</span><span class="nx">comfirm</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">off</span><span class="dl">'</span><span class="p">;</span>
-        <span class="nf">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span>  <span class="p">{</span>
+        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span>  <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">disp</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">init</span><span class="dl">'</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nf">close</span><span class="p">(</span><span class="nx">comfirm</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">dialogRef</span><span class="p">.</span><span class="nx">close</span><span class="p">(</span><span class="nx">comfirm</span><span class="p">);</span>
         <span class="p">},</span> <span class="mi">300</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -229,14 +229,14 @@
 </ul>
 
 <p>创建好组件后再服务中添加快捷创建此组件的方法:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nf">dialog</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="p">{</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">public</span> <span class="nx">dialog</span><span class="p">(</span><span class="nx">config</span><span class="p">:</span> <span class="p">{</span>
     <span class="nx">title</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">msg</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">ok</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">no</span><span class="p">?:</span> <span class="nx">string</span><span class="p">,</span>
     <span class="nx">mask</span><span class="p">?:</span> <span class="nx">boolean</span>
 <span class="p">})</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div></div>
 <p>额外需要提一点是虽然这样创建的组件没有被一开始就添加到页面中，仍然需要在所属模块的declaration中声明，并且还得在entryComponent中声明过，否则angular就会通过报错的方式让你这么做，就像下面这个弹窗模块的定义这样:</p>
@@ -253,7 +253,7 @@
     <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">DialogService</span><span class="p">],</span>
     <span class="na">entryComponents</span><span class="p">:</span> <span class="p">[</span><span class="nx">DialogComponent</span><span class="p">,</span> <span class="nx">AlertComponent</span><span class="p">,</span> <span class="nx">ToastComponent</span><span class="p">,</span> <span class="nx">LoadComponent</span><span class="p">]</span>
 <span class="p">})</span>
-<span class="k">export</span> <span class="kd">class</span> <span class="nc">YupModule</span> <span class="p">{}</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">YupModule</span> <span class="p">{}</span>
 </code></pre></div></div>
 <p>而此弹窗模块真正需要导出的东西有4个，都列在index.ts中:</p>
 <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="p">{</span> <span class="nx">YupModule</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./module</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 需要在AppModule中引入</span>
@@ -262,23 +262,23 @@
 </code></pre></div></div>
 <h3 id="使用方法">使用方法</h3>
 <p>最终在外界的使用方式如下:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">constructor</span><span class="p">(</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">constructor</span><span class="p">(</span>
     <span class="kr">public</span> <span class="nx">yup</span><span class="p">:</span> <span class="nx">Yup</span> <span class="c1">// 其实是DialogService，被笔者改了名</span>
 <span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 
-<span class="kr">public</span> <span class="nf">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nf">dialog</span><span class="p">({</span><span class="na">msg</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹不弹?</span><span class="dl">'</span><span class="p">,</span> <span class="na">title</span><span class="p">:</span> <span class="dl">'</span><span class="s1">我弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">ok</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">no</span><span class="p">:</span> <span class="dl">'</span><span class="s1">别弹了</span><span class="dl">'</span><span class="p">,</span> <span class="na">mask</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nf">afterClose</span><span class="p">().</span><span class="nf">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">if </span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了确定</span><span class="dl">'</span><span class="p">);</span>
+<span class="kr">public</span> <span class="nx">ngOnInit</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">dialog</span><span class="p">({</span><span class="na">msg</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹不弹?</span><span class="dl">'</span><span class="p">,</span> <span class="na">title</span><span class="p">:</span> <span class="dl">'</span><span class="s1">我弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">ok</span><span class="p">:</span> <span class="dl">'</span><span class="s1">弹弹</span><span class="dl">'</span><span class="p">,</span> <span class="na">no</span><span class="p">:</span> <span class="dl">'</span><span class="s1">别弹了</span><span class="dl">'</span><span class="p">,</span> <span class="na">mask</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了确定</span><span class="dl">'</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了取消</span><span class="dl">'</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">点击了取消</span><span class="dl">'</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
 <span class="p">}</span>
 </code></pre></div></div>
 <p>当不想使用预制的弹窗组件时，大可以自行创建好一个组件，然后使用open方法:</p>
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="nx">CustomComponent</span><span class="p">,</span> <span class="dl">'</span><span class="s1">我是自定义数据</span><span class="dl">'</span><span class="p">).</span><span class="nf">afterClose</span><span class="p">().</span><span class="nf">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="s2">`我已经被关闭了，不过我能携带出来数据: 【</span><span class="p">${</span><span class="nx">res</span><span class="p">}</span><span class="s2">】`</span><span class="p">);</span>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">yup</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">CustomComponent</span><span class="p">,</span> <span class="dl">'</span><span class="s1">我是自定义数据</span><span class="dl">'</span><span class="p">).</span><span class="nx">afterClose</span><span class="p">().</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`我已经被关闭了，不过我能携带出来数据: 【</span><span class="p">${</span><span class="nx">res</span><span class="p">}</span><span class="s2">】`</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div></div>
 <p>乍一看是不是有点接近Material2的Dialog的使用呢  :) ，不过<a href="https://material.angular.io/components/dialog/overview">来自Google Inc的Material2版究极Dialog模块</a>做了极变态的抽象以及组件嵌套，推荐勇士前去研究。</p>

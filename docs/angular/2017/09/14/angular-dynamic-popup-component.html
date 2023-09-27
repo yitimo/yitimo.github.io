@@ -89,23 +89,23 @@
 <p>在组件中创建组件的核心代码分两步:</p>
 <ol>
   <li>创建组件工厂
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">componentFactoryResolver</span><span class="p">.</span><span class="nf">resolveComponentFactory</span><span class="p">(</span><span class="nx">待创建组件</span><span class="p">);</span>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentFactory</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">componentFactoryResolver</span><span class="p">.</span><span class="nx">resolveComponentFactory</span><span class="p">(</span><span class="nx">待创建组件</span><span class="p">);</span>
 </code></pre></div>    </div>
   </li>
   <li>把工厂提供给容器创建出组件
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nf">createComponent</span><span class="p">(</span><span class="nx">componentFactory</span><span class="p">);</span>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">componentRef</span> <span class="o">=</span> <span class="nx">viewContainerRef</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span><span class="nx">componentFactory</span><span class="p">);</span>
 </code></pre></div>    </div>
     <p>现在的问题在于，在服务中得不到viewContainerRef，工厂倒是能创建成功。
 其实有工厂了已经足够了，查看componentFactory提供的成员里面包含了一个create方法，顾名思义这应该就是用来创建组件的了。
 create方法有个必选参数类型为Injector，顾名思义就是注入器，即这个创建的组件打算注入些什么服务进去，暴力点直接写null也没问题。
 直接使用工厂创建组件返回的同样是一个ComponentRef类型的引用，可见此时组件确实是创建出来了，但是还没有将其插入到视图中去。此时可以再暴力一点，直接用原生DOM操作插入到body标签的末尾去:</p>
-    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nf">appendChild</span><span class="p">(</span>
- <span class="k">this</span><span class="p">.</span><span class="nf">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">)</span>
+    <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">window</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span>
+ <span class="k">this</span><span class="p">.</span><span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">)</span>
 <span class="p">);</span>
-<span class="k">this</span><span class="p">.</span><span class="nx">appRef</span><span class="p">.</span><span class="nf">attachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">);</span> <span class="c1">// 注入ApplicationRef服务后使用</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">appRef</span><span class="p">.</span><span class="nx">attachView</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">);</span> <span class="c1">// 注入ApplicationRef服务后使用</span>
 <span class="c1">// ...</span>
-<span class="kr">private</span> <span class="nf">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
- <span class="k">return </span><span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span> <span class="k">as</span> <span class="nx">EmbeddedViewRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">).</span><span class="nx">rootNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">HTMLElement</span><span class="p">;</span>
+<span class="kr">private</span> <span class="nx">getComponentRootNode</span><span class="p">(</span><span class="nx">componentRef</span><span class="p">:</span> <span class="nx">ComponentRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">HTMLElement</span> <span class="p">{</span>
+ <span class="k">return</span> <span class="p">(</span><span class="nx">componentRef</span><span class="p">.</span><span class="nx">hostView</span> <span class="k">as</span> <span class="nx">EmbeddedViewRef</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">).</span><span class="nx">rootNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as</span> <span class="nx">HTMLElement</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="c1">// ...</span>
 </code></pre></div>    </div>

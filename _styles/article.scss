@@ -127,6 +127,9 @@
       line-height: 1.5;
       font-weight: 400;
   }
+  p, em, strong, li {
+    word-break: normal;
+  }
   img {
       display: block;
       margin: 15px auto;

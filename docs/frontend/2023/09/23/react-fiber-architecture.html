@@ -232,7 +232,7 @@
 
 <p>The child fiber corresponds to the value returned by a component’s <code class="language-plaintext highlighter-rouge">render</code> method. So in the following example</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">Parent</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Parent</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">&lt;</span><span class="nc">Child</span> <span class="p">/&gt;</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -241,7 +241,7 @@
 
 <p>The sibling field accounts for the case where <code class="language-plaintext highlighter-rouge">render</code> returns multiple children (a new feature in Fiber!):</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">Parent</span><span class="p">()</span> <span class="p">{</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Parent</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="p">[&lt;</span><span class="nc">Child1</span> <span class="p">/&gt;,</span> <span class="p">&lt;</span><span class="nc">Child2</span> <span class="p">/&gt;]</span>
 <span class="p">}</span>
 </code></pre></div></div>
@@ -268,7 +268,7 @@
 
 <p>With the exception of <code class="language-plaintext highlighter-rouge">NoWork</code>, which is 0, a larger number indicates a lower priority. For example, you could use the following function to check if a fiber’s priority is at least as high as the given level:</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nf">matchesPriority</span><span class="p">(</span><span class="nx">fiber</span><span class="p">,</span> <span class="nx">priority</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">matchesPriority</span><span class="p">(</span><span class="nx">fiber</span><span class="p">,</span> <span class="nx">priority</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">fiber</span><span class="p">.</span><span class="nx">pendingWorkPriority</span> <span class="o">!==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span>
          <span class="nx">fiber</span><span class="p">.</span><span class="nx">pendingWorkPriority</span> <span class="o">&lt;=</span> <span class="nx">priority</span>
 <span class="p">}</span>
