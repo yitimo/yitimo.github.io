@@ -33,12 +33,24 @@ description: TypeScript module and jsx.
 - 安装的``@types/react``版本本身有问题: 尝试更换多个版本无效
 - react 不支持 tsconfig 的 ``"moduleResolution": "NodeNext"`` 配置: 另起一个干净的纯react项目发现其实也支持
 
-排除以上可能后, 迷茫之际看到了错误里的 ``VNodeNormalizedChildren``, 这是 vue3 里的类型, 直接原因一定是 react 和 vue 的类型定义冲突了. 果然在 vue 里全局声明了 JSX:
+排除以上可能后, 迷茫之际看到了错误里的 ``VNodeNormalizedChildren``, 这是 vue3 里的类型, 可知直接原因一定是 react 和 vue 的类型定义冲突了. 果然在 vue 里全局声明了 JSX:
 
 ![vue jsx 定义](/assets/images/202312/vue_jsx_type.jpg)
 
+而 @types/react 里也声明了 JSX:
+
+![react jsx 定义](/assets/images/202312/react_jsx_type.png)
+
+然后后引入的 JSX 声明就会覆盖前一个同名类型, ``JSX.Element`` 的类型就开始混乱了.
+
 期望的是react组件正常使用``.tsx``文件来开发, 而vue使用``.vue``文件来开发, 那么如何做到呢?
 
-## 几个tsconfig配置
+最佳解是将 tsconfig 里的 jsx 配置值为 react-jsx, 这是 react17 开始支持的方式, 配置后甚至不需要手动在 tsx 文件里多写一行 ``import React from 'react``.
+
+> 是否可以配置忽略 vue 里的 JSX 声明, 或者如 vue 自己的注释里说的, 3.4 版本开始自己就移除了
+
+## 为什么
+
+*TODO: 各种配置下的 tsc 编译结果*
 
 ## 扩展阅读
