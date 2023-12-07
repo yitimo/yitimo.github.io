@@ -51,6 +51,30 @@ description: TypeScript module and jsx.
 
 ## 为什么
 
+### 类型从哪来
+
+TypeScript默认会
+
+### TypeScript 全局类型
+
+ts里可以用``declare namespace``语法来声明全局变量, 比如这样:
+
+``` ts
+declare namespace React {
+  ...
+}
+```
+
+然后就可以全局使用这个变量了:
+
+![全局使用react变量](/assets/images/202312/global_use_react_ts_error.jpg)
+
+出现了熟悉的错误, 必须手动引入: ``import React from 'react';``
+
+### TypeScript 如何处理 JSX
+
+ts使用tsx后缀来给jsx添加类型.
+
 *TODO: 各种配置下的 tsc 编译结果*
 
 ## 扩展阅读
