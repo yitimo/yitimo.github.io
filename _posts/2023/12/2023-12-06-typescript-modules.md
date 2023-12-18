@@ -53,7 +53,11 @@ description: TypeScript module and jsx.
 
 ### 类型从哪来
 
-TypeScript默认会
+TypeScript默认会包含工程内所有模块, 和 ``node_modules/@types`` 目录下的所有模块。当在 ts 文件里引入 react 时, react 库本身未提供类型, 所以 ts 会关联 ``node_modules/@types/react`` 下的类型, 如果未安装, 会有提示:
+
+![missing react type](/assets/images/202312/missing_react_type.png)
+
+与此不同, vue3 自带了类型声明, 所以引入 vue 使用时直接就能有类型提示。
 
 ### TypeScript 全局类型
 
@@ -70,6 +74,9 @@ declare namespace React {
 ![全局使用react变量](/assets/images/202312/global_use_react_ts_error.jpg)
 
 出现了熟悉的错误, 必须手动引入: ``import React from 'react';``
+
+- *TODO: 为什么需要手动引入*
+- *TODO: 为什么 react 组件会和 vue 有类型冲突*
 
 ### TypeScript 如何处理 JSX
 
