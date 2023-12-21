@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TypeScript 模块化和 JSX | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
+    <script src="/assets/theme.js"></script>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/iconfont.css">
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/frontend/2023/12/04/typescript-modules.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog theme-dark">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+    <div class="yitiblog-header-inner block flex">
+        <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
+        <a href="/"><span class="title font-l">再见二丁目</span></a>
+        <div class="flex-1"></div>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
+    </div>
+</header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>
+
+    <section class="yitiblog-content block article">
+        <h1 id="TypeScript 模块化和 JSX">TypeScript 模块化和 JSX</h1>
+        
+            
+            <p class="time"><i>发布于: 2023-12-04 14:20</i></p>
+        
+        
+        
+        <h2 id="问题">问题</h2>
+
+<p>近日尝试配置脚手架来构建多页面, 并支持页面之间使用不同的框架, 比如页面A使用vue而页面B使用react.</p>
+
+<p>在进行vue3的ts配置时遇到了错误:</p>
+
+<p><img src="/assets/images/202312/vue_type_error.jpg" alt="vue类型错误" /></p>
+
+<p>于是调整了tsconfig配置:</p>
+
+<p><img src="/assets/images/202312/tsconfig_change.jpg" alt="调整tsconfig" /></p>
+
+<p>然后就轮到react这边报错了:</p>
+
+<p><img src="/assets/images/202312/tsx_type_error.jpg" alt="tsx类型错误" /></p>
+
+<p>根据这个错误各种搜索无果, 能想到的几个可能:</p>
+
+<ul>
+  <li>vscode抽风: 重启换电脑无效</li>
+  <li>实际安装了多个版本的<code class="language-plaintext highlighter-rouge">@types/react</code>类型有冲突: 反复检查确实只安装了最新版本</li>
+  <li>安装的<code class="language-plaintext highlighter-rouge">@types/react</code>版本本身有问题: 尝试更换多个版本无效</li>
+  <li>react 不支持 tsconfig 的 <code class="language-plaintext highlighter-rouge">"moduleResolution": "NodeNext"</code> 配置: 另起一个干净的纯react项目发现其实也支持</li>
+</ul>
+
+<p>排除以上可能后, 迷茫之际看到了错误里的 <code class="language-plaintext highlighter-rouge">VNodeNormalizedChildren</code>, 这是 vue3 里的类型, 可知直接原因一定是 react 和 vue 的类型定义冲突了. 果然在 vue 里全局声明了 JSX:</p>
+
+<p><img src="/assets/images/202312/vue_jsx_type.jpg" alt="vue jsx 定义" /></p>
+
+<p>而 @types/react 里也声明了 JSX:</p>
+
+<p><img src="/assets/images/202312/react_jsx_type.png" alt="react jsx 定义" /></p>
+
+<p>然后后引入的 JSX 声明就会覆盖前一个同名类型, <code class="language-plaintext highlighter-rouge">JSX.Element</code> 的类型就开始混乱了.</p>
+
+<p>期望的是react组件正常使用<code class="language-plaintext highlighter-rouge">.tsx</code>文件来开发, 而vue使用<code class="language-plaintext highlighter-rouge">.vue</code>文件来开发, 那么如何做到呢?</p>
+
+<p>最佳解是将 tsconfig 里的 jsx 配置值为 react-jsx, 这是 react17 开始支持的方式, 配置后甚至不需要手动在 tsx 文件里多写一行 <code class="language-plaintext highlighter-rouge">import React from 'react</code>.</p>
+
+<blockquote>
+  <p>是否可以配置忽略 vue 里的 JSX 声明, 或者如 vue 自己的注释里说的, 3.4 版本开始自己就移除了</p>
+</blockquote>
+
+<h2 id="为什么">为什么</h2>
+
+<h3 id="类型从哪来">类型从哪来</h3>
+
+<p>TypeScript默认会包含工程内所有模块, 和 <code class="language-plaintext highlighter-rouge">node_modules/@types</code> 目录下的所有模块。当在 ts 文件里引入 react 时, react 库本身未提供类型, 所以 ts 会关联 <code class="language-plaintext highlighter-rouge">node_modules/@types/react</code> 下的类型, 如果未安装, 会有提示:</p>
+
+<p><img src="/assets/images/202312/missing_react_type.png" alt="missing react type" /></p>
+
+<p>与此不同, vue3 自带了类型声明, 所以引入 vue 使用时直接就能有类型提示。</p>
+
+<h3 id="typescript-全局类型">TypeScript 全局类型</h3>
+
+<p>ts里可以用<code class="language-plaintext highlighter-rouge">declare namespace</code>语法来声明全局变量, 比如这样:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">declare</span> <span class="k">namespace</span> <span class="nx">React</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后就可以全局使用这个变量了:</p>
+
+<p><img src="/assets/images/202312/global_use_react_ts_error.jpg" alt="全局使用react变量" /></p>
+
+<p>出现了熟悉的错误, 必须手动引入: <code class="language-plaintext highlighter-rouge">import React from 'react';</code>, 为什么需要手动引入?</p>
+
+<p>可以到 <code class="language-plaintext highlighter-rouge">node_modules/@types/react</code> 的类型定义里找到这样的导出:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">declare</span> <span class="k">namespace</span> <span class="nx">React</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+<span class="k">export</span> <span class="o">=</span> <span class="nx">React</span><span class="p">;</span>
+<span class="k">export</span> <span class="k">as</span> <span class="k">namespace</span> <span class="nx">React</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>即生命了 React 命名空间, 然后将其导出, 最终定义出了一个 UMD 模块而不是ES模块(并不是 <code class="language-plaintext highlighter-rouge">export default React</code>)。</p>
+
+<p>然后 ts 就需要我们手动像引入ES模块一样将其引入来兼容. 对应在 js 里就需要 <code class="language-plaintext highlighter-rouge">import * as React from 'react'</code> 这样来转 ES 模块然后使用. 到了 tsx 里也一样, ts 会使用全局声明好的 React 和 JSX 类型, 并将 react 组件转义为 <code class="language-plaintext highlighter-rouge">React.createElement</code>.</p>
+
+<p>而当配置了 tsconfig 的 jsx 为 react-jsx 时, 就不再需要手动引入 React 了, 这是 react17 开始提供的新方式, 会将 react 的组件创建方式转义为一个 jsx 模块方法, 最终编译产物会像这样:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="dl">"</span><span class="s2">use strict</span><span class="dl">"</span><span class="p">;</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="dl">"</span><span class="s2">__esModule</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">value</span><span class="p">:</span> <span class="kc">true</span> <span class="p">});</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">App</span> <span class="o">=</span> <span class="k">void</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">jsx_runtime_1</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">"</span><span class="s2">react/jsx-runtime</span><span class="dl">"</span><span class="p">);</span>
+<span class="kd">function</span> <span class="nx">Child</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">jsx_runtime_1</span><span class="p">.</span><span class="nx">jsx</span><span class="p">)(</span><span class="dl">"</span><span class="s2">div</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span> <span class="na">children</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Child</span><span class="dl">"</span> <span class="p">});</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">App</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">jsx_runtime_1</span><span class="p">.</span><span class="nx">jsx</span><span class="p">)(</span><span class="nx">Child</span><span class="p">,</span> <span class="p">{});</span>
+<span class="p">}</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">App</span> <span class="o">=</span> <span class="nx">App</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>这就使得 react 组件使用的 JSX 类型是来自专门的 JSX 命名空间, 而不再是和 vue 冲突的 global.JSX 了, 也就是 <code class="language-plaintext highlighter-rouge">node_modules/@types/react/jsx-runtime.d.ts</code> 下的 JSX 声明:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">namespace</span> <span class="nx">JSX</span> <span class="p">{</span>
+    <span class="kd">type</span> <span class="nx">ElementType</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">ElementType</span><span class="p">;</span>
+    <span class="kr">interface</span> <span class="nx">Element</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">Element</span> <span class="p">{}</span>
+    <span class="kr">interface</span> <span class="nx">ElementClass</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">ElementClass</span> <span class="p">{}</span>
+    <span class="kr">interface</span> <span class="nx">ElementAttributesProperty</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">ElementAttributesProperty</span> <span class="p">{}</span>
+    <span class="kr">interface</span> <span class="nx">ElementChildrenAttribute</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">ElementChildrenAttribute</span> <span class="p">{}</span>
+    <span class="kd">type</span> <span class="nx">LibraryManagedAttributes</span><span class="o">&lt;</span><span class="nx">C</span><span class="p">,</span> <span class="nx">P</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">LibraryManagedAttributes</span><span class="o">&lt;</span><span class="nx">C</span><span class="p">,</span> <span class="nx">P</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="kr">interface</span> <span class="nx">IntrinsicAttributes</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">IntrinsicAttributes</span> <span class="p">{}</span>
+    <span class="kr">interface</span> <span class="nx">IntrinsicClassAttributes</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">IntrinsicClassAttributes</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">{}</span>
+    <span class="kr">interface</span> <span class="nx">IntrinsicElements</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">JSX</span><span class="p">.</span><span class="nx">IntrinsicElements</span> <span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这是一个常规的 ES 模块导出, 自然也不需要手动 import 一次 React 了。</p>
+
+<h2 id="扩展阅读">扩展阅读</h2>
+
+<p><em>TODO: 参考文档和链接</em></p>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/frontend/2023/09/23/react-fiber-architecture.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                【翻译】React Fiber 架构
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            var h1s = document.getElementsByTagName('h1')
+            var h2s = document.getElementsByTagName('h2')
+            var h3s = document.getElementsByTagName('h3')
+            for (var i = 0; i < h1s.length; i += 1) {
+                addAnchorNode(h1s.item(i))
+            }
+            for (var i = 0; i < h2s.length; i += 1) {
+                addAnchorNode(h2s.item(i))
+            }
+            for (var i = 0; i < h3s.length; i += 1) {
+                addAnchorNode(h3s.item(i))
+            }
+            function addAnchorNode(target) {
+                if (!target || !target.id) {
+                    return
+                }
+                var linkADOM = document.createElement('a')
+                linkADOM.classList = 'anchor-a'
+                linkADOM.href = '#' + target.id
+                var linkIDOM = document.createElement('i')
+                linkIDOM.classList = 'anchor-i iconfont icon-anchor'
+                linkADOM.appendChild(linkIDOM)
+                target.appendChild(linkADOM)
+            }
+        })
+    </script>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+    </ul>
+</div>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人博客@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>

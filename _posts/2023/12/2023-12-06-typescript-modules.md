@@ -73,15 +73,56 @@ declare namespace React {
 
 ![全局使用react变量](/assets/images/202312/global_use_react_ts_error.jpg)
 
-出现了熟悉的错误, 必须手动引入: ``import React from 'react';``
+出现了熟悉的错误, 必须手动引入: ``import React from 'react';``, 为什么需要手动引入?
 
-- *TODO: 为什么需要手动引入*
-- *TODO: 为什么 react 组件会和 vue 有类型冲突*
+可以到 ``node_modules/@types/react`` 的类型定义里找到这样的导出:
 
-### TypeScript 如何处理 JSX
+``` ts
+declare namespace React {
+  ...
+}
+export = React;
+export as namespace React;
+```
 
-ts使用tsx后缀来给jsx添加类型.
+即生命了 React 命名空间, 然后将其导出, 最终定义出了一个 UMD 模块而不是ES模块(并不是 ``export default React``)。
 
-*TODO: 各种配置下的 tsc 编译结果*
+然后 ts 就需要我们手动像引入ES模块一样将其引入来兼容. 对应在 js 里就需要 ``import * as React from 'react'`` 这样来转 ES 模块然后使用. 到了 tsx 里也一样, ts 会使用全局声明好的 React 和 JSX 类型, 并将 react 组件转义为 ``React.createElement``.
+
+而当配置了 tsconfig 的 jsx 为 react-jsx 时, 就不再需要手动引入 React 了, 这是 react17 开始提供的新方式, 会将 react 的组件创建方式转义为一个 jsx 模块方法, 最终编译产物会像这样:
+
+``` js
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.App = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+function Child() {
+    return (0, jsx_runtime_1.jsx)("div", { children: "Child" });
+}
+function App() {
+    return (0, jsx_runtime_1.jsx)(Child, {});
+}
+exports.App = App;
+```
+
+这就使得 react 组件使用的 JSX 类型是来自专门的 JSX 命名空间, 而不再是和 vue 冲突的 global.JSX 了, 也就是 ``node_modules/@types/react/jsx-runtime.d.ts`` 下的 JSX 声明:
+
+``` ts
+export namespace JSX {
+    type ElementType = React.JSX.ElementType;
+    interface Element extends React.JSX.Element {}
+    interface ElementClass extends React.JSX.ElementClass {}
+    interface ElementAttributesProperty extends React.JSX.ElementAttributesProperty {}
+    interface ElementChildrenAttribute extends React.JSX.ElementChildrenAttribute {}
+    type LibraryManagedAttributes<C, P> = React.JSX.LibraryManagedAttributes<C, P>;
+    interface IntrinsicAttributes extends React.JSX.IntrinsicAttributes {}
+    interface IntrinsicClassAttributes<T> extends React.JSX.IntrinsicClassAttributes<T> {}
+    interface IntrinsicElements extends React.JSX.IntrinsicElements {}
+}
+```
+
+这是一个常规的 ES 模块导出, 自然也不需要手动 import 一次 React 了。
 
 ## 扩展阅读
+
+*TODO: 参考文档和链接*
