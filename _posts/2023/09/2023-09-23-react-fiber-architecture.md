@@ -31,9 +31,9 @@ Fiber 介绍了一些新颖的概念, 通过代码可能很难去完全理解. �
 
 注意我并没有在 react 团队里, 不会有任何权威性. **这不是一篇官方文档.** 为保证准确性我有请 react 团队成员审阅.
 
-同时这是一个还在进行中的工作. **Fiber is an ongoing project that will likely undergo significant refactors before it's completed.** Also ongoing are my attempts at documenting its design here. Improvements and suggestions are highly welcome.
+同时这是一个还在进行中的工作. **Fiber 还是个进行中的项目, 在完成之前可能还会有重大重构.** 同时我也在尝试文档化其设计, 欢迎提供改进和建议.
 
-My goal is that after reading this document, you will understand Fiber well enough to follow along as it's implemented, and eventually even be able to contribute back to React.
+我的目标是在阅读完本文档后, 你能足够理解 Fiber 的实现, 甚至能参与贡献 React 库.
 
 ### 前置阅读
 
@@ -54,13 +54,13 @@ react 使用**协调算法**来比较两棵树的差异, 进而计算哪些部�
 
 **更改**通常是 setState 的结果, 最终作为重新渲染的结果.
 
-react api 的核心思想就是判断更改是否会让应用重新渲染. This allows the developer to reason declaratively, rather than worry about how to efficiently transition the app from any particular state to another (A to B, B to C, C to A, and so on).
+react api 的核心思想就是判断更改是否会让应用重新渲染. 这让开发者能够声明式地来推导, 而不用纠结于如何高效更新应用的状态(比如从 A 到 B, 从 B 到 C, 再从 C 到 A 等等).
 
-Actually re-rendering the entire app on each change only works for the most trivial apps; in a real-world app, it's prohibitively costly in terms of performance. React has optimizations which create the appearance of whole app re-rendering while maintaining great performance. The bulk of these optimizations are part of a process called **reconciliation**.
+实际上只有极少数应用, 需要在每次更改时都重新渲染整个应用; 对于一个实际应用来说, 这样做的性能成本太高了. React 做了特殊优化来在保证高性能的同时找出何处触发了应用重渲染. 主要优化点在于一个叫 **协调算法(reconciliation)**的过程.
 
-Reconciliation is the algorithm behind what is popularly understood as the "virtual DOM." A high-level description goes something like this: when you render a React application, a tree of nodes that describes the app is generated and saved in memory. This tree is then flushed to the rendering environment — for example, in the case of a browser application, it's translated to a set of DOM operations. When the app is updated (usually via ``setState``), a new tree is generated. The new tree is diffed with the previous tree to compute which operations are needed to update the rendered app.
+协调算法基于已经被普遍理解得"虚拟DOM"概念. 比如可以这么理解: 当你渲染了一个 React 应用时, 一颗用来描述整个应用的节点树就会被创建并保存在内存里. 这棵树后续会被使用到所在的渲染环境 —— 比如在一个浏览器环境里, 它会被转义为一个 DOM 的操作集合. 当应用更新时(通常是通过 ``setState`` 方法), 一颗新的节点树会被生成. 新旧两颗树会进行差异比较, 来计算出需要进行哪些操作来更新应用.
 
-Although Fiber is a ground-up rewrite of the reconciler, the high-level algorithm [described in the React docs](https://facebook.github.io/react/docs/reconciliation.html) will be largely the same. The key points are:
+尽管 Fiber 是对协调算法彻底的重写, 其高阶算法([如在React文档里描述的](https://facebook.github.io/react/docs/reconciliation.html))还是会大致相同. 其关键点是:
 
 - 不同的组件类型会生成不同的两颗组件树. react 不会去 diff 比较它们, 而是直接完整替换为新的组件树.
 - 一个列表的diff依赖于key. key需要是 "固定的, 可预测的, 唯一的".
@@ -77,15 +77,15 @@ Fiber reimplements the reconciler. It is not principally concerned with renderin
 
 ### 调度
 
-**scheduling**: the process of determining when work should be performed.
+**scheduling**: 用来决定任务应该何时被执行.
 
-**work**: any computations that must be performed. Work is usually the result of an update (e.g. ``setState``).
+**work**: 所有必须执行的计算. 通常就是某次更新的结果(比如 ``setState`` 调用).
 
-React's [Design Principles](https://facebook.github.io/react/contributing/design-principles.html#scheduling) document is so good on this subject that I'll just quote it here:
+React 的[设计原则文档](https://facebook.github.io/react/contributing/design-principles.html#scheduling) 已经有对这个话题很好的解释, 这里列出几点:
 
-> In its current implementation React walks the tree recursively and calls render functions of the whole updated tree during a single tick. However in the future it might start delaying some updates to avoid dropping frames.
+> 在 React 当前的实现里会递归地遍历节点树, 然后在本轮代码循环里调用render方法来完整更新整颗树. 而在未来则可能会推迟部分更新来避免出现掉帧.
 >
-> This is a common theme in React design. Some popular libraries implement the "push" approach where computations are performed when the new data is available. React, however, sticks to the "pull" approach where computations can be delayed until necessary.
+> 这在 React 的设计里是一个常规主题. 当新数据出现时, 一些流行的库会选择主动 "推" 的方式来执行计算. 而 React 则坚持用 "拉" 的方式来适当推迟计算.
 >
 > React is not a generic data processing library. It is a library for building user interfaces. We think that it is uniquely positioned in an app to know which computations are relevant right now and which are not.
 >

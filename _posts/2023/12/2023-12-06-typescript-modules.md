@@ -125,4 +125,5 @@ export namespace JSX {
 
 ## 扩展阅读
 
-*TODO: 参考文档和链接*
+- [TypeScript JSX](https://www.typescriptlang.org/docs/handbook/jsx.html)
+- [TypeScript Modules - Theory](https://www.typescriptlang.org/docs/handbook/modules/theory.html)
