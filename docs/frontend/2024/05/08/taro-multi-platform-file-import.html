@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>taro多端编译 - 引入多端文件 | yitimo的个人博客</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
+    <script src="/assets/theme.js"></script>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/iconfont.css">
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再見二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人博客" />
+<meta property="og:description" content="yitimo的个人博客" />
+<link rel="canonical" href="https://blog.yitimo.com/frontend/2024/05/08/taro-multi-platform-file-import.html" />
+<meta property="og:url" content="https://blog.yitimo.com" />
+<meta property="og:site_name" content="再見二丁目" />
+<script type="application/ld+json">
+{"name":"再見二丁目","description":"yitimo的个人博客","@type":"WebSite","url":"https://blog.yitimo.com","headline":"再見二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog theme-dark">
+    <h1 style="display: none;">再見二丁目 | yitimo的个人博客</h1>
+    <header class="yitiblog-header">
+    <div class="yitiblog-header-inner block flex">
+        <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
+        <a href="/"><span class="title font-l">再见二丁目</span></a>
+        <div class="flex-1"></div>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
+    </div>
+</header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>
+
+    <section class="yitiblog-content block article">
+        <h1 id="taro多端编译 - 引入多端文件">taro多端编译 - 引入多端文件</h1>
+        
+            
+            <p class="time"><i>发布于: 2024-05-08 17:54</i></p>
+        
+        
+        
+        <blockquote>
+  <p>官方文档: <a href="https://taro-docs.jd.com/docs/envs#%E7%BB%9F%E4%B8%80%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%A4%9A%E7%AB%AF%E6%96%87%E4%BB%B6">统一接口的多端文件</a></p>
+</blockquote>
+
+<p>本文将解析 taro 是如何做到一行代码自动引入不同端文件的, 效果就是当使用 <code class="language-plaintext highlighter-rouge">import xxx from './util'</code> 引入 util 模块时, taro 会优先尝试引入编译平台对应的实现(<code class="language-plaintext highlighter-rouge">import xxx from './util.[weapp|alipay|...].[js|ts|jsx|tsx]'</code>).</p>
+
+<h2 id="webpack-和-enhanced-resolve">webpack 和 enhanced-resolve</h2>
+
+<p>作为前置知识先讲讲 webpack 中的 resolve 配置, 官方文档<a href="https://webpack.js.org/concepts/module-resolution/">在这里</a>, <a href="https://webpack.js.org/api/resolvers/">和这里</a>.</p>
+
+<p>resolver 是个通过绝对路径来定位模块的工具库, 一个模块可以这样依赖于另一个模块:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">foo</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">path/to/module</span><span class="dl">'</span><span class="p">;</span>
+<span class="c1">// or</span>
+<span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">path/to/module</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>依赖模块可以是应用里的代码, 也可以是个第三方库. resolver 帮助 webpack 找到通过 <code class="language-plaintext highlighter-rouge">require/import</code> 语句引入的所有需要被包含进 bundle 里的模块代码. webpack 使用 <a href="https://github.com/webpack/enhanced-resolve">enhanced-resolve</a> 来在打包模块时处理文件路径.</p>
+
+<blockquote>
+  <p>enhanced-resolve 能处理这三种文件路径: 绝对路径(<code class="language-plaintext highlighter-rouge">/a/b/c</code>)、相对路径(<code class="language-plaintext highlighter-rouge">./a/b/c</code>)、模块路径(<code class="language-plaintext highlighter-rouge">a/b/c</code>)</p>
+</blockquote>
+
+<p>而 webpack 配置里的 resolve 配置, 就是给 enhanced-resolve 用的了, 常用的配置比如:</p>
+
+<ul>
+  <li>modules: 指定从哪里找<code class="language-plaintext highlighter-rouge">模块路径</code>, 比如一般会配置为 <code class="language-plaintext highlighter-rouge">node_modules</code></li>
+  <li>alias: 配置路径别名</li>
+  <li>extensions: 配置模块文件后缀名, 比如一般会配置为 <code class="language-plaintext highlighter-rouge">['.js', '.jsx', '.ts', '.tsx']</code></li>
+</ul>
+
+<p>webpack 构建时会生成自己的 compiler 实例, 里面有一些内置的 resolver 实例, 并提供了定制的方式:</p>
+
+<ul>
+  <li><strong>normal resolver</strong>: 处理绝对路径或相对路径的模块, 可以通过 resolve.plugins 定制</li>
+  <li>context resolver: 处理指定 context 下的模块, 可以通过 resolve.plugins 定制</li>
+  <li>loader resolver: 处理 webpack loader 模块, 可以通过 resolveLoader 定制</li>
+</ul>
+
+<p>(enhanced-resolve提供了一些内置的插件hook)[https://github.com/webpack/enhanced-resolve/blob/main/lib/ResolverFactory.js#L318], 而 taro 则定制了一个 enhanced-resolve 插件来定位多端模块的路径, 就是 <code class="language-plaintext highlighter-rouge">@tarojs/runner-utils</code> 下的 <code class="language-plaintext highlighter-rouge">MultiPlatformPlugin</code>.</p>
+
+<h2 id="multiplatformplugin">MultiPlatformPlugin</h2>
+
+<p>插件分为几部分: 基本的 enhanced-resolve 插件结构, 确定需要多端解析的路径, 执行多端路径替换. 源码<a href="https://github.com/NervJS/taro/blob/main/packages/taro-runner-utils/src/resolve/MultiPlatformPlugin.ts">在这里</a>.</p>
+
+<h3 id="基本插件结构">基本插件结构</h3>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">class</span> <span class="nx">MultiPlatformPlugin</span> <span class="p">{</span>
+  <span class="k">private</span> <span class="nx">source</span><span class="p">:</span> <span class="kr">string</span>
+  <span class="k">private</span> <span class="nx">target</span><span class="p">:</span> <span class="kr">string</span>
+
+  <span class="kd">constructor</span> <span class="p">(</span><span class="nx">source</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">target</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">source</span> <span class="o">=</span> <span class="nx">source</span> <span class="c1">// 从 described-resolve 这个 hook 进入</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span> <span class="c1">// 解析完成后触发 resolve 这个 hook</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="nx">apply</span> <span class="p">(</span><span class="nx">resolver</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">resolver</span><span class="p">.</span><span class="nx">ensureHook</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
+    <span class="nx">resolver</span>
+      <span class="p">.</span><span class="nx">getHook</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">source</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">tapAsync</span><span class="p">(</span><span class="dl">'</span><span class="s1">MultiPlatformPlugin</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">resolveContext</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// request: 请求目标, 包含路径等</span>
+        <span class="c1">// resolveContext: 当前 resolve 上下文</span>
+        <span class="c1">// callback: 解析完成后主动执行回调</span>
+        <span class="c1">// ...</span>
+      <span class="p">})</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="确定需要多端解析的路径">确定需要多端解析的路径</h3>
+
+<p>request入参里的路径可能有三种(相对路径、绝对路径、模块路径), 这里 taro 排除了模块路径并手动将相对路径转为了绝对路径, 然后处于性能考虑跳过了 <code class="language-plaintext highlighter-rouge">node_modules</code> 下的路径:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">innerRequest</span><span class="p">:</span> <span class="kr">string</span> <span class="o">=</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span> <span class="o">||</span> <span class="nx">request</span><span class="p">.</span><span class="nx">path</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">innerRequest</span> <span class="o">||</span> <span class="o">!</span><span class="nx">request</span><span class="p">.</span><span class="nx">context</span><span class="p">.</span><span class="nx">issuer</span><span class="p">)</span> <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">innerRequest</span><span class="p">))</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">srcRequest</span><span class="p">:</span> <span class="kr">string</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">isAbsolute</span><span class="p">(</span><span class="nx">innerRequest</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// absolute path</span>
+    <span class="nx">srcRequest</span> <span class="o">=</span> <span class="nx">innerRequest</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span><span class="p">.</span><span class="nx">isAbsolute</span><span class="p">(</span><span class="nx">innerRequest</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="sr">/^</span><span class="se">\.</span><span class="sr">/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">innerRequest</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// relative path</span>
+    <span class="nx">srcRequest</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">request</span><span class="p">.</span><span class="nx">request</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="sr">/node_modules/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">srcRequest</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="nx">srcRequest</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">callback</span><span class="p">()</span>
+  <span class="p">}</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="执行多端路径替换">执行多端路径替换</h3>
+
+<p>替换函数在 <code class="language-plaintext highlighter-rouge">@tarojs/helper</code> 的 <code class="language-plaintext highlighter-rouge">resolveMainFilePath</code> 里, 手动遍历文件名和后缀, 检查是否有多端文件并尝试替换:</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">resolveMainFilePath</span> <span class="p">(</span><span class="nx">p</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">extArrs</span> <span class="o">=</span> <span class="nx">SCRIPT_EXT</span><span class="p">):</span> <span class="kr">string</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">realPath</span> <span class="o">=</span> <span class="nx">p</span>
+  <span class="kd">const</span> <span class="nx">taroEnv</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TARO_ENV</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">extArrs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">extArrs</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">taroEnv</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}</span><span class="s2">.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}</span><span class="s2">.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">path</span><span class="p">.</span><span class="nx">sep</span><span class="p">}</span><span class="s2">index.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">path</span><span class="p">.</span><span class="nx">sep</span><span class="p">}</span><span class="s2">index.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">\/</span><span class="sr">index$/</span><span class="p">,</span> <span class="s2">`.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}</span><span class="s2">/index`</span><span class="p">)}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">\/</span><span class="sr">index$/</span><span class="p">,</span> <span class="s2">`.</span><span class="p">${</span><span class="nx">taroEnv</span><span class="p">}</span><span class="s2">/index`</span><span class="p">)}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">path</span><span class="p">.</span><span class="nx">sep</span><span class="p">}</span><span class="s2">index</span><span class="p">${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s2">`</span><span class="p">${</span><span class="nx">p</span><span class="p">}${</span><span class="nx">path</span><span class="p">.</span><span class="nx">sep</span><span class="p">}</span><span class="s2">index</span><span class="p">${</span><span class="nx">item</span><span class="p">}</span><span class="s2">`</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">realPath</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="样式文件怎么办">样式文件怎么办</h2>
+
+<p>从源码能看到如果request的路径是有后缀的, 也不会进行多段处理, 所以如果项目里的样式是包含后缀引入的, 则样式文件就不支持多段引入. 有两个办法支持(以<code class="language-plaintext highlighter-rouge">scss</code>文件为例):</p>
+
+<ol>
+  <li>垫一层 ts/js 文件的多端实现, 在里面引入样式文件(<code class="language-plaintext highlighter-rouge">echo "import './index.scss'" &gt;&gt; ./index.weapp.ts</code>)</li>
+  <li>将样式文件后缀配置到 resolve.extensions 列表里, 然后省略后缀引入样式文件, 如果用了 ts 还需要声明一下 <code class="language-plaintext highlighter-rouge">*.scss</code> 模块类型, 如果配置了 eslint 则也需要配置一下 resolve</li>
+</ol>
+
+<h2 id="实现一个vite版本的">实现一个vite版本的</h2>
+
+<p>vite 里构建是基于 rollup, 所以可以实现一个 vite 插件来定制 rollup 的 resolveId 这个 hook 来实现多端引入, 还可以借用 taro helper 库提供的 <code class="language-plaintext highlighter-rouge">resolveMainFilePath</code> 来实现:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="nx">resolveId</span><span class="p">(</span><span class="nx">importee</span><span class="p">,</span> <span class="nx">importer</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 忽略 node_modules</span>
+  <span class="k">if</span> <span class="p">(</span><span class="sr">/node_modules/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">importer</span><span class="p">))</span> <span class="k">return</span> <span class="kc">null</span>
+  <span class="c1">// 忽略模块路径</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">path</span><span class="p">.</span><span class="nx">isAbsolute</span><span class="p">(</span><span class="nx">importee</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="sr">/^</span><span class="se">\.</span><span class="sr">/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">importee</span><span class="p">))</span> <span class="k">return</span> <span class="kc">null</span>
+  <span class="c1">// 解析完整路径 也可以手动解析</span>
+  <span class="kd">const</span> <span class="p">{</span> <span class="na">id</span><span class="p">:</span> <span class="nx">targetId</span> <span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">importee</span><span class="p">,</span> <span class="nx">importer</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+  <span class="kd">const</span> <span class="nx">extDotIndex</span> <span class="o">=</span> <span class="nx">targetId</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="dl">'</span><span class="s1">.</span><span class="dl">'</span><span class="p">)</span>
+  <span class="kd">let</span> <span class="nx">srcPath</span> <span class="o">=</span> <span class="nx">targetId</span>
+  <span class="kd">let</span> <span class="nx">srcExt</span> <span class="o">=</span> <span class="dl">''</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">extDotIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">srcPath</span> <span class="o">=</span> <span class="nx">targetId</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">extDotIndex</span><span class="p">)</span>
+    <span class="nx">srcExt</span> <span class="o">=</span> <span class="nx">targetId</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">extDotIndex</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="c1">// 替换多端实现</span>
+  <span class="kd">const</span> <span class="nx">realPath</span> <span class="o">=</span> <span class="nx">helper</span><span class="p">.</span><span class="nx">resolveMainFilePath</span><span class="p">(</span><span class="nx">srcPath</span><span class="p">,</span> <span class="nx">srcExt</span> <span class="p">?</span> <span class="p">[</span><span class="nx">srcExt</span><span class="p">]</span> <span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">resolve</span><span class="p">.</span><span class="nx">extensions</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">realPath</span> <span class="o">!==</span> <span class="nx">targetId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">realPath</span><span class="p">,</span> <span class="nx">importer</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="kc">null</span>
+<span class="p">},</span>
+</code></pre></div></div>
+
+<h2 id="总结">总结</h2>
+
+<p>taro 框架的构建部分整体上是对 webpack 的较复杂配置, 包括本文提到的通过 webpack 的 resolve.plugins 配置来实现多端文件引入.</p>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/docker/2024/01/27/translate-manage-data-in-docker.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                【翻译】在 Docker 管理数据
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            var h1s = document.getElementsByTagName('h1')
+            var h2s = document.getElementsByTagName('h2')
+            var h3s = document.getElementsByTagName('h3')
+            for (var i = 0; i < h1s.length; i += 1) {
+                addAnchorNode(h1s.item(i))
+            }
+            for (var i = 0; i < h2s.length; i += 1) {
+                addAnchorNode(h2s.item(i))
+            }
+            for (var i = 0; i < h3s.length; i += 1) {
+                addAnchorNode(h3s.item(i))
+            }
+            function addAnchorNode(target) {
+                if (!target || !target.id) {
+                    return
+                }
+                var linkADOM = document.createElement('a')
+                linkADOM.classList = 'anchor-a'
+                linkADOM.href = '#' + target.id
+                var linkIDOM = document.createElement('i')
+                linkIDOM.classList = 'anchor-i iconfont icon-anchor'
+                linkADOM.appendChild(linkIDOM)
+                target.appendChild(linkADOM)
+            }
+        })
+    </script>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+    </ul>
+</div>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人博客@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>
