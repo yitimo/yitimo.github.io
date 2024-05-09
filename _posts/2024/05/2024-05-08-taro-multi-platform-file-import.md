@@ -41,11 +41,17 @@ webpack 构建时会生成自己的 compiler 实例, 里面有一些内置的 re
 - context resolver: 处理指定 context 下的模块, 可以通过 resolve.plugins 定制
 - loader resolver: 处理 webpack loader 模块, 可以通过 resolveLoader 定制
 
-(enhanced-resolve提供了一些内置的插件hook)[https://github.com/webpack/enhanced-resolve/blob/main/lib/ResolverFactory.js#L318], 而 taro 则定制了一个 enhanced-resolve 插件来定位多端模块的路径, 就是 ``@tarojs/runner-utils`` 下的 ``MultiPlatformPlugin``.
+[enhanced-resolve提供了一些内置的插件hook](https://github.com/webpack/enhanced-resolve/blob/main/lib/ResolverFactory.js#L318), 而 taro 则定制了一个 enhanced-resolve 插件来定位多端模块的路径, 就是 ``@tarojs/runner-utils`` 下的 ``MultiPlatformPlugin``.
 
 ## MultiPlatformPlugin
 
-插件分为几部分: 基本的 enhanced-resolve 插件结构, 确定需要多端解析的路径, 执行多端路径替换. 源码[在这里](https://github.com/NervJS/taro/blob/main/packages/taro-runner-utils/src/resolve/MultiPlatformPlugin.ts).
+插件分为这几部分:
+
+- 基本的 enhanced-resolve 插件结构, 入口 hook 和完成后要触发的 hook
+- 确定需要多端解析的路径
+- 执行多端路径替换
+
+源码[在这里](https://github.com/NervJS/taro/blob/main/packages/taro-runner-utils/src/resolve/MultiPlatformPlugin.ts).
 
 ### 基本插件结构
 
@@ -133,7 +139,7 @@ export function resolveMainFilePath (p: string, extArrs = SCRIPT_EXT): string {
 
 ## 样式文件怎么办
 
-从源码能看到如果request的路径是有后缀的, 也不会进行多段处理, 所以如果项目里的样式是包含后缀引入的, 则样式文件就不支持多段引入. 有两个办法支持(以``scss``文件为例):
+从源码能看到如果request的路径是有后缀的, 也不会进行多端处理, 所以如果项目里的样式是包含后缀引入的, 则样式文件就不支持多段引入. 有两个办法支持(以``scss``文件为例):
 
 1. 垫一层 ts/js 文件的多端实现, 在里面引入样式文件(``echo "import './index.scss'" >> ./index.weapp.ts``)
 2. 将样式文件后缀配置到 resolve.extensions 列表里, 然后省略后缀引入样式文件, 如果用了 ts 还需要声明一下 ``*.scss`` 模块类型, 如果配置了 eslint 则也需要配置一下 resolve
