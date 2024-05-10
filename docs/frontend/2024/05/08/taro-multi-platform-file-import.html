@@ -58,7 +58,7 @@
         <h1 id="taro多端编译 - 引入多端文件">taro多端编译 - 引入多端文件</h1>
         
             
-            <p class="time"><i>发布于: 2024-05-08 17:54</i></p>
+            <p class="time"><i>修改于: 2024-05-09 23:32</i></p>
         
         
         
@@ -101,11 +101,19 @@
   <li>loader resolver: 处理 webpack loader 模块, 可以通过 resolveLoader 定制</li>
 </ul>
 
-<p>(enhanced-resolve提供了一些内置的插件hook)[https://github.com/webpack/enhanced-resolve/blob/main/lib/ResolverFactory.js#L318], 而 taro 则定制了一个 enhanced-resolve 插件来定位多端模块的路径, 就是 <code class="language-plaintext highlighter-rouge">@tarojs/runner-utils</code> 下的 <code class="language-plaintext highlighter-rouge">MultiPlatformPlugin</code>.</p>
+<p><a href="https://github.com/webpack/enhanced-resolve/blob/main/lib/ResolverFactory.js#L318">enhanced-resolve提供了一些内置的插件hook</a>, 而 taro 则定制了一个 enhanced-resolve 插件来定位多端模块的路径, 就是 <code class="language-plaintext highlighter-rouge">@tarojs/runner-utils</code> 下的 <code class="language-plaintext highlighter-rouge">MultiPlatformPlugin</code>.</p>
 
 <h2 id="multiplatformplugin">MultiPlatformPlugin</h2>
 
-<p>插件分为几部分: 基本的 enhanced-resolve 插件结构, 确定需要多端解析的路径, 执行多端路径替换. 源码<a href="https://github.com/NervJS/taro/blob/main/packages/taro-runner-utils/src/resolve/MultiPlatformPlugin.ts">在这里</a>.</p>
+<p>插件分为这几部分:</p>
+
+<ul>
+  <li>基本的 enhanced-resolve 插件结构, 入口 hook 和完成后要触发的 hook</li>
+  <li>确定需要多端解析的路径</li>
+  <li>执行多端路径替换</li>
+</ul>
+
+<p>源码<a href="https://github.com/NervJS/taro/blob/main/packages/taro-runner-utils/src/resolve/MultiPlatformPlugin.ts">在这里</a>.</p>
 
 <h3 id="基本插件结构">基本插件结构</h3>
 
@@ -190,7 +198,7 @@
 
 <h2 id="样式文件怎么办">样式文件怎么办</h2>
 
-<p>从源码能看到如果request的路径是有后缀的, 也不会进行多段处理, 所以如果项目里的样式是包含后缀引入的, 则样式文件就不支持多段引入. 有两个办法支持(以<code class="language-plaintext highlighter-rouge">scss</code>文件为例):</p>
+<p>从源码能看到如果request的路径是有后缀的, 也不会进行多端处理, 所以如果项目里的样式是包含后缀引入的, 则样式文件就不支持多段引入. 有两个办法支持(以<code class="language-plaintext highlighter-rouge">scss</code>文件为例):</p>
 
 <ol>
   <li>垫一层 ts/js 文件的多端实现, 在里面引入样式文件(<code class="language-plaintext highlighter-rouge">echo "import './index.scss'" &gt;&gt; ./index.weapp.ts</code>)</li>
