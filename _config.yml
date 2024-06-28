@@ -16,9 +16,9 @@
 title: 再見二丁目
 email: admin@yitimo.com
 description: >- # this means to ignore newlines until "baseurl:"
-  yitimo的个人博客
+  yitimo的个人日志
 baseurl: ""
-url: "https://blog.yitimo.com"
+url: "https://www.yitimo.com"
 github_username:  yitimo
 destination: docs/
 
