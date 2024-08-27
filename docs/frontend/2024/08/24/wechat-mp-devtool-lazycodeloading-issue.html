@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>微信小程序开启lazyCodeLoading后工具白屏问题 | yitimo的个人日志</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
+    <script src="/assets/theme.js"></script>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/iconfont.css">
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再见二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人日志" />
+<meta property="og:description" content="yitimo的个人日志" />
+<link rel="canonical" href="https://www.yitimo.com/frontend/2024/08/24/wechat-mp-devtool-lazycodeloading-issue.html" />
+<meta property="og:url" content="https://www.yitimo.com" />
+<meta property="og:site_name" content="再见二丁目" />
+<script type="application/ld+json">
+{"name":"再见二丁目","description":"yitimo的个人日志","@type":"WebSite","url":"https://www.yitimo.com","headline":"再见二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog theme-dark">
+    <h1 style="display: none;">再见二丁目 | yitimo的个人日志</h1>
+    <header class="yitiblog-header">
+    <div class="yitiblog-header-inner block flex">
+        <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
+        <a href="/"><span class="title font-l">再见二丁目</span></a>
+        <div class="flex-1"></div>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
+    </div>
+</header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>
+
+    <section class="yitiblog-content block article">
+        <h1 id="微信小程序开启lazyCodeLoading后工具白屏问题">微信小程序开启lazyCodeLoading后工具白屏问题</h1>
+        
+            
+            <p class="time"><i>发布于: 2024-08-24 16:55</i></p>
+        
+        
+        
+        <h2 id="问题表现">问题表现</h2>
+
+<p>问题表现简单来说就是: 小程序开启 <code class="language-plaintext highlighter-rouge">"lazyCodeLoading": "requiredComponents"</code> 后导致了页面白屏.</p>
+
+<p>补充几项已知信息:</p>
+
+<ul>
+  <li>使用真机预览调试, 甚至发布上线都一切正常, 出问题的只有开发者工具</li>
+  <li>使用 taro/uniapp 等跨端框架时更容易遇到</li>
+  <li>跨端框架用到混合使用原生自定义组件时更更容易遇到</li>
+</ul>
+
+<p>一些社区相关问题:</p>
+
+<ul>
+  <li><a href="https://developers.weixin.qq.com/community/develop/doc/0002c06294c0e85ebb4ed897151400">https://developers.weixin.qq.com/community/develop/doc/0002c06294c0e85ebb4ed897151400</a></li>
+  <li><a href="https://developers.weixin.qq.com/community/develop/doc/000a6461590ee8e628dd061fb5bc00">https://developers.weixin.qq.com/community/develop/doc/000a6461590ee8e628dd061fb5bc00</a></li>
+  <li><a href="https://developers.weixin.qq.com/community/develop/doc/000e862d7946284ac76e8dfe45b800">https://developers.weixin.qq.com/community/develop/doc/000e862d7946284ac76e8dfe45b800</a></li>
+  <li><a href="https://developers.weixin.qq.com/community/develop/doc/0004624f66c96083889f55db454c00">https://developers.weixin.qq.com/community/develop/doc/0004624f66c96083889f55db454c00</a></li>
+  <li><a href="https://github.com/NervJS/taro/issues/14539">https://github.com/NervJS/taro/issues/14539</a></li>
+  <li><a href="https://github.com/NervJS/taro/issues/13053">https://github.com/NervJS/taro/issues/13053</a></li>
+</ul>
+
+<p>社区方案基本上都是等待官方修复, 或干脆关闭 <code class="language-plaintext highlighter-rouge">"lazyCodeLoading": "requiredComponents"</code> 配置.</p>
+
+<p>但小程序有部分能力是必须强制开启该配置的, 比如使用 <code class="language-plaintext highlighter-rouge">xr-frame</code> 3d渲染能力时, 比如使用 <code class="language-plaintext highlighter-rouge">skyline</code> 渲染时.</p>
+
+<p>并且开启配置后理论上可以优化小程序启动时间和运行时内存占用, 可以的话还是希望能开启.</p>
+
+<h2 id="排查过程">排查过程</h2>
+
+<p>新建一个微信原生的 demo 工程, 默认就是开启 <code class="language-plaintext highlighter-rouge">lazyCodeLoading</code> 配置的, 表现也一切正常, 不会出现白屏:</p>
+
+<p><img src="/assets/images/202408/新建空项目默认开启配置.jpg" alt="新建空项目默认开启配置" /></p>
+
+<p>那问题会不会出在 taro 框架呢? 如果是的话有没有办法避免呢?</p>
+
+<p>接下来深入一个taro工程的微信端产物, 看看taro最终构建出了一个啥样的微信原生工程:</p>
+
+<p><img src="/assets/images/202408/taro工程的微信小程序端构建产物.jpg" alt="taro工程的微信小程序端构建产物" /></p>
+
+<p>定位到出现白屏的页面, 其wxml部分非常简单:</p>
+
+<p><img src="/assets/images/202408/白屏页面wxml.jpg" alt="白屏页面wxml" /></p>
+
+<p>可见 taro 是基于小程序的 <a href="https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/template.html">template</a> 能力来在运行时渲染出整个页面所有组件的, 那是不是 template 能力导致的白屏呢? 在 demo 项目里试试:</p>
+
+<p>新建全局的template文件, 然后声明一个template:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- base.wxml --&gt;</span>
+<span class="nt">&lt;template</span> <span class="na">name=</span><span class="s">"tmpl_hello"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;view&gt;</span>Hello <span class="nt">&lt;/view&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+</code></pre></div></div>
+
+<p>在分包页面里引入并使用这个 template:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- pages-subpackage/pkg-a/pages/sub/index.wxml --&gt;</span>
+<span class="nt">&lt;import</span> <span class="na">src=</span><span class="s">"../../../../base.wxml"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;text&gt;</span>pages-subpackage/pkg-a/pages/sub/index.wxml<span class="nt">&lt;/text&gt;</span>
+
+<span class="nt">&lt;template</span> <span class="na">is=</span><span class="s">"tmpl_hello"</span> <span class="na">data=</span><span class="s">""</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// pages-subpackage/pkg-a/pages/sub/index.js</span>
+<span class="nx">Page</span><span class="p">({</span>
+	<span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+		<span class="na">root</span><span class="p">:</span> <span class="dl">'</span><span class="s1">pkg-a</span><span class="dl">'</span>
+	<span class="p">},</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>最终的分包结构像这样, 结果也正常渲染出来了:</p>
+
+<p><img src="/assets/images/202408/新建并配置基于template的渲染分包页面.jpg" alt="新建并配置基于template的渲染分包页面" /></p>
+
+<p>好像还是不够还原 taro 产物, 那就是自定义组件! 出现白屏的页面有用到混合原生自定义组件的写法, 再补充到 demo 工程里试试:</p>
+
+<p>接下来新建一个全局自定义组件 hello:</p>
+
+<p><img src="/assets/images/202408/全局hello组件.jpg" alt="全局hello组件" /></p>
+
+<p>然后在全局模板里作为 tmpl_hello 的实现, 最后在分包页面里注册组件并使用新版的 tmpl_hello 进行渲染:</p>
+
+<p><img src="/assets/images/202408/基于template使用全局组件.jpg" alt="基于template使用全局组件" /></p>
+
+<p>然后工具就报错了:</p>
+
+<p><img src="/assets/images/202408/分包基于template使用主包组件报错.jpg" alt="分包基于template使用主包组件报错" /></p>
+
+<p>这下问题初步定位了: 微信小程序在分包内基于template能力使用主包中的自定义组件时, 在开发者工具内会报错, 即使已经在分包页面里注册过这个全局组件.</p>
+
+<p>表现也与社区反馈的完全一致: 关闭 lazyCodeLoading 时一切正常! 真机运行一切正常!</p>
+
+<p>但是与实际taro工程的情况还是不太一样, taro工程里没有报错, 只是白屏, 这应该与运行时渲染组件代码的执行时机有关, 把 template 里的全局组件改为基于 root 数据动态渲染试试:</p>
+
+<p><img src="/assets/images/202408/动态setData渲染template组件.jpg" alt="动态setData渲染template组件" /></p>
+
+<p>这样表现就与taro工程下一致了, template 组件不渲染, 也没有任何报错, 在 taro 工程的情况下, 页面中的组件都基于 taro_tmpl 这个 template 渲染, 最终导致的效果就是: 页面一片空白, 只有一个 page 标签, 也没有任何报错.</p>
+
+<h2 id="问题总结">问题总结</h2>
+
+<p>总结一下问题表现: 微信小程序在开启 <code class="language-plaintext highlighter-rouge">"lazyCodeLoading": "requiredComponents"</code> 配置后, 在分包页面中使用主包的 template 渲染主包中的自定义组件时, 真机运行正常, 但开发者工具内会无法渲染, 即使已经在分包页面里注册过该自定义组件.</p>
+
+<h2 id="解决方案">解决方案</h2>
+
+<p>既然定位到是分包内不能使用主包组件的问题, 那就可以有两个解决方案:</p>
+
+<ul>
+  <li>遇到导致白屏的自定义组件时, 不仅要在使用组件的分包页面里注册, 还需要随机找一个主包页面注册</li>
+  <li>也可以干脆在 <code class="language-plaintext highlighter-rouge">app.json</code> 里全局注册自定义组件</li>
+</ul>
+
+<p>也就是要在主包页面或全局的 <code class="language-plaintext highlighter-rouge">usingComponents</code> 里注册一下自定义组件, 但不需要实际使用.</p>
+
+<p>但这其实都违背了懒加载的初衷, <strong>在不需要的位置过度注册了组件</strong>.</p>
+
+<h3 id="taro-下遗留问题">taro 下遗留问题</h3>
+
+<ul>
+  <li><strong>为什么只有自定义组件会出问题</strong>: view、text、image 等小程序基础组件不需要注册, 不存在主包分包问题.</li>
+  <li><strong>只有部分原生自定义组件无法渲染, 仍有部分表现正常</strong>: 原因暂未明确, 估计是正常渲染的组件运行时涉及了其他主包逻辑, 触发了将自己在主包中(全局)加载. 更容易导致问题的似乎是 依赖较少 且 在相对上层使用(更接近page) 的组件.</li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/frontend/2024/05/08/taro-multi-platform-file-import.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                taro多端编译 - 引入多端文件
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            var h1s = document.getElementsByTagName('h1')
+            var h2s = document.getElementsByTagName('h2')
+            var h3s = document.getElementsByTagName('h3')
+            for (var i = 0; i < h1s.length; i += 1) {
+                addAnchorNode(h1s.item(i))
+            }
+            for (var i = 0; i < h2s.length; i += 1) {
+                addAnchorNode(h2s.item(i))
+            }
+            for (var i = 0; i < h3s.length; i += 1) {
+                addAnchorNode(h3s.item(i))
+            }
+            function addAnchorNode(target) {
+                if (!target || !target.id) {
+                    return
+                }
+                var linkADOM = document.createElement('a')
+                linkADOM.classList = 'anchor-a'
+                linkADOM.href = '#' + target.id
+                var linkIDOM = document.createElement('i')
+                linkIDOM.classList = 'anchor-i iconfont icon-anchor'
+                linkADOM.appendChild(linkIDOM)
+                target.appendChild(linkADOM)
+            }
+        })
+    </script>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+    </ul>
+</div>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人日志@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>
