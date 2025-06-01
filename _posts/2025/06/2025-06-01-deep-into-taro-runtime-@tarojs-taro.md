@@ -1,6 +1,7 @@
 ---
+layout: post
 title:        深入 taro 运行时 - @tarojs/taro 模块的实现
-lastUpdated:  2025-06-01 18:39:12 +0800
+date:  2025-06-01 18:39:12 +0800
 author:       yitimo
 categories:   frontend
 tags:         ["frontend"]

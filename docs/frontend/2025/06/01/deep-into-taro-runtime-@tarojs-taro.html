@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>深入 taro 运行时 - @tarojs/taro 模块的实现 | yitimo的个人日志</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="HandheldFriendly" content="True" />
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style></style>
+    <script src="/assets/theme.js"></script>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/iconfont.css">
+    <!-- Begin Jekyll SEO tag v2.4.0 -->
+<meta name="generator" content="Jekyll v3.7.2" />
+<meta property="og:title" content="再见二丁目" />
+<meta property="og:locale" content="zh_CN" />
+<meta name="description" content="yitimo的个人日志" />
+<meta property="og:description" content="yitimo的个人日志" />
+<link rel="canonical" href="https://www.yitimo.com/frontend/2025/06/01/deep-into-taro-runtime-@tarojs-taro.html" />
+<meta property="og:url" content="https://www.yitimo.com" />
+<meta property="og:site_name" content="再见二丁目" />
+<script type="application/ld+json">
+{"name":"再见二丁目","description":"yitimo的个人日志","@type":"WebSite","url":"https://www.yitimo.com","headline":"再见二丁目","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<!-- Bing -->
+<meta name="msvalidate.01" content="C6A533BFA9ED34F59CE76F9AC19623EF" />
+<!-- Baidu -->
+<meta name="baidu-site-verification" content="VWCN98I3kC" />
+<!-- Sougou -->
+<meta name="sogou_site_verification" content="7e6MA7i4va"/>
+<!-- 360 -->
+<meta name="360-site-verification" content="cdabf9283d84ba985379081ab8882306" />
+<!-- google -->
+<meta name="google-site-verification" content="yT-0lXiM2x-GWfMubV7vqohZtKCEVJqyMaj_LS-45J0" />
+
+</head>
+<body class="yitiblog theme-dark">
+    <h1 style="display: none;">再见二丁目 | yitimo的个人日志</h1>
+    <header class="yitiblog-header">
+    <div class="yitiblog-header-inner block flex">
+        <a href="/"><img src="/assets/images/yitimo.jpg" class="avatar" /></a>
+        <a href="/"><span class="title font-l">再见二丁目</span></a>
+        <div class="flex-1"></div>
+        <i id="yitiblog-theme-btn" class="iconfont icon-theme theme-btn"></i>
+    </div>
+</header>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.yitiblogTheme) {
+            window.yitiblogTheme.initThemeEntry('yitiblog-theme-btn')
+        }
+    })
+</script>
+
+    <section class="yitiblog-content block article">
+        <h1 id="深入 taro 运行时 - @tarojs/taro 模块的实现">深入 taro 运行时 - @tarojs/taro 模块的实现</h1>
+        
+            
+            <p class="time"><i>发布于: 2025-06-01 18:39</i></p>
+        
+        
+        
+        <p>taro工程下有很多子包, 以下是 AI 给的各个子包简单说明, 供参考:</p>
+
+<ul>
+  <li><strong>babel-plugin-*、babel-preset-taro</strong>: Babel 插件和预设，用于 Taro 项目的代码转译，支持不同框架（如 React、Solid、Taro API 等）的 JSX/TS/JS 转换。</li>
+  <li><strong>create-app</strong>: 脚手架工具，用于初始化新的 Taro 项目。</li>
+  <li><strong>css-to-react-native</strong>: 将 CSS 转换为 React Native 可用的样式对象。</li>
+  <li><strong>eslint-config-taro、stylelint-config-taro-rn、stylelint-taro、stylelint-taro-rn</strong>: 代码风格和规范相关的配置，分别用于 JS/TS、React Native、样式等。</li>
+  <li><strong>jest-helper</strong>: 测试辅助工具，简化 Taro 项目的单元测试配置。</li>
+  <li><strong>postcss-</strong>*: 一系列 PostCSS 插件，用于样式转换，如 px 单位转换、常量解析、HTML 样式处理等。</li>
+  <li><strong>rollup-plugin-copy</strong>: Rollup 插件，用于构建时复制文件。</li>
+  <li><strong>shared</strong>: Taro 内部通用工具库，包含类型判断、错误断言等基础工具。</li>
+  <li><strong>taro</strong>: Taro 核心 API，对外暴露的主包，包含小程序/H5/React Native 等端的入口和核心能力。详见 taro/README.md。</li>
+  <li><strong>taro-api</strong>: Taro 的 API 类型定义和接口声明。</li>
+  <li><strong>taro-cli</strong>: 命令行工具，支持项目创建、编译、转换、预览、上传等操作。</li>
+  <li><strong>taro-cli-convertor</strong>: 小程序项目一键迁移/转换工具。</li>
+  <li><strong>taro-components、taro-components-advanced</strong>: Taro 组件库，封装了跨端 UI 组件。</li>
+  <li><strong>taro-helper</strong>: 编译、依赖、终端等辅助工具集合。</li>
+  <li><strong>taro-plugin-mini-ci</strong>: 小程序云开发/CI 插件，支持命令行上传、预览、打开开发者工具等。</li>
+  <li><strong>taro-platform-</strong>*: 各端适配包（如 weapp、alipay、tt、jd、swan、harmony 等），实现不同小程序/平台的编译和运行时适配。</li>
+  <li><strong>taro-webpack5-prebundle</strong>: Webpack5 预打包相关能力，提升构建性能。</li>
+  <li><strong>taro-webpack5-runner</strong>: Webpack5 编译器 Runner，Taro 的主编译实现，包含小程序分包、公共依赖抽取等复杂逻辑。</li>
+  <li>…</li>
+</ul>
+
+<p>今天先重点来看看比较常用到的 <code class="language-plaintext highlighter-rouge">@tarojs/taro</code> 包的实现细节, 与之相关的有 taro、taro-api、taro-runtime、shared 等目录, 对应 <code class="language-plaintext highlighter-rouge">@tarojs/taro</code>、<code class="language-plaintext highlighter-rouge">@tarojs/taro-api</code>、<code class="language-plaintext highlighter-rouge">@tarojs/taro-runtime</code>、<code class="language-plaintext highlighter-rouge">@tarojs/shared</code>这几个 npm 包.</p>
+
+<p>整个 <code class="language-plaintext highlighter-rouge">@tarojs/taro</code> 包的实际 js 代码就以下几行：</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span> <span class="nx">hooks</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@tarojs/runtime</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">taro</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@tarojs/api</span><span class="dl">'</span><span class="p">).</span><span class="k">default</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">hooks</span><span class="p">.</span><span class="nx">isExist</span><span class="p">(</span><span class="dl">'</span><span class="s1">initNativeApi</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+  <span class="nx">hooks</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="dl">'</span><span class="s1">initNativeApi</span><span class="dl">'</span><span class="p">,</span> <span class="nx">taro</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kr">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">taro</span>
+<span class="kr">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="k">default</span> <span class="o">=</span> <span class="kr">module</span><span class="p">.</span><span class="nx">exports</span>
+</code></pre></div></div>
+
+<p>主要涉及了三块内容:</p>
+<ul>
+  <li>引入 <code class="language-plaintext highlighter-rouge">@tarojs/api</code> 包的 taro 对象</li>
+  <li>触发 <code class="language-plaintext highlighter-rouge">initNativeApi</code> 这个 taro 内部钩子</li>
+  <li>最后直接导出 taro 对象</li>
+</ul>
+
+<p>另外包里还有完整的 types 类型定义和 h5 下的 css 样式文件.</p>
+
+<h2 id="types类型定义">types类型定义</h2>
+
+<p>所有类型都定义在入口模块下, 通过 <code class="language-plaintext highlighter-rouge">/// &lt;reference path="..."&gt;</code> 和 <code class="language-plaintext highlighter-rouge">/// &lt;reference types="..."&gt;</code>，引入来拆分子目录文件方便维护，包括：</p>
+<ul>
+  <li>全局类型（global.d.ts）</li>
+  <li>API 类型（taro.api.d.ts）：Taro 提供的所有跨端 API 类型</li>
+  <li>组件类型（taro.component.d.ts）：Taro 组件相关类型</li>
+  <li>配置类型（taro.config.d.ts）：小程序 App、页面等配置项类型</li>
+  <li>生命周期类型（taro.lifecycle.d.ts）：App、页面、组件等生命周期类型</li>
+  <li>运行时类型（taro.runtime.d.ts）</li>
+  <li>各端平台的 shim 类型（如支付宝、京东、百度、字节、微信等小程序平台的扩展类型）</li>
+  <li>H5、RN 端的 overlay 类型</li>
+</ul>
+
+<p>其中 <code class="language-plaintext highlighter-rouge">TaroStatic</code> 会被挂载到 default 导出的对象上, 即最终 <code class="language-plaintext highlighter-rouge">import Taro from '@tarojs/taro'</code> 导入的大对象的类型</p>
+
+<p>还有 index.d.ts 里定义了三个全局类型:</p>
+
+<ul>
+  <li>defineAppConfig：定义小程序 App 配置</li>
+  <li>definePageConfig：定义页面配置</li>
+  <li>importNativeComponent：导入原生组件</li>
+</ul>
+
+<p>小细节像 <code class="language-plaintext highlighter-rouge">getCurrentPages/getApp</code> 这些小程序下的全局函数, taro 是没有声明到 global 的, 而是也声明到了 <code class="language-plaintext highlighter-rouge">TaroStatic</code> 里, 实际上 taro 代码里也是这样来调用的: <code class="language-plaintext highlighter-rouge">Taro.getCurrentPages()</code></p>
+
+<h2 id="taro对象">Taro对象</h2>
+
+<p>来到 packages/taro-api 目录下, <code class="language-plaintext highlighter-rouge">@tarojs/api</code> 包默认导出了这些字段:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">Taro</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="nx">unknown</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">Current</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入的 Current 对象, 包含 app, page, router 等运行时状态数据</span>
+  <span class="nx">getCurrentInstance</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入, 返回 Current 对象</span>
+  <span class="nx">eventCenter</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入的事件系统实例, 运行时触发 getEventCenter hook 并 new 出来</span>
+  <span class="nx">Events</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入, 事件class, eventCenter 也是 new 了此实例</span>
+  <span class="nx">nextTick</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入, 内部二次实现的 wx.nextTick</span>
+  <span class="nx">options</span><span class="p">,</span> <span class="c1">// 从 @tarojs/runtime 引入, 用来定制运行时行为, 比如是否开启 prerender, 是否开启 debug 等</span>
+
+  <span class="nx">ENV_TYPE</span><span class="p">,</span> <span class="c1">// 是个枚举常量, 对应 process.env.TARO_ENV 里的各平台值</span>
+  <span class="nx">getEnv</span><span class="p">,</span> <span class="c1">// 根据 process.env.TARO_ENV 返回 ENV_TYPE 枚举值</span>
+
+  <span class="nx">Behavior</span><span class="p">,</span> <span class="c1">// 模拟小程序的 Behavior 机制, 默认实现直接返回了传入的 options</span>
+  <span class="nx">Link</span><span class="p">,</span> <span class="c1">// request 拦截器类, Taro.request 就包装了一层 new Link 的拦截器容器实例</span>
+  <span class="nx">interceptors</span><span class="p">,</span> <span class="c1">// timeoutInterceptor 和 logInterceptor 两个内置 request 拦截器</span>
+  <span class="nx">interceptorify</span><span class="p">,</span> <span class="c1">// 返回一个 Link 拦截器实例的快捷方法, 内部没有实际使用</span>
+  <span class="c1">// 返回一个函数, 能将 designWidth/deviceRatio 等尺寸转换相关配置设置到 taro.config 里</span>
+  <span class="c1">// taro 编译时会注入到 entry 代码里执行</span>
+  <span class="nx">getInitPxTransform</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">// 挂载 设计稿初始化函数, 支持手动调用</span>
+<span class="nx">Taro</span><span class="p">.</span><span class="nx">initPxTransform</span> <span class="o">=</span> <span class="nx">getInitPxTransform</span><span class="p">(</span><span class="nx">Taro</span><span class="p">)</span>
+<span class="c1">// 挂载 px 转换函数, 用来在 jsx style 里转成 rpx/rem</span>
+<span class="nx">Taro</span><span class="p">.</span><span class="nx">pxTransform</span> <span class="o">=</span> <span class="nx">getPxTransform</span><span class="p">(</span><span class="nx">Taro</span><span class="p">)</span>
+<span class="c1">// 挂载 preload 函数, 功能就是将字段设置到 Current.preloadData 里, 可以用于页面跳转传参</span>
+<span class="nx">Taro</span><span class="p">.</span><span class="nx">preload</span> <span class="o">=</span> <span class="nx">getPreload</span><span class="p">(</span><span class="nx">Current</span><span class="p">)</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">Taro</span>
+</code></pre></div></div>
+
+<p>看到这里会发现导出的对象和实际使用时的 api 实现并不一致, 而且缺少了很多平台 api, 我们往下看具体做了什么.</p>
+
+<h3 id="通用-api-挂载实现">通用 api 挂载实现</h3>
+
+<p>接下来举例看看部分通用 api, <strong>首先是 <code class="language-plaintext highlighter-rouge">pxTransform</code> 的实现</strong>:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">getPxTransform</span> <span class="p">(</span><span class="nx">taro</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">size</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 从全局配置里取设计尺寸</span>
+    <span class="kd">const</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">taro</span><span class="p">.</span><span class="nx">config</span> <span class="o">||</span> <span class="p">{}</span>
+    <span class="kd">const</span> <span class="nx">baseFontSize</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">baseFontSize</span>
+    <span class="kd">const</span> <span class="nx">deviceRatio</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">deviceRatio</span> <span class="o">||</span> <span class="nx">defaultDesignRatio</span>
+    <span class="kd">const</span> <span class="nx">designWidth</span> <span class="o">=</span> <span class="p">((</span><span class="nx">input</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">designWidth</span><span class="p">)</span>
+      <span class="p">?</span> <span class="nx">config</span><span class="p">.</span><span class="nx">designWidth</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span>
+      <span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">designWidth</span> <span class="o">||</span> <span class="nx">defaultDesignWidth</span><span class="p">)(</span><span class="nx">size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">designWidth</span> <span class="k">in</span> <span class="nx">deviceRatio</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">`deviceRatio 配置中不存在 </span><span class="p">${</span><span class="nx">designWidth</span><span class="p">}</span><span class="s2"> 的设置！`</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">targetUnit</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">targetUnit</span> <span class="o">||</span> <span class="nx">defaultTargetUnit</span>
+    <span class="kd">const</span> <span class="nx">unitPrecision</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">unitPrecision</span> <span class="o">||</span> <span class="nx">defaultUnitPrecision</span>
+    <span class="c1">// 向下取整</span>
+    <span class="kd">const</span> <span class="nx">formatSize</span> <span class="o">=</span> <span class="o">~~</span><span class="nx">size</span>
+    <span class="c1">// 基于当前设计尺寸的目标单位比例, 比如默认 750 尺寸下比例为 1</span>
+    <span class="kd">let</span> <span class="nx">rootValue</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="nx">deviceRatio</span><span class="p">[</span><span class="nx">designWidth</span><span class="p">]</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">targetUnit</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">rem</span><span class="dl">'</span><span class="p">:</span>
+        <span class="c1">// 转 rem 基于基础字号的 2 倍</span>
+        <span class="nx">rootValue</span> <span class="o">*=</span> <span class="nx">baseFontSize</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">break</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">px</span><span class="dl">'</span><span class="p">:</span>
+        <span class="c1">// 转 px 基于自身的 2 倍</span>
+        <span class="nx">rootValue</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="k">break</span>
+    <span class="p">}</span>
+    <span class="c1">// 原始尺寸转目标单位尺寸: 1px -&gt; 2px/0.025rem</span>
+    <span class="kd">let</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">formatSize</span> <span class="o">/</span> <span class="nx">rootValue</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">unitPrecision</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">unitPrecision</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// 保护小数点 默认是 5 位</span>
+      <span class="nx">val</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">toFixed</span><span class="p">(</span><span class="nx">unitPrecision</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">val</span> <span class="o">+</span> <span class="nx">targetUnit</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>函数最终会获取配置好的设计尺寸计算出和 css 里一致的 rpx 数值, 并加上目标单位(仍然是 px)返回, 至于 px 单位转 rpx 单位是另外由 postcss-pxtransform 插件完成的.</p>
+
+<p><strong>然后看看似曾相识的 Taro.nextTick api.</strong> 我们知道 vue 里有 <code class="language-plaintext highlighter-rouge">this.nextTick</code> 方法在数据触发 dom 更新后回调, 小程序里也有 <code class="language-plaintext highlighter-rouge">wx.nextTick</code> 等待本轮同步 setData 完成后的微任务队列里回调, 而 react 里直接没有这个 api, 看看 taro 是怎么实现的:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Current</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./current</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">TaroRootElement</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./dom/root</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">env</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./env</span><span class="dl">'</span>
+
+<span class="k">import</span> <span class="kd">type</span> <span class="p">{</span> <span class="nx">TFunc</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./interface</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">TIMEOUT</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">nextTick</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cb</span><span class="p">:</span> <span class="nx">TFunc</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">?:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">any</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">beginTime</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
+  <span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">Current</span><span class="p">.</span><span class="nx">router</span>
+
+  <span class="kd">const</span> <span class="nx">timerFunc</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="nx">ctx</span> <span class="p">?</span> <span class="nx">cb</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span> <span class="p">:</span> <span class="nx">cb</span><span class="p">()</span>
+    <span class="p">},</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">router</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="k">return</span> <span class="nx">timerFunc</span><span class="p">()</span>
+
+  <span class="kd">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">router</span><span class="p">.</span><span class="nx">$taroPath</span>
+
+  <span class="cm">/**
+   * 三种情况
+   *   1. 调用 nextTick 时，pendingUpdate 已经从 true 变为 false（即已更新完成），那么需要光等 100ms
+   *   2. 调用 nextTick 时，pendingUpdate 为 true，那么刚好可以搭上便车
+   *   3. 调用 nextTick 时，pendingUpdate 还是 false，框架仍未启动更新逻辑，这时最多轮询 100ms，等待 pendingUpdate 变为 true。
+   */</span>
+  <span class="kd">function</span> <span class="nx">next</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="na">pageElement</span><span class="p">:</span> <span class="nx">TaroRootElement</span> <span class="o">|</span> <span class="kc">null</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="o">&lt;</span><span class="nx">TaroRootElement</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pageElement</span><span class="p">?.</span><span class="nx">pendingUpdate</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TARO_PLATFORM</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">web</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// eslint-disable-next-line dot-notation</span>
+        <span class="nx">pageElement</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">?.[</span><span class="dl">'</span><span class="s1">componentOnReady</span><span class="dl">'</span><span class="p">]?.().</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">timerFunc</span><span class="p">()</span>
+        <span class="p">})</span> <span class="o">??</span> <span class="nx">timerFunc</span><span class="p">()</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">pageElement</span><span class="p">.</span><span class="nx">enqueueUpdateCallback</span><span class="p">(</span><span class="nx">cb</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">beginTime</span> <span class="o">&gt;</span> <span class="nx">TIMEOUT</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">timerFunc</span><span class="p">()</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">next</span><span class="p">(),</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">next</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>taro 框架下更新状态是从根节点下发的, 并且内部优化了 setData 的调用, 也就是上面代码里的 pageElement, 而 Taro.nextTick 主要就是在等待下一轮更新开始然后回调, 而且是按 20ms 的分片来轮询, 最多到 100ms.</p>
+
+<blockquote>
+  <p>Taro.nextTick(): setState(react) -&gt; render(react) -&gt; setData(taro) -&gt; setData(wx) -&gt; 触发回调</p>
+</blockquote>
+
+<h3 id="平台-api-挂载">平台 api 挂载</h3>
+
+<p>以上介绍了 taro 下全平台通用 api 的挂载和实现, 那么 taro 又是如何挂载某个具体平台下的常规 api 的呢? 答案在 initNativeApi 这个 hook 里.</p>
+
+<p>以微信平台为例, 先找到 <code class="language-plaintext highlighter-rouge">packages/taro-platform-weapp/src/runtime.ts</code> 这个模块:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">mergeInternalComponents</span><span class="p">,</span> <span class="nx">mergeReconciler</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@tarojs/shared</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">components</span><span class="p">,</span> <span class="nx">hostConfig</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./runtime-utils</span><span class="dl">'</span>
+
+<span class="nx">mergeReconciler</span><span class="p">(</span><span class="nx">hostConfig</span><span class="p">)</span>
+<span class="c1">// ...</span>
+</code></pre></div></div>
+
+<p>这个模块最终会在项目构建时注入到头部代码里, 然后在应用启动时前置执行, 具体的 taro 构建流程后续会另开一篇介绍 :)</p>
+
+<p>其中 mergeReconciler 函数会调用入参 hostConfig 里的 hook 函数:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nx">mergeReconciler</span> <span class="p">(</span><span class="nx">hostConfig</span><span class="p">,</span> <span class="nx">hooksForTest</span><span class="p">?)</span> <span class="p">{</span>
+  <span class="c1">// hooks 是 packages/shared/src/runtime-hooks.ts 里创建的 taro 内部 hook 列表, 其中就有 initNativeApi</span>
+  <span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">hooksForTest</span> <span class="o">||</span> <span class="nx">hooks</span>
+  <span class="kd">const</span> <span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">hostConfig</span><span class="p">)</span>
+  <span class="nx">keys</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">key</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">obj</span><span class="p">.</span><span class="nx">tap</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">hostConfig</span><span class="p">[</span><span class="nx">key</span><span class="p">])</span>
+  <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后 hostConfig 里透传了 initNativeApi 函数:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ...</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">initNativeApi</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./apis</span><span class="dl">'</span>
+<span class="c1">// ...</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">hostConfig</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">initNativeApi</span><span class="p">,</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>看看 initNativeApi 函数的实现:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">processApis</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@tarojs/shared</span><span class="dl">'</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">needPromiseApis</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./apis-list</span><span class="dl">'</span>
+
+<span class="kr">declare</span> <span class="kd">const</span> <span class="nx">wx</span><span class="p">:</span> <span class="kr">any</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">initNativeApi</span> <span class="p">(</span><span class="nx">taro</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">processApis</span><span class="p">(</span><span class="nx">taro</span><span class="p">,</span> <span class="nx">wx</span><span class="p">,</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">})</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">cloud</span> <span class="o">=</span> <span class="nx">wx</span><span class="p">.</span><span class="nx">cloud</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">getTabBar</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">pageCtx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">pageCtx</span><span class="p">?.</span><span class="nx">getTabBar</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">function</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">pageCtx</span><span class="p">.</span><span class="nx">getTabBar</span><span class="p">()?.</span><span class="nx">$taroInstances</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">getRenderer</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">taro</span><span class="p">.</span><span class="nx">getCurrentInstance</span><span class="p">()?.</span><span class="nx">page</span><span class="p">?.</span><span class="nx">renderer</span> <span class="o">??</span> <span class="dl">'</span><span class="s1">webview</span><span class="dl">'</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>果然是在挂载 api 到 taro 对象上, 最后看看 processApis 函数的实现:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">processApis</span> <span class="p">(</span><span class="nx">taro</span><span class="p">,</span> <span class="nb">global</span><span class="p">,</span> <span class="nx">config</span><span class="p">:</span> <span class="nx">IProcessApisIOptions</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+  <span class="kd">const</span> <span class="nx">patchNeedPromiseApis</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">needPromiseApis</span> <span class="o">||</span> <span class="p">[]</span>
+  <span class="kd">const</span> <span class="nx">_needPromiseApis</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="o">&lt;</span><span class="kr">string</span><span class="o">&gt;</span><span class="p">([...</span><span class="nx">patchNeedPromiseApis</span><span class="p">,</span> <span class="p">...</span><span class="nx">needPromiseApis</span><span class="p">])</span>
+  <span class="kd">const</span> <span class="nx">preserved</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1">// ...不需要处理的一些 api</span>
+  <span class="p">]</span>
+  <span class="kd">const</span> <span class="nx">apis</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">(</span>
+    <span class="o">!</span><span class="nx">config</span><span class="p">.</span><span class="nx">isOnlyPromisify</span>
+      <span class="p">?</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nb">global</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="nx">api</span> <span class="o">=&gt;</span> <span class="nx">preserved</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">api</span><span class="p">)</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+      <span class="p">:</span> <span class="nx">patchNeedPromiseApis</span>
+  <span class="p">)</span>
+  <span class="c1">// ...</span>
+  <span class="nx">apis</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">key</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">_needPromiseApis</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">originKey</span> <span class="o">=</span> <span class="nx">key</span>
+      <span class="nx">taro</span><span class="p">[</span><span class="nx">originKey</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="na">options</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">any</span><span class="o">&gt;</span> <span class="o">|</span> <span class="kr">string</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">...</span><span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+        <span class="c1">// Promise 化</span>
+        <span class="kd">const</span> <span class="na">p</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">obj</span><span class="p">.</span><span class="nx">success</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">config</span><span class="p">.</span><span class="nx">modifyAsyncResult</span><span class="p">?.(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="p">?.(</span><span class="nx">res</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">connectSocket</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">resolve</span><span class="p">(</span>
+                <span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">().</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">task</span> <span class="p">?</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">task</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">:</span> <span class="nx">res</span><span class="p">)</span>
+              <span class="p">)</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="nx">resolve</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+          <span class="nx">obj</span><span class="p">.</span><span class="nx">fail</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">fail</span><span class="p">?.(</span><span class="nx">res</span><span class="p">)</span>
+            <span class="nx">reject</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+          <span class="p">}</span>
+          <span class="nx">obj</span><span class="p">.</span><span class="nx">complete</span> <span class="o">=</span> <span class="nx">res</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">options</span><span class="p">.</span><span class="nx">complete</span><span class="p">?.(</span><span class="nx">res</span><span class="p">)</span>
+          <span class="p">}</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">task</span> <span class="o">=</span> <span class="nb">global</span><span class="p">[</span><span class="nx">key</span><span class="p">](</span><span class="nx">obj</span><span class="p">,</span> <span class="p">...</span><span class="nx">args</span><span class="p">)</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">task</span> <span class="o">=</span> <span class="nb">global</span><span class="p">[</span><span class="nx">key</span><span class="p">](</span><span class="nx">obj</span><span class="p">)</span>
+          <span class="p">}</span>
+        <span class="p">})</span>
+        <span class="c1">// ...</span>
+        <span class="k">return</span> <span class="nx">p</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// ...</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
+  <span class="c1">// ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="常用-api-挂载">常用 api 挂载</h3>
+
+<p>taro 挂载完平台 api 后, 还会挂载一些常用 api, 比如 Taro.getCurrentPages 等, 此外一开始看到 taro 大对象里有拦截器相关字段, 这里还会二次包装 request api 来支持拦截器能力:</p>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">equipCommonApis</span> <span class="p">(</span><span class="nx">taro</span><span class="p">,</span> <span class="nb">global</span><span class="p">,</span> <span class="nx">apis</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">any</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{})</span> <span class="p">{</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">canIUseWebp</span> <span class="o">=</span> <span class="nx">getCanIUseWebp</span><span class="p">(</span><span class="nx">taro</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">getCurrentPages</span> <span class="o">=</span> <span class="nx">getCurrentPages</span> <span class="o">||</span> <span class="nx">nonsupport</span><span class="p">(</span><span class="dl">'</span><span class="s1">getCurrentPages</span><span class="dl">'</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">getApp</span> <span class="o">=</span> <span class="nx">getApp</span> <span class="o">||</span> <span class="nx">nonsupport</span><span class="p">(</span><span class="dl">'</span><span class="s1">getApp</span><span class="dl">'</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nb">global</span><span class="p">.</span><span class="nx">env</span> <span class="o">||</span> <span class="p">{}</span>
+
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="nx">taro</span><span class="p">.</span><span class="nx">requirePlugin</span> <span class="o">=</span> <span class="nx">requirePlugin</span> <span class="o">||</span> <span class="nx">nonsupport</span><span class="p">(</span><span class="dl">'</span><span class="s1">requirePlugin</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">taro</span><span class="p">.</span><span class="nx">requirePlugin</span> <span class="o">=</span> <span class="nx">nonsupport</span><span class="p">(</span><span class="dl">'</span><span class="s1">requirePlugin</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="c1">// request &amp; interceptors</span>
+  <span class="kd">const</span> <span class="nx">request</span> <span class="o">=</span> <span class="nx">apis</span><span class="p">.</span><span class="nx">request</span> <span class="o">||</span> <span class="nx">getNormalRequest</span><span class="p">(</span><span class="nb">global</span><span class="p">)</span>
+  <span class="kd">function</span> <span class="nx">taroInterceptor</span> <span class="p">(</span><span class="nx">chain</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">request</span><span class="p">(</span><span class="nx">chain</span><span class="p">.</span><span class="nx">requestParams</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="kd">const</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">taro</span><span class="p">.</span><span class="nx">Link</span><span class="p">(</span><span class="nx">taroInterceptor</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">link</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">addInterceptor</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">addInterceptor</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">link</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">cleanInterceptors</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">cleanInterceptors</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">link</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">miniGlobal</span> <span class="o">=</span> <span class="nx">taro</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">miniGlobal</span> <span class="o">=</span> <span class="nb">global</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">getAppInfo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">platform</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TARO_PLATFORM</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">MiniProgram</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">taroVersion</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">TARO_VERSION</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">unknown</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">designWidth</span><span class="p">:</span> <span class="nx">taro</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">designWidth</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">createSelectorQuery</span> <span class="o">=</span> <span class="nx">delayRef</span><span class="p">(</span><span class="nx">taro</span><span class="p">,</span> <span class="nb">global</span><span class="p">,</span> <span class="dl">'</span><span class="s1">createSelectorQuery</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">exec</span><span class="dl">'</span><span class="p">)</span>
+  <span class="nx">taro</span><span class="p">.</span><span class="nx">createIntersectionObserver</span> <span class="o">=</span> <span class="nx">delayRef</span><span class="p">(</span><span class="nx">taro</span><span class="p">,</span> <span class="nb">global</span><span class="p">,</span> <span class="dl">'</span><span class="s1">createIntersectionObserver</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">observe</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="总结">总结</h2>
+
+<p>先来总结一下 <code class="language-plaintext highlighter-rouge">import Taro from '@tarojs/taro'</code> 背后都做了什么:
+<img src="/assets/images/202506/taro_api_bound.png" alt="taro_api_bound" /></p>
+
+<p>这解释了为何在单测环境下直接使用 <code class="language-plaintext highlighter-rouge">@tarojs/taro</code> 会找不到 api, 甚至会有奇怪报错, 因为其背后依赖了一些 taro 运行时启动代码. 正确方式应该将其 mock 掉, 并且尝试将可测试代码与 taro 解耦.</p>
+
+<p>这样设计也提供了一些参考: 除了到处 if/else 之外, 还可以如何封装多平台兼容的工具库</p>
+<ul>
+  <li>插件化组织平台特殊逻辑, 即<strong>先默认提供兜底实现, 然后在运行时动态注入各平台特殊实现.</strong></li>
+  <li>实现接口层来抹平 api 的平台、版本等差异, 比如有些平台不存在某个 api, 或者 api 参数不同等情况, 对内使用时保持一致.</li>
+  <li>我们也可以从外部去挂载 api 到 Taro 对象上, 扩展 TaroStatic 类型, 定制全局 taro 能力</li>
+</ul>
+
+<p>参考链接:</p>
+
+<ul>
+  <li><a href="https://docs.taro.zone/docs/platform-plugin/how#%E4%BA%8C%E5%A4%84%E7%90%86-api">编写端平台插件</a></li>
+  <li><a href="https://developers.weixin.qq.com/miniprogram/dev/api/ui/custom-component/wx.nextTick.html">wx.nextTick</a></li>
+</ul>
+
+    </section>
+    <section class="yitiblog-pager block flex">
+        
+            <a class="block prev" href="/frontend/2024/08/24/wechat-mp-devtool-lazycodeloading-issue.html">
+                <img class="prev" src="/assets/images/prev.svg" alt="prev post" />
+                微信小程序开启lazyCodeLoading后工具白屏问题
+            </a>
+        
+        <div class="flex-1"></div>
+        
+    </section>
+    <section class="yitiblog-comment block">
+        <script
+            src="https://utteranc.es/client.js"
+            repo="yitimo/yitimo.github.io"
+            issue-term="pathname"
+            label="comment"
+            theme="github-light"
+            crossorigin="anonymous"
+            async
+        ></script>
+    </section>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            var h1s = document.getElementsByTagName('h1')
+            var h2s = document.getElementsByTagName('h2')
+            var h3s = document.getElementsByTagName('h3')
+            for (var i = 0; i < h1s.length; i += 1) {
+                addAnchorNode(h1s.item(i))
+            }
+            for (var i = 0; i < h2s.length; i += 1) {
+                addAnchorNode(h2s.item(i))
+            }
+            for (var i = 0; i < h3s.length; i += 1) {
+                addAnchorNode(h3s.item(i))
+            }
+            function addAnchorNode(target) {
+                if (!target || !target.id) {
+                    return
+                }
+                var linkADOM = document.createElement('a')
+                linkADOM.classList = 'anchor-a'
+                linkADOM.href = '#' + target.id
+                var linkIDOM = document.createElement('i')
+                linkIDOM.classList = 'anchor-i iconfont icon-anchor'
+                linkADOM.appendChild(linkIDOM)
+                target.appendChild(linkADOM)
+            }
+        })
+    </script>
+    <footer class="yitiblog-footer">
+        <div class="block font-m">
+            <div class="flex">
+    <ul class="flex-1">
+        <li><a href="https://github.com/yitimo" class="link">GitHub</a></li>
+    </ul>
+</div>
+
+<ul class="copyright">
+    <li class="disable-select"><a href="https://beian.miit.gov.cn" class="recordation" target="_blank">浙ICP备17012995号-1</a></li>
+    <li class="disable-select">yitimo的个人日志@<span id="copyright-year">present</span></li>
+</ul>
+
+<script>
+    document.getElementById('copyright-year').innerText = new Date().getFullYear().toString()
+</script>
+
+        </div>
+    </footer>
+    <div id="core-mta"></div>
+<script>
+    // // baidu统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?decb433e7fc3d68b16da80cdd59ee827";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+    })();
+
+    // // baidu 站长
+    // (function(){
+    //     var bp = document.createElement('script');
+    //     var curProtocol = window.location.protocol.split(':')[0];
+    //     if (curProtocol === 'https') {
+    //         bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    //     }
+    //     else {
+    //         bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    //     }
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(bp, s);
+    // })();
+
+    // // 腾讯mta(官方即将下线)
+    // var _mtac = {};
+  	// (function() {
+  	// 	var mta = document.createElement("script");
+  	// 	mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+  	// 	mta.setAttribute("name", "MTAH5");
+  	// 	mta.setAttribute("sid", "500707646");
+  	// 	var s = document.getElementsByTagName("script")[0];
+  	// 	s.parentNode.insertBefore(mta, s);
+  	// })();
+</script>
+</body>
+</html>
