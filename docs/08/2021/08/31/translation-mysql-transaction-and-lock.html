@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】【MySQL文档@13.3.1】START TRANSACTION, COMMIT, 和 ROLLBACK 语法 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>【翻译】【MySQL文档@13.3.1】START TRANSACTION, COMMIT, 和 ROLLBACK 语法</h1>
+    <div><pre><code class="language-sql">START TRANSACTION
+    [transaction_characteristic [, transaction_characteristic] ...]
+
+transaction_characteristic: {
+    WITH CONSISTENT SNAPSHOT
+  | READ WRITE
+  | READ ONLY
+}
+
+BEGIN [WORK]
+COMMIT [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
+ROLLBACK [WORK] [AND [NO] CHAIN] [[NO] RELEASE]
+SET autocommit = {0 | 1}
+</code></pre>
+<p>这些语法提供了事务(transaction)相关的控制:</p>
+<ul>
+<li><code>START TRANSACTION</code> 或 <code>BEGIN</code>: 开始一个新事务</li>
+<li><code>COMMIT</code>: 提交当前事务, 使其改动真正生效</li>
+<li><code>ROLLBACK</code>: 回滚当前事务到开始之前</li>
+<li><code>SET autocommit</code>: 开/关 当前事务的默认自动提交行为</li>
+</ul>
+<p>默认的 MySQL 会启用 <code>autocommit</code> 模式, 即非事务情况下所有语句都会自动提交, 就好像它们都被包了一层 <code>START TRANSACTION ... COMMIT</code>, 所以你不能使用 <code>ROLLBACK</code> 来回滚改动, 不过语句执行出错时可以实现回滚.</p>
+<p>可以使用 <code>START TRANSACTION</code> 语句来禁用一系列语句的自动提交:</p>
+<pre><code class="language-sql">START TRANSACTION;
+SELECT @A:=SUM(salary) FROM table1 WHERE type=1;
+UPDATE table2 SET summary=@A WHERE type=1;
+COMMIT;
+</code></pre>
+<p>使用了 <code>START TRANSACTION</code> 后, 你就需要手动 <code>COMMIT</code> 或 <code>ROLLBACK</code> 来结束你的事务. 然后 自动提交模式 也会恢复原值.</p>
+<p><code>START TRANSACTION</code> 语句支持一些修饰语来控制你的事务, 多个修饰语用逗号隔开:</p>
+<ul>
+<li><code>WITH CONSISTENT SNAPSHOT</code>: TODO: 待补充</li>
+<li><code>READ WRITE/READ ONLY</code>: 事务的访问模式, 用来允许或禁止事务中用到的表的修改行为. <code>READ ONLY</code> 限制用到表的其他事务或非事务只能读而不能写, 当前事务本身能读写.</li>
+</ul>
+<p>MySQL 对 InnoDB 索引的表, 在只读事务中的查询提供了额外优化. 在不能自动识别为只读模式的情况下可以手动开启来得到这些优化.</p>
+<p>默认的访问模式是 <code>READ/WRITE</code> 读写模式. 同一个语句不支持同时制定只读和读写模式.</p>
+<p>在只读模式下, 支持使用 DML 语句来修改使用 TEMPORARY 关键词创建的临时表. DDL语句的修改、持久化表则是不被允许的.</p>
+<p>更多关于事务访问模式的信息详见 <strong>13.3.7</strong>.</p>
+<p>如果开启了只读系统变量, <code>START TRANSACTION READ WRITE</code> 语句需要<code>connection</code> 的管理权限.</p>
+<blockquote>
+<p><strong>重要:</strong> 很多MySQL客户端(比如 JDBC)都封装并提供了他们自己的方法来开启事务, 而不需要直接使用 <code>START TRANSACTION</code> 语句.</p>
+</blockquote>
+<p>想要显式禁用自动提交模式, 使用以下语句:</p>
+<pre><code class="language-sql">SET autocommit=0;
+</code></pre>
+<p>当设置值为 <code>0</code> 来禁用自动提交后, 对于事务安全的表的改动都不会立即生效, 你必须手动 <code>COMMIT</code> 来使其生效, 或 <code>ROLLBACK</code> 来回滚改动.</p>
+<p>autocommit 是一个session级的变量, 故每个session都要设置. 想要禁用所有新连接的自动提交的话, 需要设置到 autocommit 的系统变量.</p>
+<p><code>BEGIN</code> 和 <code>BEGIN WORK</code> 是 <code>START TRANSACTION</code> 的别名, 用来初始化一个事务. <code>START TRANSACTION</code> 是一个标准SQL语句, 是开启一个 ad-hoc 事务和修改器的推荐方式, 而 <code>BEGIN</code> 不是.</p>
+<p>这里的 <code>BEGIN</code> 语法跟 <code>BEGIN ... END</code> 混用的情况不同, 后者不会开始一个事务.</p>
+<blockquote>
+<p><strong>注意:</strong> 在所有存储的程序里(比如 过程、函数、触发器和事件), 会认为 <code>BEGIN</code> 是 <code>BEGIN ... END</code> 块的开始部分. 故请使用 <code>START TRANSACTION</code> 语法.</p>
+</blockquote>
+<p>可选的 <code>WORK</code> 关键字也支持 <code>COMMIT</code> 和 <code>ROLLBACK</code>, 用的是 <code>CHAIN</code> 和 <code>RELEASE</code>. 这两个语法用来提供事务结束阶段的更多控制. 系统变量 <code>completion type</code> 定义了默认的结束行为.</p>
+<p><code>AND CHAIN</code>语法能在当前事务结束时立即开启一个新事务, 新的事物和原事务拥有相同的隔离等级、读写访问权限. <code>RELEASE</code> 语法使服务在当前事务结束后断连当前session. 还有 <code>NO</code> 关键词来禁用 <code>CHAIN/RELEASE</code> 行为, 当想系统默认开启<code>completion_type</code> 配置时会用到.</p>
+<p>开始一个新事务会使所有正在pending的事务被提交, 详见 <strong>13.3.3</strong>.</p>
+<p>开始一个新事务同时还会使捕获的表锁被释放, 就好像你自己执行了 <code>UNLOCK TABLES</code>. 开启新事务不会释放全局的读锁(<code>FLUSH TABLES WITH READ LOCK</code>得到的).</p>
+<p>为了最好的结果, 事务应该只被单事务安全的存储引擎管理的表来使用. 否则可能会有以下问题:</p>
+<ul>
+<li>如果你用到了来自不止一个单事务安全存储引擎(比如 InnoDB), 且事务隔离等级为 <code>SERIALIZABLE</code>. 当一个事务被提交, 而另一个还未完成的事务看到了被前一个事务修改的值, 此时事务的原子性得不到保证, 而产生了不一致.(如果跨引擎的事务很少用到, 你可以在需要时给每个事务单独设置隔离等级为 <code>SERIALIZABLE</code>).</li>
+<li>如果你在一个事务里用到了非事务安全的表, 这些表的改动会直接被存储, 即又变成了自动提交模式.</li>
+<li>如果你在一个事务里更新一个非事务表, 然后抛出 <code>ROLLBACK</code>, 此时会报 <code>ER_WARNING_NOT_COMPLETE_ROLLBACK</code> 的警告. 事务安全的表会被成功回滚, 而非事务安全的表做不到.</li>
+</ul>
+<p>每个事务都被存储在一个二进制日志里, 直到 <code>COMMIT</code>. 被回滚的事务不会被记录. (例外: 非事务的表不能被回滚, 如果被回滚的事务里包含了非事务表的改动, 整个事务会在 <code>ROLLBACK</code> 语句后被记录, 来确保非事务表的改动是重复的.)</p>
+<p>你可以用 <code>SET TRANSACTION</code> 语句来修改事务的隔离等级和访问模式. 详见 <strong>13.3.7</strong>.</p>
+<p>回滚是一个慢操作, 且可能发生用户意料之外的行为. 因此, <code>SHOW PROCESSLIST</code> 可以用来显示session的State列中的回滚, 这对隐式回滚和主动回滚都有效.</p>
+<blockquote>
+<p><strong>注意:</strong> 在 MySQL 8.0 里, BEGIN, COMMIT 和 ROLLBACK 不受 <code>--replicate-do-db</code> 或 <code>--replicate-ignore-db</code> 规则影响.</p>
+</blockquote>
+<p>当 <code>InnoDB</code> 完成了一次事务的回滚, 这次事务设置的所有锁都会被释放. 如果事务里的单个SQL语句由于错误而回滚了, 这条语句里的锁会在事务还存在时保留. 这是因为 <code>InnoDB</code> 存储不知道行锁究竟是哪条语句设置的.</p>
+<p>如果事务里的一个select语句调用了存储方法, 且存储方法里的一条语句时报了, 这次事务会回滚. 如果后续事务又执行了<code>ROLLBACK</code>, 整个事务都会被回滚.</p>
+<h2>原文链接</h2>
+<p><a href="https://dev.mysql.com/doc/refman/8.0/en/commit.html">https://dev.mysql.com/doc/refman/8.0/en/commit.html</a></p>
+</div>
+</body>
+</html>

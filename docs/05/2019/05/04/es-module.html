@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript模块化编程整理 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>JavaScript模块化编程整理</h1>
+    <div><p>模块化是为了避免所有代码逻辑都集中在同一个片段下, 而是拆分到多个模块下, 最后通过某种方式编译打包并运行. 这样做能使工程更易维护, 应用整体运行更可控. JS前端项目有非常多种模块化的方式:</p>
+<ul>
+<li><strong>拆分成多个 script 标签, 每个 script 标签就是一个模块</strong>, 缺点是实际上每个script标签是共用上下文的, 并没有真正的隔离, 只算是同一个模块拆分成了多个片段</li>
+<li><strong>自执行函数</strong>, 即 <code>(function() { /* 模块实现逻辑 */ })()</code> 这样的方式, 这真正做到了模块之间的隔离, 缺点是模块之间被完全隔离, 只能通过共同的全局作用域来通信, 而做不到模块间的引用</li>
+<li>然后就是前端工程化后冒出来的各种&quot;奇妙&quot;名词了: <code>AMD/UMD/CommonJS/ES Module</code>, 下文将详细描述这些概念</li>
+</ul>
+<p><em>TODO: 继续重新修订</em></p>
+<hr />
+<p>本文将主要围绕<strong>webpack如何处理我们的JS代码</strong>这个问题来对JavaScript模块化编程进行梳理，包括以下几点:</p>
+<ol>
+<li>node环境和浏览器环境
+<ol>
+<li>浏览器环境模块化</li>
+</ol>
+</li>
+<li>commonjs, amd和其他
+<ol>
+<li>webpack的output.libraryTarget配置</li>
+</ol>
+</li>
+<li>require/module.exports和es6 import/export
+<ol>
+<li>导入/导出同类模块(commonjs或es6)</li>
+<li>导入/导出不同模块(commonjs或es6)</li>
+</ol>
+</li>
+<li>webpack chunk和模块懒加载
+<ol>
+<li>webpack如何处理懒加载模块</li>
+<li>webpack如何拆分chunk</li>
+</ol>
+</li>
+<li>TypeScript和代码提示
+<ol>
+<li>TypeScript模块</li>
+<li><code>.d.ts</code>文件和类型声明</li>
+</ol>
+</li>
+</ol>
+<hr />
+<h2>node环境和浏览器环境</h2>
+<p>我们知道node环境中直接就可以使用commonjs规范进行模块化，并根据目录/文件来区分模块。</p>
+<p>比如<code>./lib</code>或<code>./lib/index.js</code>或<code>lib.js</code>都可以作为<code>lib</code>模块来使用。我们通过<code>module.exports</code>来导出变量并通过<code>require</code>来导入变量。</p>
+<p>但是在浏览器环境中我们无法直接使用commonjs，所以当我们发现自己项目的src目录下明明使用了<code>module.exports</code>这些语法却能在浏览器中生效时，这一定是webpack帮我们做了些什么。</p>
+<h3>浏览器环境的JS模块化</h3>
+<p>现在准备一个最简单的基于webpack的web项目，包含一个名为<code>calendar</code>的模块：</p>
+<pre><code class="language-javascript">/// &lt;calendar/index.js&gt;
+const now = function () {
+    const _now = new Date()
+    return _now.getFullYear() +
+        '-' +
+        addZero(_now.getMonth() + 1) +
+        '-' +
+        addZero(_now.getDate()) +
+        ' ' +
+        addZero(_now.getHours()) +
+        ':' +
+        addZero(_now.getMinutes()) +
+        ':' +
+        addZero(_now.getSeconds())
+}
+
+function addZero(src) {
+    if (typeof src === 'number') {
+        src = src.toString()
+    }
+    return src &amp;&amp; src.length === 1 ? ('0' + src) : src
+}
+
+module.exports = { now }
+
+</code></pre>
+<p>然后我们在webpack.config.js中这样配置：</p>
+<pre><code class="language-javascript">/// &lt;calendar/index.js&gt;
+const path = require('path')
+
+module.exports = {
+    mode: 'development',
+    devtool: 'none',
+    entry: {
+        calendar: './calendar/index.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'wwwroot'),
+    },
+}
+</code></pre>
+<p>最终编译生成的<code>calendar.js</code>会是这样的结构：</p>
+<pre><code class="language-javascript">/// &lt;wwwroot/calendar.js&gt;
+(function(modules){
+    // ...
+    // 闭包方式return出module.exports
+})({
+    &quot;./calendar/index.js&quot;: (function(module, exports, __webpack_require__) {
+        // ...
+        // 从__webpack_require__中访问utils模块
+    }),
+    &quot;./calendar/utils.js&quot;: (function(module, exports) {
+        // ...
+    })
+})
+</code></pre>
+<p>结论就是，浏览器环境下，webpack为我们把commonjs模块进行了转义，编译成为了一个立即执行函数。</p>
+<hr />
+<h2>模块化规范：commonjs, amd和其他</h2>
+<p>除了上文提到的commonjs之外，还有几个模块化相关的名词容易把人绕晕：commonjs、commonjs2、amd、umd。</p>
+<hr />
+<p><em>待补充 commonjs/commonjs2/amd各自介绍</em></p>
+<hr />
+<p>接下来我们围绕webpack配置中的<a href="https://webpack.docschina.org/configuration/output#output-librarytarget">output.libraryTarget</a>这个配置来梳理这些概念。</p>
+<p>上文示例是在编写一个实际应用，也就是说我们的项目源码只需要在一个立即执行函数中直接运行就完成了自己的任务。但是当要编写一个第三方库时，我们无法保证其他项目也一定会使用commonjs来引入这个库，此时就需要配置<code>libraryTarget</code>来指定模块如何导出为一个库，其中umd方式为通用方式，即能兼容不同的模块规范，现在我们配置这个属性看看：</p>
+<pre><code class="language-javascript">/// &lt;calendar/index.js&gt;
+const path = require('path')
+
+module.exports = {
+    mode: 'development',
+    devtool: 'none',
+    entry: {
+        calendar: './calendar/index.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'wwwroot'),
+        library: 'libCalendar', // +
+        libraryTarget: 'umd', // +
+    },
+}
+
+</code></pre>
+<p>现在编译结果会是这样的结构：</p>
+<pre><code class="language-javascript">/// &lt;wwwroot/calendar.js&gt;
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' &amp;&amp; typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' &amp;&amp; define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports[&quot;libCalendar&quot;] = factory();
+	else
+		root[&quot;libCalendar&quot;] = factory();
+})(window, function() {
+    return 上文编译输出的立即执行函数
+})
+</code></pre>
+<p>结论就是，webpack默认将我们的模块化代码编译为兼容浏览器环境的commonjs方式输出，同时我们还可以进一步配置来完成兼容amd模块甚至将模块绑定到window等操作。</p>
+<hr />
+<h2>commonjs和es6 module</h2>
+<p>接下来我们改用es6模块来编写calendar库：</p>
+<pre><code class="language-javascript">/// &lt;calendar/index.js&gt;
+import addZero from './utils'
+
+const now = function () {
+    const _now = new Date()
+    return _now.getFullYear() +
+        '-' +
+        addZero(_now.getMonth() + 1) +
+        '-' +
+        addZero(_now.getDate()) +
+        ' ' +
+        addZero(_now.getHours()) +
+        ':' +
+        addZero(_now.getMinutes()) +
+        ':' +
+        addZero(_now.getSeconds())
+}
+
+export default now
+</code></pre>
+<p>移除上文webpack.config.js中添加的两行配置：</p>
+<pre><code class="language-javascript">// ...
+library: 'libCalendar', // -
+libraryTarget: 'umd', // -
+// ...
+</code></pre>
+<p>此时编译结果的结构是这样的：</p>
+<pre><code class="language-javascript">/// &lt;wwwroot/calendar.js&gt;
+(function(modules) {
+    // ...
+    // 闭包方式return module.exports
+})({
+    &quot;./calendar/index.js&quot;: (function(module, __webpack_exports__, __webpack_require__) {
+        // 从__webpack_require__访问utils模块
+        // 从__webpack_exports__导出default
+    }),
+    &quot;./calendar/utils.js&quot;: (function(module, __webpack_exports__, __webpack_require__) {
+        // 从__webpack_exports__导出default
+    })
+})
+</code></pre>
+<p>结论就是，目前的es6模块我们可以看成commonjs的语法糖，webpack会将其编译成与commonjs方式类似的输出，比如将变量导出至<code>module.exports.default</code>。</p>
+<h3>模块混用</h3>
+<p>现在从上文结论可以得知，我们完全可以在es6模块中import一个commonjs方式导出的变量，或是在commonjs模块中require一个es6模块export的变量。目前webpack最终都会编译为commonjs方式。即：</p>
+<pre><code class="language-javascript">export { A }
+export default A
+</code></pre>
+<p>会编译为：</p>
+<pre><code class="language-javascript">module.exports = {
+    default: A,
+    A: A
+}
+</code></pre>
+<hr />
+<pre><code class="language-javascript">import B as defaultB, { B } from '...'
+</code></pre>
+<p>会编译为：</p>
+<pre><code class="language-javascript">const utils = require('...')
+const defaultB = utils.default
+const B = utils.B
+</code></pre>
+<hr />
+<h2>webpack chunk和模块懒加载</h2>
+<p>接下来看看懒加载(延迟加载)的模块是如何工作的，改造calendar模块为这样：</p>
+<pre><code class="language-javascript">/// &lt;calendar/index.js&gt;
+const now = async function () {
+    const utils = await import('./utils')
+    const addZero = utils.addZero
+    const _now = new Date()
+    return _now.getFullYear() +
+        '-' +
+        addZero(_now.getMonth() + 1) +
+        '-' +
+        addZero(_now.getDate()) +
+        ' ' +
+        addZero(_now.getHours()) +
+        ':' +
+        addZero(_now.getMinutes()) +
+        ':' +
+        addZero(_now.getSeconds())
+}
+
+export { now }
+export default now
+</code></pre>
+<p>这样会在使用到utils模块时才加载这个模块进来，牺牲了少量的加载时间，换来了初始化时更快的加载体积拆分缩减。最终编译结果结构像这样：</p>
+<pre><code class="language-javascript">/// &lt;wwwroot/calendar.js&gt;
+(function(modules) {
+    // 提供一个叫requireEnsure的函数，用于根据chunk id创建一个script标签，动态插入到document.head中
+})({
+    &quot;./calendar/index.js&quot;: (function(module, __webpack_exports__, __webpack_require__) {
+        // ...
+        // 调用__webpack_require__执行requireEnsure的函数函数以懒加载utils模块
+    })
+})
+</code></pre>
+<pre><code class="language-javascript">/// &lt;wwwroot/0.js&gt;
+(window[&quot;webpackJsonp&quot;] = window[&quot;webpackJsonp&quot;] || []).push([[0],{
+    &quot;./calendar/utils.js&quot;: (function(module, __webpack_exports__, __webpack_require__) {
+        // ...
+    })
+}]);
+</code></pre>
+<p>结论就是，对于懒加载的模块，会单独拆分到自己的js文件中，并通过jsonp方式(动态创建script标签，设置src并插入到head)动态执行这些拆分的js文件。</p>
+<h3>webpack如何拆分chunk</h3>
+<p>在webpack配置中，我们可以手动拆分依赖，做到node_modules和src中的代码分离，甚至分离css chunk，这样可以防止出现某个js文件过大，最终做到性能优化。
+接下来我们手动造一个比较大的依赖，看看webpack如何处理它。给webpack添加如下配置：</p>
+<pre><code class="language-javascript">const path = require('path')
+
+module.exports = {
+    mode: 'development',
+    devtool: 'none',
+    entry: {
+        calendar: './calendar/index.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'wwwroot'),
+    },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: { // 即utils下的依赖会被拆分到vendor模块下作为chunk被使用
+                    test: /[\\/]utils[\\/]/,
+                    name: 'vendor',
+                    chunks: 'all'
+                },
+            },
+        },
+    },
+}
+</code></pre>
+<p>亲测目前的webpack比较“智能”，即使配置了splitChunks，若目标包不够“大”，依然不会将其拆分，在实际项目中一般依赖已经都足够大了，所以不会有这个困扰。</p>
+<p>最终输出会得到两个js，calendar.js和vendor.js。也就是，虽然没有显式使用懒加载引入utils模块，utils依然被拆分然后以懒加载形式被使用了，此实验想要成功，一定要保证utils模块足够大，条件参考webpack文档原文:</p>
+<p>webpack will automatically split chunks based on these conditions:</p>
+<ul>
+<li>New chunk can be shared OR modules are from the node_modules folder</li>
+<li>New chunk would be bigger than 30kb (before min+gz)</li>
+<li>Maximum number of parallel requests when loading chunks on demand would be lower or equal to 5</li>
+<li>Maximum number of parallel requests at initial page load would be lower or equal to 3</li>
+</ul>
+<p>When trying to fulfill the last two conditions, bigger chunks are preferred.</p>
+<p>另外chunk的拆分仅仅是拆分了文件，并没有改为异步加载，仍然会按顺序同步执行多个chunk。</p>
+<hr />
+<h2>TypeScript模块</h2>
+<p>接下来轮到TypeScript了，可以将其认为是es6的高级语法糖，有自己的编译器(tsc)，通过配置定制编译规则，比如编译至es5+commonjs模块。
+修改webpack添加ts支持(还需要<code>npm i --save-dev typescript ts-loader</code>来一发):</p>
+<pre><code class="language-javascript">const path = require('path')
+
+module.exports = {
+    mode: 'development',
+    devtool: 'none',
+    entry: {
+        calendar: './calendar/index.ts'
+    },
+    output: {
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'wwwroot'),
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
+    },
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                loader: 'ts-loader'
+            }
+        ]
+    }
+}
+</code></pre>
+<p>现在执行webpack打包，得到的<code>calendar.js</code>与之前commonjs方式是一致的:</p>
+<pre><code class="language-javascript">/// &lt;wwwroot/calendar.js&gt;
+(function(modules){
+    // ...
+    // 闭包方式return出module.exports
+})({
+    &quot;./calendar/index.js&quot;: (function(module, exports, __webpack_require__) {
+        // ...
+        // 从__webpack_require__中访问utils模块
+    }),
+    &quot;./calendar/utils.js&quot;: (function(module, exports) {
+        // ...
+    })
+})
+</code></pre>
+<p>而使用TypeScript的理由可以有这么几个:</p>
+<ul>
+<li>编码阶段的代码提示和类型检查</li>
+<li>编写第三方库时支持自动生成<code>.d.ts</code>类型声明(JS实现的话则需要手动维护一份)</li>
+<li>告别babel全家桶</li>
+</ul>
+</div>
+</body>
+</html>

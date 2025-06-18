@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】React Fiber 架构 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>【翻译】React Fiber 架构</h1>
+    <div><p><a href="https://github.com/acdlite/react-fiber-architecture#react-fiber-architecture">原文链接: React Fiber Architecture</a></p>
+<blockquote>
+<p>原文最后更改与 2016 年, 可能已过时.</p>
+</blockquote>
+<h2>简介</h2>
+<p><code>React Fiber</code> 是即将到来的 react 核心算法的重新实现. 是 react 团队两年来的研究成果.</p>
+<p><code>React Fiber</code> 的目标是增加比如 动画、布局、手势 这些领域的适配度. 首要特性就是 <strong>增量渲染</strong>: 将渲染任务拆分为多个 chunk, 然后扩散到多个帧来完成.</p>
+<p>其他核心特性还包括了发生新更改时暂停、终止或复用工作; 指定不同类型更新工作的优先级; 新的<code>并发 primitives</code>.</p>
+<h2>关于此文档</h2>
+<p>Fiber 介绍了一些新颖的概念, 通过代码可能很难去完全理解. 此文档一开始只是我关注 react 项目里的 Fiber 实现时收集的一些笔记. 当有了一定积累后, 我发现这可能对其他人也会有帮助.</p>
+<p>我会尽可能用最直白的语言, 避免专业术语, 也会尽可能关联到额外的相关信息.</p>
+<p>注意我并没有在 react 团队里, 不会有任何权威性. <strong>这不是一篇官方文档.</strong> 为保证准确性我有请 react 团队成员审阅.</p>
+<p>同时这是一个还在进行中的工作. <strong>Fiber 还是个进行中的项目, 在完成之前可能还会有重大重构.</strong> 同时我也在尝试文档化其设计, 欢迎提供改进和建议.</p>
+<p>我的目标是在阅读完本文档后, 你能足够理解 Fiber 的实现, 甚至能参与贡献 React 库.</p>
+<h3>前置阅读</h3>
+<p>在继续阅读之前强烈建议先熟悉这几条内容:</p>
+<ul>
+<li><a href="https://facebook.github.io/react/blog/2015/12/18/react-components-elements-and-instances.html">react组件, 元素, 实例</a> - &quot;组件&quot;概念经常被谈论到. 掌握这一概念至关重要.</li>
+<li><a href="https://facebook.github.io/react/docs/reconciliation.html">协调算法</a> - 对 react 协调算法的高阶解释.</li>
+<li><a href="https://github.com/reactjs/react-basic">react 基础理论概念</a> - 对react概念模型的轻量讲述. 不涉及具体实现, 但慢慢会体现出作用.</li>
+<li><a href="https://facebook.github.io/react/contributing/design-principles.html">react 设计原则</a> - 特别要关注讲述调度的章节. 这对解释为何要用 fiber 有帮助.</li>
+</ul>
+<h2>综述</h2>
+<p>根据前置阅读章节, 先一起来梳理以下概念</p>
+<h3>什么是协调算法</h3>
+<p>react 使用<strong>协调算法</strong>来比较两棵树的差异, 进而计算哪些部分需要更改.</p>
+<p><strong>更改</strong>通常是 setState 的结果, 最终作为重新渲染的结果.</p>
+<p>react api 的核心思想就是判断更改是否会让应用重新渲染. 这让开发者能够声明式地来推导, 而不用纠结于如何高效更新应用的状态(比如从 A 到 B, 从 B 到 C, 再从 C 到 A 等等).</p>
+<p>实际上只有极少数应用, 需要在每次更改时都重新渲染整个应用; 对于一个实际应用来说, 这样做的性能成本太高了. React 做了特殊优化来在保证高性能的同时找出何处触发了应用重渲染. 主要优化点在于一个叫 **协调算法(reconciliation)**的过程.</p>
+<p>协调算法基于已经被普遍理解得&quot;虚拟DOM&quot;概念. 比如可以这么理解: 当你渲染了一个 React 应用时, 一颗用来描述整个应用的节点树就会被创建并保存在内存里. 这棵树后续会被使用到所在的渲染环境 —— 比如在一个浏览器环境里, 它会被转义为一个 DOM 的操作集合. 当应用更新时(通常是通过 <code>setState</code> 方法), 一颗新的节点树会被生成. 新旧两颗树会进行差异比较, 来计算出需要进行哪些操作来更新应用.</p>
+<p>尽管 Fiber 是对协调算法彻底的重写, 其高阶算法(<a href="https://facebook.github.io/react/docs/reconciliation.html">如在React文档里描述的</a>)还是会大致相同. 其关键点是:</p>
+<ul>
+<li>不同的组件类型会生成不同的两颗组件树. react 不会去 diff 比较它们, 而是直接完整替换为新的组件树.</li>
+<li>一个列表的diff依赖于key. key需要是 &quot;固定的, 可预测的, 唯一的&quot;.</li>
+</ul>
+<h3>协调 vs 渲染</h3>
+<p>The DOM is just one of the rendering environments React can render to, the other major targets being native iOS and Android views via React Native. (This is why &quot;virtual DOM&quot; is a bit of a misnomer.)</p>
+<p>The reason it can support so many targets is because React is designed so that reconciliation and rendering are separate phases. The reconciler does the work of computing which parts of a tree have changed; the renderer then uses that information to actually update the rendered app.</p>
+<p>This separation means that React DOM and React Native can use their own renderers while sharing the same reconciler, provided by React core.</p>
+<p>Fiber reimplements the reconciler. It is not principally concerned with rendering, though renderers will need to change to support (and take advantage of) the new architecture.</p>
+<h3>调度</h3>
+<p><strong>scheduling</strong>: 用来决定任务应该何时被执行.</p>
+<p><strong>work</strong>: 所有必须执行的计算. 通常就是某次更新的结果(比如 <code>setState</code> 调用).</p>
+<p>React 的<a href="https://facebook.github.io/react/contributing/design-principles.html#scheduling">设计原则文档</a> 已经有对这个话题很好的解释, 这里列出几点:</p>
+<blockquote>
+<p>在 React 当前的实现里会递归地遍历节点树, 然后在本轮代码循环里调用render方法来完整更新整颗树. 而在未来则可能会推迟部分更新来避免出现掉帧.</p>
+<p>这在 React 的设计里是一个常规主题. 当新数据出现时, 一些流行的库会选择主动 &quot;推&quot; 的方式来执行计算. 而 React 则坚持用 &quot;拉&quot; 的方式来适当推迟计算.</p>
+<p>React is not a generic data processing library. It is a library for building user interfaces. We think that it is uniquely positioned in an app to know which computations are relevant right now and which are not.</p>
+<p>If something is offscreen, we can delay any logic related to it. If data is arriving faster than the frame rate, we can coalesce and batch updates. We can prioritize work coming from user interactions (such as an animation caused by a button click) over less important background work (such as rendering new content just loaded from the network) to avoid dropping frames.</p>
+</blockquote>
+<p>关键点有这些:</p>
+<ul>
+<li>在 UI 层, 并不是所有更改都需要被立即应用到; 事实上, 这样做会很浪费, 会造成掉帧并影响用户体验.</li>
+<li>不同类型的更改有不同的优先级 — 比如动画更新需要比数据存储更快完成.</li>
+<li><code>push-based</code> 的方式需要应用(即开发者)来决定如何协调工作. <code>pull-based</code> 方式则允许框架(react)更智能地帮你做这些决定.</li>
+</ul>
+<p>react目前并没有以重要的方式来使用调度; 一次更改会让整个子组件树都立即被重新渲染. 检查 react 的核心算法来使用调度能力就是 fiber 的驱动理念.</p>
+<hr />
+<p>现在我们准备好了深入 react fiber 的实现. 下一章会更有技术深度.</p>
+<h2>什么是 Fiber</h2>
+<p>We're about to discuss the heart of React Fiber's architecture. Fibers are a much lower-level abstraction than application developers typically think about. If you find yourself frustrated in your attempts to understand it, don't feel discouraged. Keep trying and it will eventually make sense. (When you do finally get it, please suggest how to improve this section.)</p>
+<p>Here we go!</p>
+<hr />
+<p>We've established that a primary goal of Fiber is to enable React to take advantage of scheduling. Specifically, we need to be able to</p>
+<ul>
+<li>暂停当前工作, 迟一点再回来.</li>
+<li>指定不同类型工作的优先级.</li>
+<li>复用之前完成了的工作.</li>
+<li>终止不再需要的工作.</li>
+</ul>
+<p>为了做到上述这些, 我们首先需要能打断各个单元里工作的方法. 某种意义上, fiber 就是做这个的. 一个 fiber 代表了一个 <strong>工作单元</strong>.</p>
+<p>为了更进一步, 我们先回看章节: <a href="https://github.com/reactjs/react-basic#transformation">React components as functions of data</a>. 常规表达为:</p>
+<pre><code>v = f(d)
+</code></pre>
+<p>It follows that rendering a React app is akin to calling a function whose body contains calls to other functions, and so on. This analogy is useful when thinking about fibers.</p>
+<p>The way computers typically track a program's execution is using the <a href="https://en.wikipedia.org/wiki/Call_stack">call stack</a>. When a function is executed, a new stack frame is added to the stack. That <strong>stack frame</strong> represents the work that is performed by that function.</p>
+<p>When dealing with UIs, the problem is that if too much work is executed all at once, it can cause animations to drop frames and look choppy. What's more, some of that work may be unnecessary if it's superseded by a more recent update. This is where the comparison between UI components and function breaks down, because components have more specific concerns than functions in general.</p>
+<p>Newer browsers (and React Native) implement APIs that help address this exact problem: <code>requestIdleCallback</code> schedules a low priority function to be called during an idle period, and <code>requestAnimationFrame</code> schedules a high priority function to be called on the next animation frame. The problem is that, in order to use those APIs, you need a way to break rendering work into incremental units. If you rely only on the call stack, it will keep doing work until the stack is empty.</p>
+<p>Wouldn't it be great if we could customize the behavior of the call stack to optimize for rendering UIs? Wouldn't it be great if we could interrupt the call stack at will and manipulate stack frames manually?</p>
+<p>That's the purpose of React Fiber. Fiber is reimplementation of the stack, specialized for React components. You can think of a single fiber as a <strong>virtual stack frame</strong>.</p>
+<p>The advantage of reimplementing the stack is that you can <a href="https://www.facebook.com/groups/2003630259862046/permalink/2054053404819731/">keep stack frames in memory</a> and execute them however (and whenever) you want. This is crucial for accomplishing the goals we have for scheduling.</p>
+<p>Aside from scheduling, manually dealing with stack frames unlocks the potential for features such as concurrency and error boundaries. We will cover these topics in future sections.</p>
+<p>下一章我们将更多去关注fiber的结构.</p>
+<h3>fiber 结构</h3>
+<p><em>Note: as we get more specific about implementation details, the likelihood that something may change increases. Please file a PR if you notice any mistakes or outdated information.</em></p>
+<p>In concrete terms, a fiber is a JavaScript object that contains information about a component, its input, and its output.</p>
+<p>A fiber corresponds to a stack frame, but it also corresponds to an instance of a component.</p>
+<p>Here are some of the important fields that belong to a fiber. (This list is not exhaustive.)</p>
+<h4><code>type</code> 和 <code>key</code></h4>
+<p>The type and key of a fiber serve the same purpose as they do for React elements. (In fact, when a fiber is created from an element, these two fields are copied over directly.)</p>
+<p>The type of a fiber describes the component that it corresponds to. For composite components, the type is the function or class component itself. For host components (<code>div</code>, <code>span</code>, etc.), the type is a string.</p>
+<p>Conceptually, the type is the function (as in <code>v = f(d)</code>) whose execution is being tracked by the stack frame.</p>
+<p>Along with the type, the key is used during reconciliation to determine whether the fiber can be reused.</p>
+<h4><code>child</code> 和 <code>sibling</code></h4>
+<p>These fields point to other fibers, describing the recursive tree structure of a fiber.</p>
+<p>The child fiber corresponds to the value returned by a component's <code>render</code> method. So in the following example</p>
+<pre><code class="language-jsx">function Parent() {
+  return &lt;Child /&gt;
+}
+</code></pre>
+<p>The child fiber of <code>Parent</code> corresponds to <code>Child</code>.</p>
+<p>The sibling field accounts for the case where <code>render</code> returns multiple children (a new feature in Fiber!):</p>
+<pre><code class="language-jsx">function Parent() {
+  return [&lt;Child1 /&gt;, &lt;Child2 /&gt;]
+}
+</code></pre>
+<p>The child fibers form a singly-linked list whose head is the first child. So in this example, the child of <code>Parent</code> is <code>Child1</code> and the sibling of <code>Child1</code> is <code>Child2</code>.</p>
+<p>Going back to our function analogy, you can think of a child fiber as a <a href="https://en.wikipedia.org/wiki/Tail_call">tail-called function</a>.</p>
+<h4><code>return</code></h4>
+<p>The return fiber is the fiber to which the program should return after processing the current one. It is conceptually the same as the return address of a stack frame. It can also be thought of as the parent fiber.</p>
+<p>If a fiber has multiple child fibers, each child fiber's return fiber is the parent. So in our example in the previous section, the return fiber of <code>Child1</code> and <code>Child2</code> is <code>Parent</code>.</p>
+<h4><code>pendingProps</code> 和 <code>memoizedProps</code></h4>
+<p>Conceptually, props are the arguments of a function. A fiber's <code>pendingProps</code> are set at the beginning of its execution, and <code>memoizedProps</code> are set at the end.</p>
+<p>When the incoming <code>pendingProps</code> are equal to <code>memoizedProps</code>, it signals that the fiber's previous output can be reused, preventing unnecessary work.</p>
+<h4><code>pendingWorkPriority</code></h4>
+<p>A number indicating the priority of the work represented by the fiber. The <a href="https://github.com/facebook/react/blob/master/src/renderers/shared/fiber/ReactPriorityLevel.js">ReactPriorityLevel</a> module lists the different priority levels and what they represent.</p>
+<p>With the exception of <code>NoWork</code>, which is 0, a larger number indicates a lower priority. For example, you could use the following function to check if a fiber's priority is at least as high as the given level:</p>
+<pre><code class="language-jsx">function matchesPriority(fiber, priority) {
+  return fiber.pendingWorkPriority !== 0 &amp;&amp;
+         fiber.pendingWorkPriority &lt;= priority
+}
+</code></pre>
+<p>This function is for illustration only; it's not actually part of the React Fiber codebase.</p>
+<p>The scheduler uses the priority field to search for the next unit of work to perform. This algorithm will be discussed in a future section.</p>
+<h4><code>alternate</code></h4>
+<p><strong>flush</strong>: 重置一个已经渲染输出到屏幕上的 fiber.</p>
+<p><strong>work-in-progress</strong>: A fiber that has not yet completed; conceptually, a stack frame which has not yet returned.</p>
+<p>At any time, a component instance has at most two fibers that correspond to it: the current, flushed fiber, and the work-in-progress fiber.</p>
+<p>The alternate of the current fiber is the work-in-progress, and the alternate of the work-in-progress is the current fiber.</p>
+<p>A fiber's alternate is created lazily using a function called <code>cloneFiber</code>. Rather than always creating a new object, <code>cloneFiber</code> will attempt to reuse the fiber's alternate if it exists, minimizing allocations.</p>
+<p>You should think of the <code>alternate</code> field as an implementation detail, but it pops up often enough in the codebase that it's valuable to discuss it here.</p>
+<h4><code>output</code></h4>
+<p><strong>宿主组件</strong>: react 应用的叶子节点. 他们会被具体渲染到环境里 (比如在浏览器里就是 <code>div</code>, <code>span</code>这些). 在 JSX 里,  他们是用小写的标签名来表示.</p>
+<p>从概念上讲, fiber 的输出即是一个函数的返回值.</p>
+<p>每个 fiber 最终都有一个输出, 但只有 <strong>宿主组件</strong> 的叶子节点的输出才会被创建. The output is then transferred up the tree.</p>
+<p>输出即是实际给到渲染器的, 用来完整更改到渲染环境里的东西.  渲染器的责任就是定义输出会被怎样创建和更新.</p>
+<h2>未来计划</h2>
+<p>目前这就是全部了, 但此文档还远没有完成. 后续章节将会讲述一次更新的生命周期内使用的算法. 包含了这些话题:</p>
+<ul>
+<li>调度器如何找到并执行下一个工作单元.</li>
+<li>fiber 树如何跟踪和传播优先级.</li>
+<li>调度器如何知道何时要暂停和继续工作.</li>
+<li>工作如何被重置和标记为完成.</li>
+<li>副作用如何工作(比如生命周期钩子).</li>
+<li>什么是携程, 以及如何被用来实现比如 context 和 layout 等这些特性.</li>
+</ul>
+<h2>相关视频</h2>
+<p><a href="https://youtu.be/aV1271hd9ew">What's Next for React (ReactNext 2016)</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>不使用cli搭建angular项目 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>不使用cli搭建angular项目</h1>
+    <div><p>本文将从一个空目录开始搭建一个最小化可运行的完整angular项目。并且不依赖<code>@angular/cli</code>，纯手工配置<code>webpack</code>来实现。即花费巨大力气完成<code>@angular/cli</code>中的如下命令：</p>
+<pre><code class="language-shell">ng new angulectron
+ng build --prod
+</code></pre>
+<h2>初始化</h2>
+<p>初始化项目使用<code>yarn init</code>(或<code>npm init</code>)完成，最终得到包含单个<code>package.json</code>的项目。像这样：</p>
+<pre><code class="language-shell">mkdir angulectron &amp;&amp; cd angulectron
+yarn init
+// 一路回车或细心输入配置
+</code></pre>
+<p>得到类似如下内容的<code>package.json</code>文件：</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;angulectron&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;main&quot;: &quot;index.js&quot;,
+  &quot;license&quot;: &quot;MIT&quot;
+}
+</code></pre>
+<p>为了防止第一步太过简单，顺便我们再往里面添加一波依赖：</p>
+<pre><code class="language-shell">yarn add @angular/core @angular/common @angular/platform-browser @angular/platform-browser-dynamic @angular/compiler rxjs zone.js core-js
+
+yarn add --dev @angular/compiler-cli webpack webpack-cli webpack-dev-server typescript@2.9.2
+
+yarn add --dev html-webpack-plugin to-string-loader css-loader sass-loader raw-loader file-loader @ngtools/webpack @angular-devkit/build-optimizer uglifyjs-webpack-plugin mini-css-extract-plugin node-sass rimraf http-server
+</code></pre>
+<ul>
+<li>第一波依赖是angular相关的几个依赖，已经足够最简单运行了</li>
+<li>第二波是大哥webpack还有干爹typescript。其中typescript必须指定2版本(目前最新已经到3以上了)。</li>
+<li>第三波是webpack家族的一些loader和plugin，以及<code>rimraf</code>用于删除生成的文件，<code>http-server</code>用于运行小服务器来访问生成的资源。</li>
+</ul>
+<p>再添加一些脚本来帮助运行打包，这一步最终得到一个只包含单个<code>package.json</code>文件的项目，内容像这样：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;angulectron&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;description&quot;: &quot;Starter for electron app with angular(v6+)&quot;,
+    &quot;main&quot;: &quot;main.js&quot;,
+    &quot;scripts&quot;: {
+        &quot;http&quot;: &quot;http-server ./wwwroot&quot;,
+        &quot;prod&quot;: &quot;rimraf wwwroot &amp;&amp; yarn webpack -- --config ./webpack.config.js --open --progress --profile --content-base src/&quot;,
+        &quot;dev&quot;: &quot;yarn webpack-dev-server -- --config ./webpack.config.dev.js --open --progress --profile --watch --content-base src/&quot;,
+        &quot;webpack&quot;: &quot;node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js&quot;,
+        &quot;webpack-dev-server&quot;: &quot;node --max_old_space_size=4096 node_modules/webpack-dev-server/bin/webpack-dev-server.js&quot;
+    },
+    &quot;repository&quot;: {
+        &quot;type&quot;: &quot;git&quot;,
+        &quot;url&quot;: &quot;git+https://github.com/yitimo/angulectron.git&quot;
+    },
+    &quot;keywords&quot;: [
+        &quot;angular&quot;,
+        &quot;electron&quot;
+    ],
+    &quot;author&quot;: &quot;yitimo &lt;admin@yitimo.com&gt;&quot;,
+    &quot;license&quot;: &quot;MIT&quot;,
+    &quot;bugs&quot;: {
+        &quot;url&quot;: &quot;https://github.com/yitimo/angulectron/issues&quot;
+    },
+    &quot;homepage&quot;: &quot;https://github.com/yitimo/angulectron#readme&quot;,
+    &quot;devDependencies&quot;: {
+        &quot;@angular-devkit/build-optimizer&quot;: &quot;^0.8.4&quot;,
+        &quot;@angular/cli&quot;: &quot;^6.2.4&quot;,
+        &quot;@angular/compiler-cli&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/language-service&quot;: &quot;^6.1.9&quot;,
+        &quot;@ngtools/webpack&quot;: &quot;^6.2.4&quot;,
+        &quot;@types/hammerjs&quot;: &quot;^2.0.36&quot;,
+        &quot;@types/node&quot;: &quot;^10.11.5&quot;,
+        &quot;@types/uglify-js&quot;: &quot;^3.0.3&quot;,
+        &quot;@types/webpack&quot;: &quot;^4.4.14&quot;,
+        &quot;codelyzer&quot;: &quot;^4.5.0&quot;,
+        &quot;copy-webpack-plugin&quot;: &quot;^4.5.2&quot;,
+        &quot;css-loader&quot;: &quot;^1.0.0&quot;,
+        &quot;file-loader&quot;: &quot;^2.0.0&quot;,
+        &quot;html-loader&quot;: &quot;^0.5.5&quot;,
+        &quot;html-webpack-plugin&quot;: &quot;^3.2.0&quot;,
+        &quot;http-server&quot;: &quot;^0.11.1&quot;,
+        &quot;mini-css-extract-plugin&quot;: &quot;^0.4.2&quot;,
+        &quot;node-sass&quot;: &quot;^4.9.3&quot;,
+        &quot;raw-loader&quot;: &quot;^0.5.1&quot;,
+        &quot;rimraf&quot;: &quot;^2.6.2&quot;,
+        &quot;sass-loader&quot;: &quot;^7.1.0&quot;,
+        &quot;script-ext-html-webpack-plugin&quot;: &quot;^2.0.1&quot;,
+        &quot;style-loader&quot;: &quot;^0.23.0&quot;,
+        &quot;to-string-loader&quot;: &quot;^1.1.5&quot;,
+        &quot;ts-loader&quot;: &quot;^5.2.1&quot;,
+        &quot;tslint&quot;: &quot;^5.11.0&quot;,
+        &quot;typescript&quot;: &quot;^2.7.2&quot;,
+        &quot;webpack&quot;: &quot;^4.19.0&quot;,
+        &quot;webpack-cli&quot;: &quot;^3.1.0&quot;,
+        &quot;webpack-dev-server&quot;: &quot;^3.1.8&quot;,
+        &quot;webpack-inline-manifest-plugin&quot;: &quot;^4.0.1&quot;
+    },
+    &quot;dependencies&quot;: {
+        &quot;@angular/animations&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/common&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/compiler&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/core&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/forms&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/platform-browser&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/platform-browser-dynamic&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/platform-server&quot;: &quot;^6.1.9&quot;,
+        &quot;@angular/router&quot;: &quot;^6.1.9&quot;,
+        &quot;core-js&quot;: &quot;^2.5.7&quot;,
+        &quot;rxjs&quot;: &quot;^6.3.3&quot;,
+        &quot;zone.js&quot;: &quot;^0.8.26&quot;
+    }
+}
+</code></pre>
+<h2>最简单源代码</h2>
+<p>抛开脚手架，项目真正的源代码要放到一个<code>src</code>目录下，本文重点不在此，所以除了入口文件外只创建最简单的源代码，只有一个根模块，根组件，以及外联的模板和样式文件，像这样：</p>
+<p><img src="/assets/images/201810/1.png" alt="目录结构" /></p>
+<p><strong>polyfills.ts：</strong></p>
+<pre><code class="language-typescript">import 'core-js/es7/reflect';
+import 'zone.js/dist/zone';
+</code></pre>
+<p><strong>main.ts：</strong></p>
+<pre><code class="language-typescript">import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { enableProdMode } from '@angular/core';
+import { AppModule } from './app/app.module';
+
+// webpack DefinePlugin 注入的变量，需要声明，否则编辑器会报错
+declare var ENV: string;
+
+if (ENV === 'production') {
+    enableProdMode();
+}
+platformBrowserDynamic().bootstrapModule(AppModule);
+</code></pre>
+<p><strong>index.html：</strong></p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;ie=edge&quot;&gt;
+    &lt;title&gt;My App&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;angulectron&gt;Loading...&lt;/angulectron&gt;
+    &lt;% if (isDevServer) { %&gt;&lt;script src=&quot;/webpack-dev-server.js&quot;&gt;&lt;/script&gt;&lt;% } %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code></pre>
+<p><strong>app.module.ts：</strong></p>
+<pre><code class="language-typescript">import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+    imports: [
+        BrowserModule
+    ],
+    declarations: [AppComponent],
+    providers: [],
+    bootstrap: [AppComponent],
+})
+export class AppModule { }
+</code></pre>
+<p><strong>app.component.ts：</strong></p>
+<pre><code class="language-typescript">import { Component } from '@angular/core';
+
+@Component({
+    selector: 'angulectron',
+    templateUrl: 'app.component.html',
+    styleUrls: ['app.component.css', 'app.component.scss']
+})
+export class AppComponent { }
+</code></pre>
+<p><strong>app.component.html：</strong></p>
+<pre><code class="language-html">&lt;h2&gt;Hello !!!&lt;/h2&gt;
+</code></pre>
+<p><strong>app.component.css：</strong></p>
+<pre><code class="language-css">h2 {
+    color: #CD5C5C;
+}
+</code></pre>
+<p><strong>app.component.scss：</strong></p>
+<pre><code class="language-css">h2 {
+    font-size: 32px;
+}
+</code></pre>
+<p>其中报错是因为未配置<code>tsconfig.json</code>，编辑器报了<code>es7</code>装饰器新特性的警告，所以在项目根目录新建一个<code>tsconfig.json</code>：</p>
+<pre><code class="language-json">{
+    &quot;compilerOptions&quot;: {
+        &quot;target&quot;: &quot;es5&quot;,
+        &quot;module&quot;: &quot;esnext&quot;, // 重要 可以明显减小最终打包的体积
+        &quot;moduleResolution&quot;: &quot;node&quot;,
+        &quot;emitDecoratorMetadata&quot;: true,
+        &quot;experimentalDecorators&quot;: true,
+        &quot;allowSyntheticDefaultImports&quot;: true,
+        &quot;sourceMap&quot;: true,
+        &quot;noEmitHelpers&quot;: true,
+        &quot;importHelpers&quot;: true,
+        &quot;strictNullChecks&quot;: false,
+        &quot;lib&quot;: [&quot;dom&quot;, &quot;es2015&quot;],
+        &quot;baseUrl&quot;: &quot;./src&quot;,
+        &quot;paths&quot;: {
+            &quot;@angular/*&quot;: [&quot;../node_modules/@angular/*&quot;]
+        }
+    },
+    &quot;exclude&quot;: [
+        &quot;node_modules&quot;,
+        &quot;wwwroot&quot;
+    ]
+}
+</code></pre>
+<h2>webpack</h2>
+<p><code>webpack</code>配置是重头戏，实际上<code>@angular/cli</code>生成的项目内部也使用了<code>webpack</code>，不过已经被封装好了使用时完全不用去关心。</p>
+<p>基本的<code>webpack</code>配置为一个名为<code>webpack.config.js</code>的文件，文件导出一个<code>object</code>，这个<code>object</code>至少包含以下几部分：</p>
+<ol>
+<li><strong>entry</strong> 指定入口文件，我们这里是<code>main.ts</code>和<code>polyfills.ts</code>这两个</li>
+<li><strong>output</strong> 指定输出的目录、名字等</li>
+<li><strong>module.rules</strong> 配置各种<code>loader</code></li>
+<li><strong>plugins</strong> 配置各种额外规则</li>
+<li><strong>optimization</strong> 配置资源压缩以及分包</li>
+<li><strong>devServer</strong> 配置开发服务器</li>
+</ol>
+<p>针对<code>angular</code>项目特有的配置项是两个<code>loader</code>和一个<code>plugin</code>，均来自于<code>@ngtools/webpack</code>这个包，实际上<code>@angular/cli</code>内部也使用了这个东西，依靠这个包才让手动配置<code>angular</code>项目的<code>webpack</code>变得简单(对比angular2刚发布的年代)。</p>
+<p>最终一个完整的webpack配置像这样：</p>
+<pre><code class="language-javascript">const path = require('path');
+
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ENV = 'production';
+
+module.exports = {
+    mode: ENV,
+    devtool: 'source-map',
+    entry: {
+        polyfills: path.resolve(__dirname, './src/polyfills.ts'),
+        main: path.resolve(__dirname, './src/main.ts')
+    },
+    output: {
+        path: path.resolve(__dirname, 'wwwroot'),
+        filename: '[name].[chunkhash].bundle.js',
+        sourceMapFilename: '[file].map',
+        chunkFilename: '[name].[chunkhash].chunk.js'
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ['to-string-loader', 'css-loader'],
+                exclude: [path.resolve(__dirname, './src/styles')]
+            },
+            {
+                test: /\.scss$/,
+                use: ['to-string-loader', 'css-loader', 'sass-loader'],
+                exclude: [path.resolve(__dirname, './src/styles')]
+            },
+            {
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                include: [path.resolve(__dirname, './src/styles')]
+            },
+            {
+                test: /\.scss$/,
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+                include: [path.resolve(__dirname, './src/styles')]
+            },
+            {
+                test: /\.html$/,
+                use: ['raw-loader'],
+                exclude: [path.resolve(__dirname, './src/index.html')]
+            },
+            {
+                test: /\.(jpg|png|gif|pdf|eot|woff2?|svg|ttf)$/,
+                use: 'file-loader'
+            },
+            {
+                test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+                use: [{
+                    loader: '@angular-devkit/build-optimizer/webpack-loader',
+                    options: {
+                        sourceMap: false
+                    }
+                }, '@ngtools/webpack']
+            },
+            {
+                test: /\.js$/,
+                use: [{
+                    loader: '@angular-devkit/build-optimizer/webpack-loader',
+                    options: {
+                        sourceMap: false
+                    }
+                }]
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            inject: 'body',
+            xhtml: true,
+            minify: true
+        }),
+        new DefinePlugin({
+            'isDevServer': 'false',
+            'ENV': JSON.stringify(ENV)
+        }),
+        new AngularCompilerPlugin({
+            tsConfigPath: './tsconfig.json',
+            entryModule: './src/app/app.module#AppModule'
+        }),
+        new MiniCssExtractPlugin({ filename: '[name]-[hash].css', chunkFilename: '[name]-[chunkhash].css' })
+    ],
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                sourceMap: false,
+                parallel: true,
+                cache: path.resolve(__dirname, 'webpack-cache/uglify-cache'),
+                uglifyOptions: {
+                    compress: {
+                        pure_getters: true,
+                        passes: 2
+                    },
+                    output: {
+                        ascii_only: true,
+                        comments: false
+                    }
+                }
+            })
+        ],
+        splitChunks: {
+            chunks: 'all'
+        }
+    },
+    devServer: {
+        port: 4201,
+        host: '127.0.0.1',
+        historyApiFallback: true,
+        watchOptions: {
+          ignored: /node_modules/
+        }
+    },
+    node: {
+        global: true,
+        crypto: 'empty',
+        process: false,
+        module: false,
+        clearImmediate: false,
+        setImmediate: false,
+        fs: 'empty'
+    }
+}
+</code></pre>
+<p>现在执行命令<code>yarn prod</code>，以上配置将生成生产模式加AOT模式下的输出，并且最终代码都会压缩至最小体积，像这样：</p>
+<p><img src="/assets/images/201810/2.png" alt="输出" /></p>
+<p>执行<code>yarn http</code>运行一下看看：</p>
+<p><img src="/assets/images/201810/3.png" alt="运行" /></p>
+<p>至此纯手工最简单的angular项目就完成了。对这个小项目做几个总结：</p>
+<ol>
+<li>其中的配置只针对<code>prod + AOT</code>模式，即不是<code>JIT</code>模式</li>
+<li>对于开发环境可以再新增一个<code>webpack.config.dev.js</code>来配置生产环境下的webpack规则，并搭配<code>webpack-dev-server</code>使用(本文未完成这一步)。对于生产环境就像文中这样先<code>yarn prod</code>，然后扔到服务器上。</li>
+<li><code>@ngtools/webpack</code>与<code>MiniCssExtractPlugin</code>不兼容，所以注意配置<code>exclude</code>规则。</li>
+<li><code>tsconfig.json</code>中的<code>&quot;module&quot;: &quot;esnext&quot;</code>这一配置相比<code>&quot;module&quot;: &quot;commonjs&quot;</code>能减少不少体积。</li>
+</ol>
+<h2>相关链接</h2>
+<ul>
+<li><a href="https://github.com/gdi2290/angular-starter">angular-starter</a> 一个教科书级复杂的angular启动项目，非常适合进阶观摩学习</li>
+<li><a href="https://github.com/yitimo/angulectron">angulectron</a> 本文示例项目地址，之后会整合electron并继续完善。</li>
+</ul>
+</div>
+</body>
+</html>

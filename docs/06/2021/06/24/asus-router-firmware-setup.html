@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>华硕路由器 AX88U 刷梅林改固件 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>华硕路由器 AX88U 刷梅林改固件</h1>
+    <div><p>此为基于自己的 <code>AX88U</code> 路由器刷上梅林改固件后的一个备忘总结。</p>
+<ul>
+<li>wire the router</li>
+<li>set as an aimesh node</li>
+<li>disable smart connect</li>
+<li>set different SSIDs</li>
+<li>fixed channels</li>
+</ul>
+<h2>固件升级</h2>
+<p>迫于koolshare论坛于本月提高了其一些固件帖子的可阅读权限, 用户必须拿到50积分才能阅读, 而笔者的万年潜水账号只有可怜的1分, 上传头像后分数终于高达3分, 预计还需要每日签到至一个半月后才有浏览资格:(
+而笔者的需求其实并不高, 仅为下载到一个不需要最新的固件离线包, 然后给路由器刷上跑起来即可. 对于同样需求的人可以按以下几步完成:</p>
+<ol>
+<li>到 <a href="https://firmware.koolshare.cn/">KoolShare固件下载服务器</a>找到自己需要的包, 比如笔者的 AX88U 就是: <a href="https://firmware.koolshare.cn/Koolshare_RMerl_New_Gen_386/RT-AX88U/">https://firmware.koolshare.cn/Koolshare_RMerl_New_Gen_386/RT-AX88U/</a></li>
+<li>在自己的路由器后台 <code>固件升级</code> 里上传下载到的 <code>.w</code> 文件, 然后路由器会自动重启</li>
+<li>在 <code>系统管理 &gt; 系统设置</code> 内勾选 <code>Format JFFS partition at next boot</code> 和 <code>Enable JFFS custom scripts and configs</code> &gt; 点击应用本页面设置 &gt; 成功后重启路由器</li>
+</ol>
+<h3>一些注意事项</h3>
+<ul>
+<li>以上仅为官方固件刷梅林改的方式</li>
+<li>本文使用到的工具、技术仍基于并来自 <a href="https://koolshare.cn/forum-96-1.html">koolshare社区</a></li>
+<li>如固件下载服务器里提到的, 此方式只能下载到除了最新版的旧版固件, 对于 <code>想刷最新版 &amp;&amp; (非社交恐惧 || 有耐心签到)</code> 的人士, 还是得移步论坛</li>
+<li>实测忘记做第3步, 新固件也已经可用了, 应该是新版<strong>默认开启</strong>了</li>
+<li>刷到新固件后恢复出厂还会是新的固件, 但软件需要重新装, JFFS 开关需要手动开</li>
+</ul>
+<h2>概念梳理</h2>
+<p>已迁移至 <a href="../07/network-knowledge-for-home-use.html">家用网络知识梳理</a></p>
+<p>TODO: 更多待补充</p>
+<h2>相关链接</h2>
+<ul>
+<li><a href="https://koolshare.cn/forum-96-1.html">KoolShare交流社区</a></li>
+<li><a href="https://github.com/hq450/fancyss">神秘软件</a></li>
+</ul>
+</div>
+</body>
+</html>

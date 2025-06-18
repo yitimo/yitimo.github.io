@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】在 Docker 管理数据 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>【翻译】在 Docker 管理数据</h1>
+    <div><blockquote>
+<p>原文链接：<a href="https://docs.docker.com/storage/">Manage data in Docker</a></p>
+</blockquote>
+<p>默认情况下容器内创建的所有文件都被存储在一个可写的容器层内, 这意味着:</p>
+<ul>
+<li>当容器不再存在时数据也不能保持, 并且容器外的其他进程将很难访问到这些数据.</li>
+<li>容器可写层是与容器运行的宿主机环境紧密藕和的. 你不能很轻松的将数据移动到别处去.</li>
+<li>写入数据到容器可写层需要一个<a href="https://docs.docker.com/storage/storagedriver/">存储驱动器</a>来管理文件系统. 其使用linux内核提供了一个联合的文件系统. 这一额外的抽象层相比使用数据卷性能要差, 后者能直接写入文件到宿主文件系统里.</li>
+</ul>
+<p>Docker有两个可选配置来保证即使容器停止了, 文件也能持久存储在宿主机上: 卷(volumes) 和 绑定挂载(bind mounts).</p>
+<p>同时Docker还支持容器将文件存储在宿主机内存里. 这些文件不是持久化存储的. 如果你在 linux 上运行 Docker, 会使用 <code>tmpfs</code> 挂载来保存文件到宿主机内存里. Windows下则用的是命名管道(named pipe).</p>
+<h2>选择正确的挂载方式</h2>
+<p>无论你选择用那种方式来挂载文件, 对容器来说数据都是相同的. 最终都是暴露为容器文件系统里的一个目录或文件.</p>
+<p>一个简单的形容数据卷、绑定挂载和tmpfs挂载区别的方式是想象数据如何在Docker宿主里存在.</p>
+<p><img src="/assets/images/202401/types-of-mounts.webp" alt="type of mounts" /></p>
+<ul>
+<li>数据卷保存在由Docker管理的宿主文件系统的一部分里(linux里是<code>/var/lib/docker/volumes/</code>). 非Docker进程不应该修改文件系统里的一部分. 数据卷是Docker里最好的存储数据的方式.</li>
+<li>绑定挂载可能被存储在宿主系统的任意位置. 他们可能是很重要的系统文件或目录. 宿主机上的非Docker进程或者Docker容器自己都能任意修改它们.</li>
+<li>tmpfs挂在只会保存在宿主机的内存里, 永远都不会被写进宿主机文件系统里.</li>
+</ul>
+<p>绑定挂载合数据卷都能用 <code>-v</code> 或 <code>--volume</code> 标识挂在到容器里, 但是有略微不同. 而对于tmpfs挂载, 你可以使用 <code>--tmpfs</code> 标识. 我们推荐容器和服务都用 <code>--mount</code> 来使用绑定挂载, 数据卷, 或者 tmpfs 挂载, 这样语法更加清晰.</p>
+<h3>数据卷</h3>
+<p>数据卷由Docker来创建和管理. 你可以直接使用 <code>docker volume create</code> 命令来创建一个数据卷, 或者由Docker在创建容器或服务时自动创建.</p>
+<p>当创建好一个数据卷时, 它被存储在宿主机的一个目录下. 当把数据卷挂载到容器时, 这个目录就被挂在到了容器下. 这个行为与绑定挂载类似, 不过数据卷是由Docker来管理, 与宿主机的核心系统隔离.</p>
+<p>一个数据卷可以同时被挂在到多个容器下. 当没有运行中的容器使用到时, 这个数据卷对Docker来说也仍然存在, 不会被自动删除. 你可以用 <code>docker volume prune</code> 命令来删除所有未被使用的数据卷.</p>
+<p>当你挂载了一个数据卷, 它可能是具名的或匿名的. 匿名数据卷会由Docker生成一个随机的唯一标识. 和具名数据卷一样, 即使你删除了容器, 匿名数据卷也会继续存在. 除非你在创建容器时用了 <code>--rm</code> 标识. 如果在创建容器时加了 <code>--rm</code> 标识, Docker就会自动移除匿名数据卷. 具体可查看<a href="https://docs.docker.com/storage/volumes/#remove-anonymous-volumes">移除匿名数据卷</a>.</p>
+<p>数据卷同时还支持卷驱动器, 这让你可以将数据存储在远程主机或云提供商等更多可能的地方.</p>
+<h3>绑定挂载</h3>
+<p>绑定挂载相比数据卷有几个限制. 当使用了绑定挂载, 一个宿主机上的文件或目录就会被挂在到容器里. 这个文件或目录通过其在宿主机上的完整路径被引用. 这个文件或目录不一定已经存在于宿主机上. 如果未存在则会自动创建. 绑定挂载很快, 但是宿主机的文件系统需要指定一个目录结构给它. 如果你在开发新的Docker应用, 可以考虑改用具名数据卷. 你不能用Docker的cli命令来直接管理绑定挂载.</p>
+<blockquote>
+<h4>重要</h4>
+<p>绑定挂载默认会赋予宿主机上文件的写权限</p>
+<p>使用绑定挂载的一个副作用是, 你可以通过运行在容器里的进程来更改宿主机的文件系统, 包括创建、修稿或删除重要的系统文件或目录. 这是个强大的能力, 会有安全方面的影响, 包括影响到宿主机上的非Docker进程.</p>
+</blockquote>
+<blockquote>
+<h4>提示</h4>
+<p>代码库较大或用到了多仓库(monorepos), 或是用到了不再随代码增大的虚拟文件系统吗? 可以看看<a href="https://docs.docker.com/desktop/synchronized-file-sharing/">同步文件共享</a>. 这提供了快速且弹性的宿主到虚拟机的文件共享能力, 其使用同步文件系统缓存来强化了绑定挂载的性能.</p>
+</blockquote>
+<h3>tmpfs</h3>
+<p>tmpfs挂载不论在容器内还是宿主机上都不会存储到硬盘上. 其可以在容器生命周期内被使用, 用来保存非持久化的状态或敏感信息. 例如, Swarm服务内部就使用了tmpfs来挂载<a href="https://docs.docker.com/engine/swarm/secrets/">秘钥</a>到服务的容器里.</p>
+<h3>具名管道</h3>
+<p><a href="https://docs.microsoft.com/en-us/windows/desktop/ipc/named-pipes">具名管道</a>可以用于Docker宿主和容器间的通信. 一个常用场景是在容器内通过第三方工具来连接到Docker引擎的API.</p>
+<h2>适合用数据卷的情况</h2>
+<p>数据卷是在Docker容器或服务里持久化存储数据时更推荐的方式. 一些使用场景包括:</p>
+<ul>
+<li>想要在多个运行的容器间共享数据. 如果你不显式的创建, 数据卷会在首次挂载到容器时被创建. 当容器停止或被移除时, 数据卷仍然会存在. 多个容器可以同时挂载同一个数据卷, 不管是可读写的还是只读的. 数据卷只会在你明确想要移除时才会移除.</li>
+<li>想要Docker宿主不被授予数据卷里目录或文件的权限, 数据卷能帮你将宿主机配置与容器运行时解耦.</li>
+<li>想要保存容器数据到一个远程主机或云提供商, 而不仅仅是保存在本地.</li>
+<li>想要备份、回退或迁移数据到另一个Docker宿主机上. 此时数据卷是个更好的选择. 你可以先停止使用了数据卷的容器, 然后备份数据卷的目录(比如<code>/var/lib/docker/volumes/&lt;volume-name&gt;</code>).</li>
+<li>想要应用在Docker桌面上有更高的I/O性能. 数据卷被保存在linux虚拟机上而不是宿主机上, 这意味着其读写操作能有更低的延迟和更高的吞吐量.</li>
+<li>你的应用需要在Docker桌面上有完整的原生文件系统表现. 比如, 一个数据库引擎需要对磁盘清理有精确的控制来保证事务操作. 数据卷被保存在linux虚拟机上, 可以做到这些, 而绑定挂载对于macOS或windows来说是远程操作, 此时文件系统表现会有略微不同.</li>
+</ul>
+<h2>适合用绑定挂载的情况</h2>
+<p>通常来说你应该尽量使用数据卷. 绑定挂载则适用于这些情况:</p>
+<ul>
+<li>在宿主和容器间共享配置文件. Docker默认用这种方式来提供DNS解决方案, 通过挂载 <code>/etc/resolv.conf</code> 到每个容器内.</li>
+<li>开发环境下在宿主和容器间共享源码或构建产物. 比如, 你可以挂在Maven的<code>target/</code>目录到容器里, 然后每次你在宿主机上构建Maven工程时, 容器内都能访问到重构建后的产物.<br />如果你用Docker以这种方式来开发, 你的生产环境的Dockerfile应该要直接复制准-生产产物到镜像里, 而不是通过绑定挂载.</li>
+<li>当Docker宿主机的文件或目录结构能确保与容器内引用的绑定挂载相符时.</li>
+</ul>
+<h2>适合用 tmpfs 挂载的情况</h2>
+<p>tmpfs挂载最适合用在当你不想数据被保存到容器里或宿主机上时. 这可能是出于安全原因, 或是应用需要写入较大的非持久化数据时用来保证性能.</p>
+<h2>使用绑定挂载或数据卷时的注意事项</h2>
+<p>当你使用绑定挂载或者数据卷时, 注意以下事项:</p>
+<ul>
+<li>如果你挂载了一个空的数据卷到容器内的非空目录下, 这些非空文件或目录会被同步(复制)到数据卷里. 同样的, 如果你启动容器时指定了一个尚未存在的数据卷, 此时就会创建出一个空数据卷. 这是个好方式来预填充另一容器需要的数据.</li>
+<li>如果你绑定挂载了非空目录或挂载了非空数据卷到容器的非空目录里, 这些文件或目录会被遮盖, 就好像你保存文件到linux宿主机的<code>/mnt</code>目录下然后又挂载了一个USB驱动到<code>/mnt</code>下. <code>/mnt</code>目录下的内容会被USB驱动的内容遮盖, 一直到USB驱动被卸载. 被遮盖的文件不会被移除或改变, 但是当有绑定挂载或挂载了数据卷时会不可访问.</li>
+</ul>
+<h2>下一步</h2>
+<ul>
+<li>更多关于<a href="https://docs.docker.com/storage/volumes/">数据卷</a>.</li>
+<li>更多关于<a href="https://docs.docker.com/storage/bind-mounts/">绑定挂载</a>.</li>
+<li>更多关于<a href="https://docs.docker.com/storage/tmpfs/">tmpfs挂载</a>.</li>
+<li>更多关于<a href="https://docs.docker.com/storage/storagedriver/">存储驱动</a>, 这与绑定挂载合数据卷无关, 但能让你保存数据到容器可写层.</li>
+</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>angular第三方包开发整理 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>angular第三方包开发整理</h1>
+    <div><p>近日笔者维护自己的几个无名小repo时，发觉想要创作一个第三方<code>angular</code>包，着实有一些不难但易乱的小问题，故作此文总结。本文将完成以下内容：</p>
+<ul>
+<li>从空白开始搭建一个基于<code>angular</code>的第三方包</li>
+<li>在本地测试待发布的包</li>
+<li>在<code>npm</code>或<code>yarn</code>发布包中指定内容</li>
+<li>在普通<code>angular</code>应用中引入并使用发布的包</li>
+</ul>
+<h2>基本项目搭建</h2>
+<p>一般的<code>angular app</code>使用<code>angular-cli</code>创建，直接<code>ng new name</code>搞定，生成的项目把<code>webpack</code>、<code>AOT</code>、<code>dev server</code>等细节都隐藏了，还支持各种参数来配置测试和<code>sass</code>等，使用起来直接<code>npm run start</code>、<code>npm run build</code>，可以说是非常傻瓜了，跳过了学习<code>webpack</code>等的许多大坑。
+不过，如果是要搭建<code>angular</code>第三方包，预编译样式和打包部署这些一般就用不着了，取而代之的要熟悉<code>npm(yarn)</code>、<code>tsconfig</code>。</p>
+<h3>初始化</h3>
+<p>项目搭建命令如下：</p>
+<pre><code>mkdir my-ng-lib
+cd my-ng-lib
+yarn init
+</code></pre>
+<p>一路回车(实际情况中还是要编辑好包的基本信息)最终得到一个<code>package.json</code>，然后<code>vscode</code>打开：
+<img src="/assets/images/201801/01.png" alt="初始化npm包" /></p>
+<h3>依赖</h3>
+<p>作为<code>angular</code>的第三方包，首先需要安装如下依赖：
+<img src="/assets/images/201801/02.png" alt="依赖安装" /></p>
+<p>其中<code>typescript</code>指定了版本是为了和当前<code>angular-cli</code>使用的版本保持一致，实际可能不必要这么做。
+现在安装了开发时要用到的包，但这些包并不用在发布以后，实际上发布的时候我们想要的只是发布自己写的代码，而不是依赖的代码，这需要在<code>package.json</code>中配置<code>peerDependencies</code>作为前置依赖，但包本身不会实际安装这些依赖，实际的包应该由应用项目来安装。现在把<code>peerDependencies</code>添加进<code>package.json</code>：</p>
+<pre><code>&quot;peerDependencies&quot;: {
+    &quot;@angular/common&quot;: &quot;&gt;=5.0.0&quot;,
+    &quot;@angular/core&quot;: &quot;&gt;=5.0.0&quot;,
+    &quot;rxjs&quot;: &quot;&gt;=5.0.0&quot;
+  }
+</code></pre>
+<h2>项目编写</h2>
+<p>基本项目搭建好后，我们应该只有<code>package.json</code>、<code>node_modules</code>和一个lock文件在项目中，现在要加上真正的项目代码了。
+无论这个包是用来实现什么目的的，作为一个第三方包，都应该要导出自己的功能以让其他项目引入使用，所以在项目根目录首先要有一个<code>index.js</code>文件，而我们要开发的是基于<code>angular</code>的<code>TypeScript</code>包，使用的自然是<code>index.ts</code>了，内容就是各种<code>export</code>导出类型、接口、方法等。作为示例这里只导出一个常量：</p>
+<pre><code>export const myNgLib: string = 'Hello, thie is my angular 3rd part lib';
+</code></pre>
+<p>为了支持<code>TypeScript</code>我们还需要一个<code>tsconfig.json</code>：</p>
+<pre><code>{
+  &quot;compilerOptions&quot;: {
+    &quot;baseUrl&quot;: &quot;.&quot;, // 基于哪个目录编译ts
+    &quot;declaration&quot;: true, // 是否生成声明文件即*.d.ts文件，有了它才有TS的代码提示
+    &quot;experimentalDecorators&quot;: true, // 用于支持TS装饰器如angular中的 @NgModule({}) 之类
+    &quot;emitDecoratorMetadata&quot;: true, // 用于支持TS装饰器如angular中的 @NgModule({}) 之类
+    &quot;module&quot;: &quot;commonjs&quot;, // 模块化形式
+    &quot;moduleResolution&quot;: &quot;node&quot;, // 模块化形式
+    &quot;rootDir&quot;: &quot;.&quot;, // 以哪个目录为根
+    &quot;lib&quot;: [&quot;es2015&quot;, &quot;dom&quot;], // 支持编译的内置库
+    &quot;skipDefaultLibCheck&quot;: true, // 是否跳过内置库检查
+    &quot;skipLibCheck&quot;: true, // 跳过库检查
+    &quot;target&quot;: &quot;es5&quot;, // 编译目标版本
+    &quot;suppressImplicitAnyIndexErrors&quot;: true, // 几个检查代码的规则
+    &quot;strictNullChecks&quot;: true, // 几个检查代码的规则
+    &quot;noImplicitAny&quot;: true, // 几个检查代码的规则
+    &quot;sourceMap&quot;: true, // 是否生成 .js.map
+    &quot;removeComments&quot;: true, // 移除注释
+    &quot;noFallthroughCasesInSwitch&quot;: true // 几个检查代码的规则
+  },
+  &quot;exclude&quot;: [  // 编译时排除以下内容
+    &quot;node_modules&quot;,
+    &quot;*.d.ts&quot;,
+    &quot;**/*.d.ts&quot;
+  ]
+}
+</code></pre>
+<p>其中的规则各有各效果，有些为了确定编译路径，有些为了语法检查，有些为了输出声明，还有排除规则等，现在可以<code>tsc</code>看看效果了，不过要先把<code>tsc</code>添加到<code>package.json</code>的<code>scripts</code>中：</p>
+<pre><code>&quot;scripts&quot;: {
+    &quot;tsc&quot;: &quot;tsc&quot;
+  }
+</code></pre>
+<p><img src="/assets/images/201801/03.png" alt="编译得到.js、js.map、.d.ts" /></p>
+<h2>发布</h2>
+<p>完美，这么厉害的包，接下来赶紧发布它。发布命令是</p>
+<pre><code>yarn publish
+</code></pre>
+<p>不过在此之前，要准备几件事：</p>
+<h3>npm账号</h3>
+<p>发布之前自然得先有npm账号，添加了就可以，最后用<code>npm whoami</code>确认身份。</p>
+<h3>包的基本信息</h3>
+<p>也就是要完善<code>package.json</code>，让全网知道这么厉害的包是我们开发的，包括开源许可、包名、作者、版本号等，最重要直接影响发布的是版本号。</p>
+<h3>选择性发布</h3>
+<p>基于<code>angular</code>的第三方包区别与普通的js包最大的地方就在于，不能直接把整个包都发布到npm，这样会导致奇怪错误，原因在于.ts文件，实际上需要发布的只是.js、.js.map、.d.ts这三种类型的文件就够了。
+因为在其他项目中不一定会使用<code>TypeScript</code>，即使用了也不会刻意包含node_modules目录，也就是说其他项目只管使用，编译的活由我们得包自己来做，相反要是我们还发布多余的.ts文件，只会导致错误。
+为了做到选择性发布，需要一个<code>.npmignore</code>文件，和<code>.gitignore</code>配合用来忽略上传的文件，一般这些编译输出我们会添加在<code>.gitignore</code>中，若项目不存在<code>.npmignore</code>，发布到npm时也会使用<code>.gitignore</code>，这不是我们想要的，所以需要再创建这个<code>.npmignore</code>来忽略.ts文件而包含编译输出：</p>
+<pre><code>node_modules
+yarn-error.log
+tsconfig.json
+.gitignore
+.npmignore
+yarn.lock
+*.ts
+!*.d.ts
+</code></pre>
+<p>现在我们的项目看起来是这样的：
+<img src="/assets/images/201801/04.png" alt="待发布项目" /></p>
+<p>使用<code>yarn pack</code>命令得到本地打包看看效果如何：
+<img src="/assets/images/201801/05.png" alt="本地打包" /></p>
+<p>看起来非常完美，该有的都有了，不该有的都忽略了，那就可以发布了，不过这里就不发布这个没什么用处的包了 : )
+打包至此完成，现在看看用起来怎么样。</p>
+<h2>本地测试</h2>
+<p>angular的第三方包要做本地测试的话，与普通的包比有一点不足，就是用不了<code>npm link</code>，这会导致错误，特别是在第三方包使用到依赖注入的情况下，原因是运行时实际是在两个angular环境下，再进一步说是因为第三方包依赖的是自己的<code>node_modules</code>，解决办法也很粗暴，删掉第三方包的<code>node_modules</code>即可，不过这代价显然有点大。找遍GitHub发现的另一个办法是配合<code>--preserve-symlinks</code>参数，不过可能是笔者使用姿势不对一直没效果。
+最后笔者自己的曲线救国办法是手动写<code>package.json</code>的<code>scripts</code>，本地测试步骤是：</p>
+<ol>
+<li>执行 <code>yarn pack</code>得到本地打包</li>
+<li>解压到测试项目的node_modules中假装是安装的项目</li>
+<li>测试项目中像使用普通安装包一样使用这个直接复制进来的包
+参考脚本如下：</li>
+</ol>
+<pre><code>&quot;scripts&quot;: {
+    &quot;prepublish&quot;: &quot;npm run clean &amp;&amp; tsc&quot;, // 清理并编译
+    &quot;clean&quot;: &quot;rimraf index.js index.js.map index.d.ts src/**/*.js src/**/*.js.map src/**/*.d.ts linktest.tgz&quot;, // 清理编译文件
+    &quot;link&quot;: &quot;npm run pack &amp;&amp; tar -zxf linktest.tgz &amp;&amp; rimraf ../lib-test-app/node_modules/my-ng-lib &amp;&amp; mv package ../lib-test-app/node_modules/my-ng-lib&quot;, // 打包后解压并移动到测试项目node_modules中
+    &quot;pack&quot;: &quot;npm run prepublish &amp;&amp; yarn pack --filename linktest.tgz&quot; // 执行编译并打包
+  }
+</code></pre>
+<h2>总结</h2>
+<ul>
+<li>发布基于<code>angular</code>的第三方包的两个难点：一是如何处理好<code>TypeScript</code>的编译，二是如何处理好<code>angular</code>运行上下文。</li>
+<li>本文的命令均使用<code>yarn</code>完成，<code>npm</code>版本命令大同小异均有其对应命令，且发布的包都是在npm托管。</li>
+<li>另外本文仅涉及发布最基本的基于angular的第三方包，包的实际功能方面没有做深入。其实对于不同功能的第三方包，仍有需要学习的内容。</li>
+</ul>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://blog.angular-university.io/how-to-create-an-angular-2-library-and-how-to-consume-it-jspm-vs-webpack/">How to create an Angular component library, and how to consume it using SystemJs or Webpack</a></li>
+<li><a href="https://github.com/angular/angular-cli/wiki/stories-linked-library">stories linked library</a></li>
+<li><a href="https://github.com/angular/angular-cli/issues/8677">npm link doesn't work with 1.5.4 version</a></li>
+</ul>
+</div>
+</body>
+</html>

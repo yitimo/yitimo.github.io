@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>react+redux笔记 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>react+redux笔记</h1>
+    <div><ul>
+<li>react本身做的事情大体是根据编写好的组件渲染出真实的DOM。</li>
+<li>
+<ul>
+<li>编写的组件可以是一个<code>es6/typescript</code>的<code>class</code>，也可以直接是个返回标签的函数。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>组件通过props接收父级传入的值，通过state维护自己内部的值。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>父级传入的props更改时会触发：<code>componentWillReceiveProps</code> -&gt; <code>shouldComponentUpdate</code> -&gt; <code>componentWillUpdate</code> -&gt; <code>render</code> -&gt; <code>componentDidUpdate</code>，最终更新界面值。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>内部<code>state</code>更改时会触发：<code>shouldComponentUpdate</code> -&gt; <code>componentWillUpdate</code> -&gt; <code>render</code> -&gt; <code>componentDidUpdate</code>，最终更新界面值。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>组件本身通过<code>setState</code>更新<code>state</code>，以更新界面值。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>react本身封装好了标签的一些事件(<code>onClick</code>等)，也可以通过<code>ref</code>获取真实DOM的引用(<code>componentDidMount</code>中可访问到)。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>redux本身做的事情大体是帮助维护一份单例的数据集(store)。</li>
+<li>
+<ul>
+<li>通过<code>subscribe</code>监听状态变化，<code>getState</code>获取当前状态。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>通过<code>reducer</code>来决定不同<code>action</code>都会如何操作数据。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>通过<code>action</code>来规范支持的操作。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>通过<code>dispatch</code>方法来传入<code>action</code>。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>至此可以这么使用react+redux：</p>
+<pre><code class="language-javascript">const store = createStore(...)
+
+class App extends Component{
+
+  componentWillMount(){
+    store.subscribe((state)=&gt;this.setState(state))
+  }
+  
+  render(){
+    return &lt;Comp state={this.state}
+        onIncrease={()=&gt;store.dispatch({type: 'ACTION1'})}
+        onDecrease={()=&gt;store.dispatch({type: 'ACTION2'})}
+    /&gt;
+  }
+}
+</code></pre>
+<hr />
+<ul>
+<li>react-redux帮助react整合redux到自己的组件体系中。</li>
+<li>
+<ul>
+<li>直接解决的问题就是不用层层传入<code>props</code>来访问<code>store</code>了。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>顶层包裹<code>Provider</code>组件并传入<code>store</code>来使用。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li><code>Provider</code>组件做的事是用<code>Context</code>维护一份store。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>需要访问store的组件用<code>connect</code>来将状态和<code>action</code>注入到<code>props</code>中。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>mapStateToProps是<code>connect</code>的第一个参数，帮助绑定状态到组件的<code>props</code>。</li>
+<li>
+<ul>
+<li>此函数返回的对象会被整合到组件<code>props</code>中。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>函数第一个参数(<code>state</code>)为全局所有的<code>reducer</code>，即<code>store</code>中的数据</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>函数第二个参数(<code>ownProps</code>)为组件本身的<code>props</code>。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>每当状态更新时最先触发<code>mapStateToProps</code>，随后走组件<code>update</code>四步。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>组件本身传入的props更改不会触发<code>mapStateToProps</code>，但传入<code>ownProps</code>后就也会触发。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>mapDispatchToProps是<code>connect</code>的第二个参数，帮助绑定<code>action</code>到组件的<code>props</code>。</li>
+<li>
+<ul>
+<li>也就是说现在可以在组件中调用<code>action</code>了。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>执行action需要dispatch，但是可以用<code>bindActionCreators</code>来隐藏dispatch部分。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>至此可以这么使用<code>react</code>+<code>redux</code>+<code>react-redux</code>：</p>
+<pre><code class="language-javascript">const mapStateToProps = (state) =&gt; ({
+  count: state.count,
+})
+const mapDispatchToProps = (dispatch, ownProps) =&gt; {
+  return bindActionCreators({
+    increase: action.increase,
+    decrease: action.decrease,
+  });
+}
+
+class MyComp extends Component {
+  render(){
+    const {count, increase, decrease} = this.props;
+    return (&lt;div&gt;
+      &lt;div&gt;计数：{this.props.count}次&lt;/div&gt;
+      &lt;button onClick={increase}&gt;增加&lt;/button&gt;
+      &lt;button onClick={decrease}&gt;减少&lt;/button&gt;
+    &lt;/div&gt;)
+  }
+}
+
+const Comp = connect(mapStateToProps, mapDispatchToProps)(MyComp);
+
+</code></pre>
+<hr />
+<p>connect后续两个参数之后再深究，其中第三个可以自定义状态如何merge到组件的<code>props</code>中。</p>
+<hr />
+<p>参考链接：</p>
+<ul>
+<li>上文示例代码搬迁自<a href="http://taobaofed.org/blog/2016/08/18/react-redux-connect/">这里</a>。</li>
+<li><a href="https://medium.com/ovrsea/mapstatetoprops-and-why-you-may-not-need-mapdispatchtoprops-as-a-beginner-dd012a3da5e6">mapStateToProps, and why you may not need mapDispatchToProps when you start Redux</a></li>
+</ul>
+<hr />
+<ul>
+<li>redux-thunk 异步的redux</li>
+<li>
+<ul>
+<li>可接收函数作为action，也就是先dispatch这个action发起异步操作。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>在此函数中通过第一个参数(dispatch)调用其他<code>action</code>，以完成异步action效果。</li>
+</ul>
+</li>
+</ul>
+<hr />
+<ul>
+<li>redux-saga 异步的redux</li>
+<li>
+<ul>
+<li>在单独的saga模块中监听组件发起的action。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>接收到组件action后执行异步方法，执行完成后再发起action到reducer。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>reducer接收到saga发起的action后返回新state到组件。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>saga对action的监听不影响reducer直接处理这个action，可以同时触发。</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>个人感觉像redux专用的小<code>rx</code>。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>组件dispatch一个<code>ActionA</code></li>
+<li>saga监听到<code>ActionA</code></li>
+<li>执行异步逻辑</li>
+<li>put一个<code>ActionB</code>到reducer</li>
+<li>reducer返回新状态到组件</li>
+</ol>
+</div>
+</body>
+</html>

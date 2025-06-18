@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用npm-link命令帮助开发npm包 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>使用npm-link命令帮助开发npm包</h1>
+    <div><p>npm link 命令核心原理即<strong>使用 symlink 能力建立本地npm包目录的软链接</strong>, 本文将基于<a href="https://docs.npmjs.com/cli/v8/commands/npm-link">官网v8.x文档</a>归纳其一些特性和用法.</p>
+<blockquote>
+<p>本文内容基于 node@v16.x, npm@v8.x</p>
+</blockquote>
+<h2>npm link 做了什么</h2>
+<p>在本地npm包仓库下运行命令 <code>npm link</code> 后, 应该会看到这样的输出:</p>
+<pre><code class="language-text">added 1 package in 495ms
+</code></pre>
+<p>或者这样的:</p>
+<pre><code class="language-text">up to date in 744ms
+</code></pre>
+<p>内部其实是 <strong>建立了当前npm包目录到npm全局的symlink</strong>, 也就是 <code>ln -s</code> 命令做的事情.</p>
+<p>那么npm全局目录在哪呢, 可以运行命令 <code>ls -l $(npm root -g)</code>, 如果刚才<code>npm link</code>成功了, 应该能看到link的包被列出, 以及你此前全局安装过的其他npm包也在这里.</p>
+<p>比如使用了<code>nvm</code>的情况下像这样:</p>
+<p><img src="/assets/images/202206/global_npm_pkgs.png" alt="global_npm_pkgs" /></p>
+<blockquote>
+<p><code>npm ls -g</code>也能看到link到全局的包</p>
+</blockquote>
+<p>如果link的包名是基于某个命名空间的, 比如 <code>@hello/world</code>, 那列出的就是目录 <code>@hello</code>, 再进去就是 <code>world</code> 目录咯.</p>
+<p>如果<code>link</code>到全局的包还包含了<code>bin</code>配置, 像这样:</p>
+<p><img src="/assets/images/202206/pkg_with_bin.png" alt="pkg with bin" /></p>
+<p>则也能被<code>link</code>到全局<code>bin</code>下:</p>
+<p><img src="/assets/images/202206/pkg_bin_in_global.png" alt="pkg bin in global" /></p>
+<h2>npm link pkg-utils 做了什么</h2>
+<p>在本地另一工程下(以<code>pkg-host</code>为例)执行 <code>npm link pkg-utils</code>, 会看到类似 <code>changed [n] packages in [m]s</code> 的输出, 就好像在<code>host</code>工程内安装了<code>pkg-utils</code>这个<code>npm</code>包一样.</p>
+<p>但本地<code>link</code>默认不会改变<code>package.json</code>文件内容, 即如果<code>package.json</code>里之前有该包且版本号为<code>^1.0.0</code>, link本地包时<strong>并不会</strong>被修改为 <code>file://../path/to/pkg-utils</code>.</p>
+<blockquote>
+<p>如果link了原本未安装的新包, 则<code>package-lock.json</code>会被改变, 如果原来已经安装了, 则也不会改变</p>
+</blockquote>
+<p>最终效果也就是<code>pkg-utils</code>包所在的本地目录被软链到了<code>pkg-host</code>工程的 <code>node_modules</code>中, 然后可以像使用常规<code>npm i</code>安装的包一样来使用:</p>
+<p><img src="/assets/images/202206/pkg_utils_in_pkg_host.png" alt="pkg utils in pkg host" /></p>
+<h2>使用 npm link 进行 &quot;真包调试&quot;</h2>
+<p><code>npm link</code>比较适合的用途之一就是帮助开发npm包项目, 可以不实际发布包版本就做到&quot;真包调试&quot;, 但也有一些区别和要注意的点:</p>
+<p><strong>会link整个目录:</strong> 常规安装npm包时, 实际上安装到node_modules内的是<code>npm pack</code>的产物, 会应用<code>.npmignore</code>规则只安装真正被发布的子文件或目录, 而<code>npm link</code>终究只是个<code>symlink</code>, 实际上会link整个目录, 包括所有子文件和目录.</p>
+<p><strong>妥善取消link</strong>: 当认为开发完成, 并想要取消link时, 可以这么做:</p>
+<ul>
+<li>在<code>pkg-host</code>里重新运行<code>npm i</code>或<code>npm i pkg-utils</code>, 也就是重新装一次这个npm包, 这样做会把link的包挤掉, 安装回<code>package.json</code>内声明好的版本</li>
+<li><em>(不推荐)</em> 在<code>pkg-host</code>里<code>npm unlink pkg-utils</code>, 实测这同时会移除 package.json 里的包依赖(如果此前安装了)</li>
+</ul>
+<p>以上两步只是从<code>pkg-host</code>工程里移除了link过来的<code>pkg-utils</code>, 实际上<code>pkg-utils</code>还被link在全局呢, 想要移除全局的link, 可以使用<code>npm uninstall/rm -g</code>命令, 就像正常移除一个全局安装的包一样:</p>
+<p><img src="/assets/images/202206/rm_pkg_utils_from_global.png" alt="rm pkg_utils from global" /></p>
+<p><strong>使用ts开发的工程, link后使用的应该(should)是编译后的js模块, 而不是原始的ts模块</strong>, 按照一般的tsconfig配置, 会忽略node_modules内的ts模块, 而使用编译后的commonjs模块, 这就需要npm包工程在link后, 继续改动ts模块时, 还要记得重新进行tsc编译, 生成最新的js模块供宿主工程使用.</p>
+<p>或者也可以专门配置宿主工程的tsconfig, 来包含node_modules中这个npm包的ts模块, <strong>但更建议的方式是写一个脚本监听相关文件改动, 然后自动编译ts到js</strong>.</p>
+<h2>还要注意哪些?</h2>
+<ul>
+<li><strong>npm link 支持多个包</strong>: 在包1和包2各自<code>npm link</code>后, 在包3里 <code>npm link 包1 包2</code> 即可同时 link 两个包</li>
+<li><strong>工程化项目如何判断某个包是link状态</strong>: <code>fs.lstatSync('包所在的node_modules下的目录').isSymbolicLink()</code></li>
+<li><strong>link 某个包后 publish</strong>: 这样做是可以的, 但需要把link的包列在<code>bundleDependencies</code>里, 如果此前没安装这个包, 还需要执行<code>npm install &lt;dep&gt; --package-lock-only</code>, 然后在pkg-host里运行<code>npm publish</code>会将目前link的<code>pkg-utils</code>内容一起打包进<code>npm pack</code>产物里. 但个人<strong>不建议</strong>这么做, link应该只用在本地调试</li>
+<li>...</li>
+</ul>
+<h2>拓展阅读</h2>
+<p><strong>什么是synlink?</strong> 一图流解释:</p>
+<p><img src="/assets/images/202206/symlink.jpg" alt="symlink" /></p>
+<p><a href="https://docs.npmjs.com/cli/v9/configuring-npm/package-json#bundledependencies"><strong>什么是bundleDependencies?</strong></a></p>
+<p><strong>yarn和pnpm</strong> 都有自己的link实现方式, 要避免混用</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>从源码理解angular编译AppModule的过程 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>从源码理解angular编译AppModule的过程</h1>
+    <div><p>承接<a href="/jekyll/update/2017/09/25/how-angular-bootstrap-in-jit.html">上文</a>。笔者之前将一个angular项目的启动过程分为了两步: 创建平台得到 <code>PlatformRef</code> ，以及执行平台引用提供的方法编译根模块 <code>AppModule</code> 。本文就将着眼于创建好的平台，从angular的茫茫源代码中看看整个AppModule的编译过程。</p>
+<h2>编译的起点</h2>
+<p>从外界使用的 <code>bootstrapModule</code> 方法入手。首先angular把皮球踢给了私有方法 <code>_bootstrapModuleWithZone</code> ，然后皮球又踢给了 <code>compileModuleAsync</code> 方法，这个方法比较调皮，直接进入是一个抽象方法，说明它有一个继承并且在前面作为服务被注入了，它就是！在创建爸爸平台 <code>platformCoreDynamic</code> 时注入的编译器工厂中提供的 <code>createCompiler</code> 方法返回的编译器实例，也就是 <code>JitCompiler</code> 。进入 <code>JitCompiler</code> 果不其然找到了 <code>compileModuleAsync</code> 方法的实现。</p>
+<pre><code>// 启动过程中就是用这个异步编译模块
+compileModuleAsync&lt;T&gt;(moduleType: Type&lt;T&gt;): Promise&lt;NgModuleFactory&lt;T&gt;&gt; {
+    return Promise.resolve(this._compileModuleAndComponents(moduleType, false));
+}
+</code></pre>
+<p>坏消息是皮球现在踢给了私有方法 <code>_compileModuleAndComponents</code> :</p>
+<pre><code>// 这个就是最底层编译模块的方法
+private _compileModuleAndComponents&lt;T&gt;(
+    moduleType: Type&lt;T&gt;,
+    isSync: boolean
+): SyncAsync&lt;NgModuleFactory&lt;T&gt;&gt; {
+    // 相当于 把第一个参数的结果作为第二个表达式的参数
+    // 但在这里只是保证两个参数顺序执行
+    // 最后做了三件事 _loadModules _compileComponents _compileModule
+    return SyncAsync.then(this._loadModules(moduleType, isSync), () =&gt; {
+        // 加载好模块后编译组件
+        this._compileComponents(moduleType, null);
+        // 编译模块并返回
+        return this._compileModule(moduleType);
+    });
+}
+</code></pre>
+<p>稍微感受一下这个 SyncAsync 对象，很厉害：</p>
+<pre><code>export const SyncAsync = {
+  // 断言同步 也就是说 如果是个Promise 那就抛出 不是的话直接返回
+  assertSync: &lt;T&gt;(value: SyncAsync&lt;T&gt;): T =&gt; {
+    if (isPromise(value)) {
+      throw new Error(`Illegal state: value cannot be a promise`);
+    }
+    return value;
+  },
+  // 除了适配普通Promise外还能处理非Promise的情况 将value作为参数传入cb
+  then: &lt;T, R&gt;(
+    value: SyncAsync&lt;T&gt;,
+    cb: (value: T) =&gt; R | Promise&lt;R&gt;| SyncAsync&lt;R&gt;
+  ): SyncAsync&lt;R&gt; =&gt; {
+    // 如果是Promise则继续这个promise(用cb接上)，否则的话直接执行cb 还是相当于接上 强行接上不是Promise的情况
+    return isPromise(value) ? value.then(cb) : cb(value);
+  },
+  all: &lt;T&gt;(syncAsyncValues: SyncAsync&lt;T&gt;[]): SyncAsync&lt;T[]&gt; =&gt; {
+    // 只要里面有Promise 那就执行 Promise.all(并行执行这些Promise) 一个都没有嘛那就直接返回
+    return syncAsyncValues.some(isPromise) ? Promise.all(syncAsyncValues) : syncAsyncValues as T[];
+  }
+};
+</code></pre>
+<p>现在看来，模块编译的重头戏就在这三个方法里面了:</p>
+<pre><code>_loadModules 负责加载模块元数据
+_compileComponents 负责编译组件
+_compileModule 负责编译模块
+</code></pre>
+<h2>_loadModules 加载模块</h2>
+<p>加载过程是这样的:</p>
+<pre><code>private _loadModules(mainModule: any, isSync: boolean): SyncAsync&lt;any&gt; {
+    const loading: Promise&lt;any&gt;[] = []; // 最终会把所有任务放到这里 用SyncAsync 串起来执行
+    // 拿到模块元数据 里面包含了所有模块 以及模块涉及的服务 指令 管道
+    const mainNgModule = this._metadataResolver.getNgModuleMetadata(mainModule) !;
+    // 遍历元数据中的模块
+    this._filterJitIdentifiers(mainNgModule.transitiveModule.modules).forEach((nestedNgModule) =&gt; {
+        // getNgModuleMetadata only returns null if the value passed in is not an NgModule
+        // 递归获取模块元数据的万恶之源 getNgModuleMetadata
+        const moduleMeta = this._metadataResolver.getNgModuleMetadata(nestedNgModule) !;
+        // 遍历这些模块的元数据拿到其声明组件的元数据
+        this._filterJitIdentifiers(moduleMeta.declaredDirectives).forEach((ref) =&gt; {
+            const promise =
+                this._metadataResolver.loadDirectiveMetadata(moduleMeta.type.reference, ref, isSync); // 这货会把指令元数据(包括组件)放到缓存 返回的是null
+            if (promise) {
+                loading.push(promise);
+            }
+        });
+        // 遍历这些模块元数据拿到其声明管道的元数据
+        this._filterJitIdentifiers(moduleMeta.declaredPipes)
+            .forEach((ref) =&gt; this._metadataResolver.getOrLoadPipeMetadata(ref));
+    });
+    return SyncAsync.all(loading);
+}
+</code></pre>
+<p>表面上代码量还不算大，不过里面还踢了几次皮球，而且存在递归，工作量非常恐怖，所做的事情如下：</p>
+<ol>
+<li>执行 getNgModuleMetadata 拿到模块元数据
+<ul>
+<li>执行 _ngModuleResolver.resolve 拿到模块本身的注解信息(即 <code>@NgModule({})</code> 中的配置信息)</li>
+<li>遍历注解中的 imports 部分 将模块所有引入的元数据添加到 importedModules，并收集了里面的服务 providers (这一步会递归调用 getNgModuleMetadata 来获得模块元数据，保证除了懒加载模块外所有与根模块关联的元数据都遍历到)</li>
+<li>遍历注解中的 exports 部分 将所有Ng类(模块、组件、指令) 元数据收集到 exportedModules</li>
+<li>新建一个 transitiveModule 用来放所有导入、导出的Ng类的元数据 据注释说是写法要改所以单独拷贝一份</li>
+<li>遍历注解中的 declaration 部分，将指令元数据放到 declaredDirectives，管道元数据放到 declaredPipes，同时都添加到 transitiveModule 中</li>
+<li>遍历所有无模块包裹的指令和管道，如果已经存在于 transitiveModule 中说明是由模块自己声明的，(引入的必定有模块包裹)，若不存在于 transitiveModule 中则抛出模块既未导入又未声明的错误</li>
+<li>接下来处理 providers 部分(在 imports和exports 后面处理，保证自己本身注入的服务的优先级)</li>
+<li>处理剩下的配置相关的几个东西: entryComponents bootstrap schemas</li>
+<li>缓存收集好的元数据并返回</li>
+</ul>
+</li>
+<li>执行 loadDirectiveMetadata 加载模块元数据中所有组件的元数据
+<ul>
+<li>进一步遍历上面得到的 transitiveModule ，加载所有指令的元数据</li>
+</ul>
+</li>
+<li>执行 getOrLoadPipeMetadata 加载模块元数据中所有管道的元数据
+<ul>
+<li>进一步遍历上面得到的 transitiveModule ，加载所有管道的元数据</li>
+</ul>
+</li>
+</ol>
+<p>至此所有与AppModule关联的模块的所有元数据都已经加载进了缓存中，包括了从 AppModule 展开的整个模块树，树上的所有指令和管道的配置，以及所有的服务。</p>
+<h2>_compileComponents 编译组件</h2>
+<ol>
+<li>遍历模块元数据，需要拿到所有的模板，包括： 组件的模板、入口组件的模板、组件的入口组件的模板(原来组件也有入口组件)，最终拿到了所有涉及的模板，放在 templates 中</li>
+<li>执行 _compileTemplate 编译模板
+<ul>
+<li>处理内联样式和外联样式，最终组合到 componentStylesheet</li>
+<li>处理管道和模板 得到模板片段、访问器、用到的管道(编译时会传入所有引入的管道，然后现在会留下使用到的管道)</li>
+<li>现在拿到了三样东西: 编译好的模板、用到的管道、编译好的样式表</li>
+<li>最后一步笔者没有看明白，只知道目的是生成一个组件工厂方法，并从中取出 viewClass 和 rendererType 用来给组建元数据赋值</li>
+</ul>
+</li>
+</ol>
+<p>没有看明白的最后几行代码:</p>
+<pre><code>let evalResult: any;
+if (!this._compilerConfig.useJit) {
+    evalResult = interpretStatements(outputContext.statements);
+} else {
+    evalResult = jitStatements( // 拼接得到具体工厂方法
+        templateJitUrl(template.ngModule.type, template.compMeta), outputContext.statements);
+}
+const viewClass = evalResult[compileResult.viewClassVar];
+const rendererType = evalResult[compileResult.rendererTypeVar];
+// 到这一步 模板、用到的管道、样式表都已经处理好了 还创建了应该是组件的工厂方法
+// 但是最后这个compile 好像把这里得到的 rendererType 一一赋值到了组件元数据中 细节待研究
+template.compiled(viewClass, rendererType);
+</code></pre>
+<p>不明觉厉的 jitStatements 方法:</p>
+<pre><code>function evalExpression(
+  sourceUrl: string,
+  ctx: EmitterVisitorContext,
+  vars: {[key: string]: any}
+): any {
+  let fnBody = `${ctx.toSource()}\n//# sourceURL=${sourceUrl}`;
+  const fnArgNames: string[] = [];
+  const fnArgValues: any[] = [];
+  for (const argName in vars) { // 遍历添加变量
+    fnArgNames.push(argName);
+    fnArgValues.push(vars[argName]);
+  }
+  if (isDevMode()) {
+    // using `new Function(...)` generates a header, 1 line of no arguments, 2 lines otherwise
+    // E.g. ```
+    // function anonymous(a,b,c
+    // /**/) { ... }```
+    // We don't want to hard code this fact, so we auto detect it via an empty function first.
+    const emptyFn = new Function(...fnArgNames.concat('return null;')).toString();
+    const headerLines = emptyFn.slice(0, emptyFn.indexOf('return null;')).split('\n').length - 1;
+    fnBody += `\n${ctx.toSourceMapGenerator(sourceUrl, sourceUrl, headerLines).toJsComment()}`;
+  }
+  return new Function(...fnArgNames.concat(fnBody))(...fnArgValues);
+}
+// 路径 语句 好像是组合了一个新的function
+// 看来是用来造工厂方法的
+export function jitStatements(sourceUrl: string, statements: o.Statement[]): {[key: string]: any} {
+  const converter = new JitEmitterVisitor(); // 新的发射访问器
+  const ctx = EmitterVisitorContext.createRoot(); // 新的发射访问器上下文
+  converter.visitAllStatements(statements, ctx); // 访问所有语句
+  converter.createReturnStmt(ctx); // 创建返回语句
+  return evalExpression(sourceUrl, ctx, converter.getArgs()); // 路径 上下文 参数 得到一个动态创建的方法
+}
+</code></pre>
+<p>Anyway, all in all, whatever, 现在已经编译好了组件，放在了缓存里面。</p>
+<h2>_compileModule 编译模块</h2>
+<p>前面执行 _loadModules 仅是加载了整个模块树的元数据，现在要正式编译它们了:</p>
+<pre><code>private _compileModule&lt;T&gt;(moduleType: Type&lt;T&gt;): NgModuleFactory&lt;T&gt; {
+    // 从缓存拿到模块工厂
+    let ngModuleFactory = this._compiledNgModuleCache.get(moduleType) !;
+    if (!ngModuleFactory) { // 缓存中没有
+    const moduleMeta = this._metadataResolver.getNgModuleMetadata(moduleType) !; // 重新拿到模块元数据
+    // Always provide a bound Compiler
+    const extraProviders = [this._metadataResolver.getProviderMetadata(new ProviderMeta(
+        Compiler, {useFactory: () =&gt; new ModuleBoundCompiler(this, moduleMeta.type.reference)}))];
+    const outputCtx = createOutputContext(); // 创建输出上下文
+    const compileResult = this._ngModuleCompiler.compile(outputCtx, moduleMeta, extraProviders); // 执行编译
+    if (!this._compilerConfig.useJit) {
+        ngModuleFactory =
+            interpretStatements(outputCtx.statements)[compileResult.ngModuleFactoryVar];
+    } else {
+        // -----------------
+        ngModuleFactory = jitStatements( // 传入路径和语句 得到一个object key为字符串 value为 生成的工厂方法
+            ngModuleJitUrl(moduleMeta), outputCtx.statements, )[compileResult.ngModuleFactoryVar]; // 从这个object中拿到 key为模块变量的值 看来是造了一个工厂方法
+    }
+    this._compiledNgModuleCache.set(moduleMeta.type.reference, ngModuleFactory); // 设置工厂方法的缓存
+    }
+    return ngModuleFactory;
+}
+</code></pre>
+<p>看上去还算比较明了，做的事情如下:</p>
+<ol>
+<li>尝试从缓存直接拿到模块工厂</li>
+<li>无缓存则新建一个服务商和输出上下文准备编译模块</li>
+<li>执行 _ngModuleCompiler.compile 进行编译，过程很复杂待研究，但结果很简单，仅返回包含一个字符串值得类 NgModuleCompileResult ，看来是又把编译结果放缓存了</li>
+<li>使用上一步的编译结果，动态创建出一个模块的工厂方法，使用的还是那个 jitStatements 方法</li>
+<li>返回这个模块工厂方法 也就是编译的结果了</li>
+</ol>
+<h2>得到 模块工厂方法之后</h2>
+<p>得到模块的工厂方法之后，就跟之前平台的创建过程连接上了，使用这个工厂创建出模块引用，并注入一个NgZone以完成整个模块的启动。</p>
+<p>比较扫兴的地方有这些：</p>
+<ol>
+<li>组件和模块的工厂方法的创建细节笔者还没有摸着头脑</li>
+<li>对于angular如何处理组件模板和模块编译的底层细节也还不明朗</li>
+<li>截至目前还没看到真正在操作DOM的影子，顶多才开始处理组件的模板</li>
+</ol>
+<p>已知的情报有这些：</p>
+<ol>
+<li>angular框架内部大量使用了依赖注入，大部分工作都被封装成了一个类(服务的本质就是一个类)，并到处注入，甚至在编译模块时模块本身的元数据也会作为服务注入使用</li>
+<li>angular框架内部在处理元数据时大量使用了缓存，用来应对层层依赖的模块树(必然会出现很多重复的模块、指令、服务、管道的声明)</li>
+<li>angular框架底层对许多原生操作(包括ES6新特性)都实现了一层抽象，包括 Reflect 和 DOM节点的访问器</li>
+</ol>
+</div>
+</body>
+</html>

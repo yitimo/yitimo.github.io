@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用golang调用网易云音乐api | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>使用golang调用网易云音乐api</h1>
+    <div><h2>2018-01-26 迁移更新</h2>
+<p>现已将所有已实现api都使用新版加密请求方式，部分调用url及参数参考自 <a href="https://github.com/Binaryify/NeteaseCloudMusicApi">NeteaseCloudMusicApi</a> 。</p>
+<hr />
+<p>本文将展示笔者经过肤浅的golang学习后，使用golang对网易云音乐api进行分析的经历，最终实现一个基本的api，可以做到代为向网易云音乐的api请求数据。笔者使用的是martini web框架，并参考了网上现有的各种网易云音乐api的python实现，在此一并谢过。
+目前实现的api只有以下几个:</p>
+<ol>
+<li>歌曲搜索</li>
+<li>歌曲详情</li>
+<li>含实际mp3地址的下载信息</li>
+</ol>
+<p>其中第三个下载能力是最磨人的，不过毕竟是可以直接获取下载链接的接口，还算值得。</p>
+<h2>一、搜索能力</h2>
+<p>这里使用的是 <code>http://music.163.com/api/search/get/</code> 这个api地址，发送的是POST请求，需要注意的点就是必须带上的几个头部以及参数的格式，实现难度相对中等。在golang下的请求核心代码如下:</p>
+<pre><code>/** 
+ * 执行搜索
+ * params: 	关键词 类型 页码 数量
+ * return:	字符串形式的请求结果
+ */
+func Search(words string, stype string, page int, limit int) string {
+	// 创建客户端
+	client := &amp;http.Client{}
+	// 格式化参数
+	_o, _l := formatParams(page, limit)
+	// 设置body
+	form := url.Values{}
+	form.Set(&quot;s&quot;, words)
+	form.Set(&quot;type&quot;, stype)
+	form.Set(&quot;limit&quot;, _l)
+	form.Set(&quot;offset&quot;, _o)
+	body := strings.NewReader(form.Encode())
+	// 创建请求
+	request, _ := http.NewRequest(&quot;POST&quot;, &quot;http://music.163.com/api/search/get/&quot;, body)
+	//设置头部
+	request.Header.Set(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)
+	request.Header.Set(&quot;Cookie&quot;, &quot;appver=2.0.2&quot;)
+	request.Header.Set(&quot;Referer&quot;, &quot;http://music.163.com&quot;)
+	request.Header.Set(&quot;Content-Length&quot;, (string)(body.Len()))
+	// 发起请求
+	response, reqErr := client.Do(request)
+	// 错误处理
+	if reqErr!= nil {
+		fmt.Println(&quot;Fatal error &quot;, reqErr.Error())
+		return `{&quot;data&quot;: null, &quot;state&quot;: false, &quot;msg&quot;: &quot;请求失败&quot;}`
+	}
+	defer response.Body.Close()
+	resBody, _ := ioutil.ReadAll(response.Body)
+	return string(resBody)
+}
+
+/**
+* 传入 搜索类型 页码 数量
+* 返回 搜索类型 偏移 数量
+*/
+func formatParams(page int, limit int) (string, string) {
+	if page &lt; 1 {
+		page = 1
+	}
+	if limit &lt; 1 {
+		limit = 0
+	}
+	return strconv.Itoa((page - 1) * limit), strconv.Itoa(limit)
+}
+</code></pre>
+<p>传入的参数即 <code>关键词，搜索类型，数量，偏移量</code> 四个。最终效果像这样:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-71dad47b316dca0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求参数" /></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-69ed01787d6ca866.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+<h2>二、歌曲详情</h2>
+<p>歌曲详情接口比搜索接口要简单很多，因为是更开放的GET请求，不需要加复杂的头部:</p>
+<pre><code>func SongInfo(id string) string {
+	res, err := http.Get(&quot;http://music.163.com/api/song/detail/?id=&quot; + id + &quot;&amp;ids=[&quot; + id + &quot;]&quot;)
+	// 错误处理
+	if err != nil {
+		fmt.Println(&quot;Fatal error &quot;, err)
+		return `{code: 0}`
+	}
+	defer res.Body.Close()
+	rs, _ := ioutil.ReadAll(res.Body)
+	return string(rs)
+}
+</code></pre>
+<p>请求结果像这样:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-2e24bac45a90ba18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+<p>相比搜索接口的结果，详情接口能拿到具体的封面信息这应该是最有用的，因为搜索得到的结果中图片都是假的，可惜的是详情结果中的 <code>mp3Url</code> 字段是空的，说明想要真正听到歌曲还得使用别的接口才行。</p>
+<h2>三、歌曲下载</h2>
+<p>歌曲下载接口应该是变动最多的接口了，经测试很多网上现有的方式都没有用，最靠谱的应该是使用其官方的请求方式，接口为 <code>http://music.163.com/weapi/song/enhance/player/url?csrf_token=</code> ，参数为两个很长的加密的字符串，要做的斗争就是如何得到这两个字符串。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-a3bf6ae3d5bd2ad4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="官网中的请求" /></p>
+<p>参考网上现有的前辈大佬的分析，个人描述的加密过程如下:</p>
+<ol>
+<li>将请求参数使用一个固定的标识字符串进行 AES加密并进行base64编码</li>
+<li>从 <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 中随机取出16次字符组成一个秘钥</li>
+<li>将1得到的结果使用2得到的秘钥串再进行一次 AES加密并base64编码，至此得到第一个参数 <code>params</code></li>
+<li>将2中的秘钥倒序后转ascii码，然后转16进制字符串得到一个中间字符串</li>
+<li>将4得到的中间字符串转为十进制大整数1，将另两个固定的16进制字符串也都转为十进制大整数2、3</li>
+<li>5中得到了三个大整数，现在执行 pow(大整数1, 大整数2, 大整数3) ，即1的2次幂取模3，得到新的大整数4</li>
+<li>将6得到的大整数4转为16进制字符串，并在左边补满0补满256位，最终得到第二个参数 <code>encSecKey</code></li>
+</ol>
+<p>封装好的函数如下:</p>
+<pre><code>func EncParams(param string) (string, string, error) {
+	// 创建 key
+	secKey := createSecretKey(16);
+	// 第一次加密 使用固定的 nonce
+	if aes1, err1 := aesEncrypt(param, nonce); err1 != nil {
+		return &quot;&quot;, &quot;&quot;, err1
+	} else {
+		// 第二次加密 使用创建的 key
+		if aes2, err2 := aesEncrypt(aes1, secKey); err2 != nil {
+			return &quot;&quot;, &quot;&quot;, err2
+		} else {
+			// 得到 加密好的 param 以及 加密好的key
+			return aes2, rsaEncrypt(secKey, pubKey, modulus), nil
+		}
+	}
+}
+</code></pre>
+<p>具体的实现有个小几十行，详见 <a href="https://github.com/yitimo/api-163-go/blob/master/madoka/encrypt.go">github</a> 吧。</p>
+<p>得到两个参数后，发的是POST请求，顺利得到结果:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4740306-38cab244bf22f315.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="请求结果" /></p>
+<h2>收尾总结</h2>
+<p>第三个接口中对笔者来说磨人的两点在于:</p>
+<ol>
+<li>对golang经验不够导致数据类型转来转去花了不少力气，以及还涉及到了大数运算，数据的格式化真的是虐惨了</li>
+<li>上文提到的 <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/</code> 这个字符串中， 最后的 <code>+/</code> 很关键不能少</li>
+</ol>
+<ul>
+<li>笔者的小项目托管在 <a href="https://github.com/yitimo/api-163-go">github</a> ，还是个很小的小项目，没来得及养肥，关于上文三个接口的细节实现好歹是有了。</li>
+<li>笔者的 <a href="https://api.163.yitimo.com">小api地址</a> 在上面的图中已经出现过了，也还没来得及养肥 :)</li>
+<li>关于作为示例的歌曲名为 《再见二丁目》，讲的是林夕老爷在东京被明哥放了鸽子很彷徨 :)</li>
+</ul>
+</div>
+</body>
+</html>

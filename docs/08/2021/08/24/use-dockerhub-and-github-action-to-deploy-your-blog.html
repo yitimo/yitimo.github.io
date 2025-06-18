@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>使用dockerhub和GitHub action来自动化部署你的博客 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>使用dockerhub和GitHub action来自动化部署你的博客</h1>
+    <div><h2>Docker做了什么</h2>
+<p>docker是基于容器的虚拟机, 围绕着镜像和容器来工作。Dockerfile 描述了如何配置这个镜像, 比如基于哪个镜像, 复制哪些文件, 执行哪些命令。</p>
+<h3>传统的应用线上部署</h3>
+<p>大致要做这些事:</p>
+<ol>
+<li>配置服务器环境</li>
+<li>配置依赖</li>
+<li>上传release资源到服务器</li>
+<li>运行程序</li>
+<li>当更换、扩展服务器时, 都要重新配置服务器环境</li>
+<li>多个应用同时运行在宿主机, 依靠目录、用户、端口等区分</li>
+</ol>
+<h3>基于docker的应用线上部署</h3>
+<p>大致要做这些事:</p>
+<ol>
+<li>服务器和本地各安装好docker</li>
+<li>本地工程在 Dockerfile 里进行配置</li>
+<li>构建应用到docker镜像并发布</li>
+<li>在服务器上运行这个镜像</li>
+<li>当更换、扩展服务器时, 重新安装docker即可</li>
+<li>多个应用相互隔离, 通过容器id区分, 通过端口通信</li>
+</ol>
+<p>Docker常用命令:</p>
+<ul>
+<li>创建本地调试用的docker镜像: <code>docker build -t [镜像名字]:[镜像tag] .</code></li>
+<li>列出docker镜像: <code>docker image ls</code></li>
+<li>创建docker容器: <code>docker create -p [运行在宿主机哪个端口]:80 --name [容器名字] -t [镜像名字]:[镜像tag]</code></li>
+<li>列出docker容器: <code>docker container ls</code></li>
+<li>运行docker容器: <code>docker container run [容器名 或 容器id前几位]</code></li>
+<li>停止docker容器: <code>docker container stop [容器名 或 容器id前几位]</code></li>
+<li>删除docker容器: <code>docker container rm [容器名 或 容器id前几位]</code></li>
+<li>删除docker镜像: <code>docker image rm [镜像名+tag 或 镜像id前几位]</code></li>
+<li>清理冗余docker镜像: <code>docker image prune -f</code></li>
+</ul>
+<h2>GithubAction做了什么</h2>
+<p>支持我们指定在 <code>哪个分支</code> 发生 <code>什么事件</code> 时, 基于 <code>哪个环境</code> 执行 <code>哪些行为</code>。</p>
+<p>比如本博客当下的配置:</p>
+<pre><code class="language-yaml">name: Docker Image CI # 名字
+on:
+  push:
+    branches: [ master ] # 响应master分支的push
+  pull_request:
+    branches: [ master ] # 响应master分支的PR
+jobs:
+  build:
+    runs-on: ubuntu-latest # 基于ubuntu运行
+    steps:
+    - uses: actions/checkout@v2 # 内置的checkout行为
+    - name: Build the Docker image # 基于当前分支创建docker镜像
+      run: docker build . --file Dockerfile --tag yitimo/yitiblog:latest
+    - name: Login to DockerHub # 登录到docker hub
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKER_USER_NAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    - name: Publish image to public docker hub # push建好的镜像到docker hub
+      run: docker push yitimo/yitiblog:latest
+</code></pre>
+<h2>还可以做什么</h2>
+<ul>
+<li>docker 让我们能通过 <strong>镜像+标签</strong> 来管理线上发行版本的应用包</li>
+<li>github action 让我们能在应用push时自动化的构建出新的 docker 镜像并发布到远程仓库</li>
+<li>此外 docker hub 也支持 webhook, 当新的镜像push过来时, 发送事件到我们个人服务器的自动化部署服务上, 然后由我们的自动化部署服务来直接 <code>docker run</code> 最新版本的镜像 :)</li>
+<li>对于私有应用, 而不愿意发布到公共的 docker hub 的, 可以充钱使用其私有镜像, 也可以像笔者一样有限使用阿里云的私有镜像 :)</li>
+<li>docker应用基于端口来暴露服务到宿主机, 比如本博客运行的容器暴露了端口 xxxx, 然后还需要宿主机通过比如 nginx 来将外部域名(blog.yitimo.com)反向代理到端口 xxxx 上 :)</li>
+</ul>
+<h3>一张图总结</h3>
+<p>还没画好:)</p>
+<h2>扩展</h2>
+<ul>
+<li><a href="https://www.docker.com/get-started">Docker get started</a></li>
+<li><a href="https://docs.github.com/en/actions/quickstart">Github action</a></li>
+<li><a href="https://www.aliyun.com/product/acr">阿里云容器镜像服务</a></li>
+</ul>
+</div>
+</body>
+</html>

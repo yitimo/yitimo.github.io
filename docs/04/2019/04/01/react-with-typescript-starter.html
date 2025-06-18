@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>从零搭建 webpack+react+typescript 启动项目 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>从零搭建 webpack+react+typescript 启动项目</h1>
+    <div><p>本文将不使用脚手架(<code>create-react-app</code>)，从空项目开始搭建一个基本的react启动项目，并配置<code>typescript</code>。涉及到的技术有：</p>
+<ul>
+<li>yarn/npm</li>
+<li>webpack</li>
+<li>typescript</li>
+<li>react</li>
+<li>less</li>
+</ul>
+<p>首先初始化一个空项目，像这样：</p>
+<p><img src="/assets/images/201904/0101.png" alt="Create Empty Dir" /></p>
+<p>具体的项目信息可以自定义，本文只关心应用部分。</p>
+<h2>安装依赖</h2>
+<p>需要安装的依赖分这么几类：react库相关、webpack loader相关、webpack plugin相关。</p>
+<table><thead><tr><th>名称</th><th>作用</th></tr></thead><tbody>
+<tr><td>react <br /> react-dom <br /> react-router-dom <br /> ...</td><td>react 库相关依赖，按需添加</td></tr>
+<tr><td>typescript</td><td></td></tr>
+<tr><td>awesome-typescript-loader</td><td>处理<code>.tsx</code>文件</td></tr>
+<tr><td>css-loader <br /> less-loader</td><td>处理样式</td></tr>
+<tr><td>url-loader</td><td>配合 <code>MiniCssExtractPlugin</code> 处理样式中内联的字体、图标等资源</td></tr>
+<tr><td>CopyWebpackPlugin</td><td>帮助直接复制指定资源到打包输出(比如图片等静态资源)</td></tr>
+<tr><td>HtmlWebpackPlugin</td><td>帮助渲染入口<code>html</code>文件，将打包结果自动引入</td></tr>
+<tr><td>MiniCssExtractPlugin</td><td>帮助压缩和单独打包<code>样式</code></td></tr>
+<tr><td>webpack.DefinePlugin</td><td>webpack内置，帮助注入全局变量到应用代码中</td></tr>
+<tr><td>TerserWebpackPlugin</td><td>帮助压缩打包结果和摇树优化</td></tr>
+</tbody></table>
+<p>可以之后用到哪些装哪些，也可以一口气全部先装好：</p>
+<pre><code class="language-shell">yarn add react react-dom
+yarn add -D typescript @types/react @types/react-dom webpack webpack-cli webpack-dev-server awesome-typescript-loader less less-loader url-loader terser-webpack-plugin mini-css-extract-plugin html-webpack-plugin 
+</code></pre>
+<p>不要忘了加个<code>.gitignore</code>排除掉<code>node_modules</code>这些不需要托管的文件。</p>
+<p>然后我们需要这么几个文件：</p>
+<ul>
+<li>tsconfig.json</li>
+<li>webpack.config.json</li>
+<li>index.html // 入口html</li>
+<li>index.ts // 应用入口</li>
+<li>global.less // 全局样式</li>
+<li>App // react应用代码</li>
+<li>
+<ul>
+<li>App.tsx</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>App.less</li>
+</ul>
+</li>
+</ul>
+<h2>基本webpack配置</h2>
+<p>下一步准备基本的webpack配置，先不包含任何loader或plugin：</p>
+<table><thead><tr><th>配置名</th><th></th><th>作用</th></tr></thead><tbody>
+<tr><td>mode</td><td></td><td>webpack模式，比如开发或生产</td></tr>
+<tr><td>devtool</td><td></td><td>配置source-map，开发模式用inline-source-map</td></tr>
+<tr><td>entry</td><td></td><td>指定入口规则</td></tr>
+<tr><td>output</td><td></td><td>指定输出规则</td></tr>
+</tbody></table>
+<ul>
+<li>| filename | 打包结果命名规则</li>
+<li>| path | 打包输出目录
+resolve |  | 配置处理规则</li>
+<li>| extensions | 处理指定后缀名的文件</li>
+<li>| modules | 处理指定模块，比如node_modules和应用所在目录</li>
+<li>| alias | 依赖的别名，方便相对路径引用
+optimization |  | 优化配置</li>
+<li>| splitChunks | 将输出拆分打包</li>
+<li>| minimizer | 输出的压缩配置
+devServer |  | 开发服务器</li>
+</ul>
+<h2>tsconfig.json配置</h2>
+<p>tsconfig用于配置ts的编译规则，大致需要这么些配置：</p>
+<table><thead><tr><th>配置名</th><th>作用</th></tr></thead><tbody>
+<tr><td>compileOnSave</td><td>用于提供IDE支持，在保存时触发编译</td></tr>
+<tr><td>compilerOptions.module</td><td>指定生成代码的模块化类型</td></tr>
+<tr><td>compilerOptions.target</td><td>指定生成的es版本</td></tr>
+<tr><td>compilerOptions.moduleResolution</td><td>分为ts默认方式和node方式，指如何来查找引入的依赖(import xxx from 'xxx')</td></tr>
+<tr><td>compilerOptions.typeRoots</td><td>指定类型声明文件(.d.ts)的路径(如果包不自带就到这里找) <br /> 配置正确了这些依赖才会有代码提示</td></tr>
+<tr><td>compilerOptions.strictNullChecks</td><td>是否严格检查空值</td></tr>
+<tr><td>compilerOptions.baseUrl</td><td>基于哪个目录编译</td></tr>
+<tr><td>compilerOptions.paths</td><td>可以配置全局路径别名以免去太多<code>../..</code>的相对路径</td></tr>
+<tr><td>compilerOptions.jsx</td><td>为react准备的配置，提供更多react特性支持</td></tr>
+<tr><td>include</td><td>只编译指定目录下的ts</td></tr>
+</tbody></table>
+<h2>loader配置</h2>
+<p>较简单的loader需要以下三个：</p>
+<pre><code class="language-javascript">{
+    test: /\.(ts|tsx)$/,
+    loader: &quot;awesome-typescript-loader&quot;,
+    options: {
+        configFileName: &quot;modoc/tsconfig.json&quot; // 如果需要指定tsconfig位置则在此配置
+    }
+},
+{
+    test: /\.(css|less)$/,
+    use: [
+        MiniCssExtractPlugin.loader, // 配合css单独分包
+        {
+            loader: &quot;css-loader&quot;
+        }, {
+            loader: &quot;less-loader&quot;,
+            options: {
+                javascriptEnabled: true
+            }
+        }]
+},
+{
+    test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+    use: &quot;url-loader&quot; // 加载css中的资源文件
+}
+</code></pre>
+<p>除此之外，笔者因为项目中引入了<code>monaco-editor</code>，需要给它单独配置<code>babel-loader</code>：</p>
+<pre><code class="language-javascript">{
+    test: /\.js$/,
+    use: {
+        loader: 'babel-loader',
+        options: {
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-syntax-dynamic-import']
+        }
+    },
+    include: [path.resolve(__dirname, &quot;../node_modules/monaco-editor&quot;)] // 只处理monaco-editor
+}
+</code></pre>
+<h2>Plugins配置</h2>
+<p>plugins配置可以让webpack的打包规则更灵活，比较简单的配置只需要下面这几个plugin：</p>
+<pre><code class="language-javascript">new CopyWebpackPlugin([
+    { from: &quot;modoc/assets&quot;, to: &quot;assets&quot; } // 打包时复制资源文件
+]),
+new HtmlWebpackPlugin({ // 入口html配置
+    filename: &quot;index.html&quot;,
+    template: &quot;modoc/index.html&quot;,
+    inject: &quot;body&quot;,
+    chunks: &quot;all&quot;,
+    minify: true,
+    xhtml: true,
+    hash: true
+}),
+new MiniCssExtractPlugin({ // css单独分包配置
+    filename: '[name].[hash].css',
+    chunkFilename: '[name].[hash].chunk.css',
+})
+</code></pre>
+<p>完整的配置<a href="https://github.com/yitimo/momo/blob/master/modoc/webpack.config.common.js">看这里</a>。配置的核心包括：入口(entry)、输出(output)、loader、plugin、压缩(optimization)。</p>
+<p><em>草稿待完善</em></p>
+</div>
+</body>
+</html>

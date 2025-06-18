@@ -1,0 +1,10 @@
+{
+  "title": "再见二丁目",
+  "email": "admin@yitimo.com",
+  "description": "yitimo的个人日志",
+  "baseurl": "",
+  "url": "https://www.yitimo.com",
+  "github_username": "yitimo",
+  "markdown": "kramdown",
+  "dist": "docs"
+}

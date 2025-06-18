@@ -1,0 +1,24 @@
+@import './variable.scss';
+
+:root {
+    --header-height: 80px;
+}
+
+@media (max-width: 1150px) {
+    :root {
+        --header-height: 72px;
+    }
+}
+@media (max-width: 812px) {
+    :root {
+        --header-height: 56px;
+    }
+}
+
+@import './global.scss';
+@import './layout.scss';
+@import './article.scss';
+
+@import './global.m.scss';
+@import './layout.m.scss';
+@import './article.m.scss';

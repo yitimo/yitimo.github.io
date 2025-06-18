@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试react组件 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>测试react组件</h1>
+    <div><h2>快照测试</h2>
+<p>一般UI组件的测试方法都比较相似，React组件也是如此。渲染可视化的UI界面会需要我们运行起整个app(即真正运行应用然后用肉眼进行测试)，而我们可以使用测试渲染器来快速生成React组件树的序列化结果。比如下面这样测试一个组件<code>&lt;Link /&gt;</code>:</p>
+<pre><code class="language-js">import React from 'react';
+import Link from '../Link.react';
+import renderer from 'react-test-renderer';
+
+it('renders correctly', () =&gt; {
+  const tree = renderer.create(
+    &lt;Link page=&quot;http://www.facebook.com&quot;&gt;Facebook&lt;/Link&gt;
+  ).toJSON();
+  expect(tree).toMatchSnapshot();
+});
+</code></pre>
+<p>首次运行测试时，jest会创建一个快照文件，看起来像这样:</p>
+<pre><code class="language-js">exports[`renders correctly 1`] = `
+&lt;a
+  className=&quot;normal&quot;
+  href=&quot;http://www.facebook.com&quot;
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+&gt;
+  Facebook
+&lt;/a&gt;
+`;
+</code></pre>
+<h3>这个快照产物应该被进行git提交，并且需要参与进code review过程</h3>
+<p>jest将快照格式化成了比较可读的格式。在随后的测试运行时，jest会直接比较渲染的输出是否和上一次的快照匹配。如果匹配一致了，则测试通过。如果不匹配了，则可能:</p>
+<ol>
+<li>存在一个组件展现的BUG了(组件存在BUG导致两次渲染的结果不一样)</li>
+<li>组件的实现改变了导致快照需要被更新</li>
+</ol>
+<p>如果是情况2，可以传入 <code>-u</code> 参数表明这次测试是用来更新快照的，还可以传入 <code>--testNamePattern</code> 来只更新匹配名称的快照。<strong>需要谨慎操作，不要无意将错误的快照更新了。</strong></p>
+<h3>测试结果应该是恒定的</h3>
+<p>测试应该是固定不变的。意思是，多次运行同一个未经修改的组件的测试，都应该得到相同的快照产出。你需要保证不要将一些动态字段加入快照，比如时间戳等，可能每次运行都会不同，此时需要对其进行模拟:</p>
+<pre><code class="language-js">Date.now = jest.fn(() =&gt; 1482363367071);
+</code></pre>
+<p>这样模拟了时间函数后，每次运行测试用例，时间值都会是固定的，也就能得到相同的快照了。</p>
+<h3>在持续集成系统中, 快照不会被自动编写</h3>
+<p>除非手动指定 <code>--updateSnapshot</code>, 当jest在持续集成系统中运行时，新快照都不会被自动编写。快照应该被当作是代码的一部分，应该在外部被测试通过，而不应该在持续集成系统中来更新快照。</p>
+<h3>使用场景</h3>
+<ol>
+<li>在不需要或不方便实际运行应用时保证没有把一个组件改坏
+<ol>
+<li>如果是真的需要修改(比如样式、命名、文案)的，也可以用来保证被修改的部分正是需要修改的，然后更新快照</li>
+<li>所有动态的值(接口数据、时间函数等), 都应该进行模拟，保证快照是一致的</li>
+</ol>
+</li>
+<li>前端组件库会被很多其他使用者应用而无法实际复现运行，快照能有效保证没有把组件库的展现改坏</li>
+<li>约束我们写无状态的组件</li>
+</ol>
+<h2>浅渲染的组件测试</h2>
+<h3>劝退</h3>
+<p>即使很多人声称<code>enzyme</code>为代表的的各种组件可以用来很容易的进行组件测试，但是对于UI组件这样以展示为目的的东西(不同于js模块)，把组件先渲染成虚拟DOM，并在脑海里想象这个虚拟DOM，然后用expect来验证虚拟DOM的各种属性，以及交互造成的属性变化，始终是抽象的。</p>
+<ul>
+<li>如果条件允许，能直接运行起应用亲自用肉眼和手指来测试一定是最高效直观的。</li>
+<li>组件测试经常会导致一个问题: 编写(修改)测试的时间远远超过了编写组件本身的时间。</li>
+</ul>
+<p><strong>如何避免组件测试</strong></p>
+<p>将复杂应用拆分成多个微应用:</p>
+<ul>
+<li>每个应用都能独立运行</li>
+<li>应用之间有规范的通信方式(url传参、storage、后端缓存)</li>
+<li>应用本身能很容易的运行起来(高可配置性, 可以轻松模拟环境、来自其他应用的传参、向其他应用传参)</li>
+<li>将应用内的多数组件提纯，然后使用快照测试</li>
+</ul>
+<h3>没劝住</h3>
+<p>我们还可以这样进行测试: 将测试组件渲染成虚拟DOM，对这个虚拟DOM进行各种交互和检查，由于目的只是测试当前组件，所以只需要进行浅渲染，即所有子组件都不进行渲染原样输出即可。</p>
+<pre><code class="language-js">import {shallow} from 'enzyme';
+
+describe('Enzyme Shallow', function () {
+  it('App\'s title should be Todos', function () {
+    let app = shallow(&lt;App/&gt;);
+    expect(app.find('h1').text()).to.equal('Todos');
+  });
+};
+</code></pre>
+<p>上述代码浅渲染了<code>&lt;App /&gt;</code>组件, 并检查其是否存在标题为<code>Todos</code>的<code>h1</code>元素。过程比较抽象，由于没有实际运行应用，只能在脑海里想象这个组件会渲染成什么样，然后用你觉得足够的<code>expect</code>来证明。</p>
+</div>
+</body>
+</html>

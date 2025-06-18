@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>动态切换antd主题色配置 | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>动态切换antd主题色配置</h1>
+    <div><p><a href="https://ant.design/docs/react/customize-theme-cn">Ant Design</a>官网介绍了其主题色能力，并且相对模糊的提到了通过less来动态切换主题色的方案(底部<a href="https://medium.com/@mzohaib.qc/ant-design-dynamic-runtime-theme-1f9a1a030ba0">社区教程</a>中)。而<a href="https://ant.design">ant.design</a>本身看起来也是用同一方案实现了动态主题色切换。本文将介绍并配置此动态主题方案，即侧重<code>antd-theme-webpack-plugin</code>这个插件配合<code>antd</code>+<code>react</code>的使用，以后再另行介绍<code>less</code>的<code>modifyVars</code>原理。</p>
+<h2>项目准备</h2>
+<p>首先准备两个less文件用于定义全局的主题样式，比如笔者放在了<code>src/styles</code>下：</p>
+<p><img src="/assets/images/201904/0701.png" alt="Add global less" /></p>
+<p>在<code>_var.less</code>中引入antd默认样式：</p>
+<pre><code class="language-less">@import '~antd/lib/style/themes/default.less';
+</code></pre>
+<p>除此之外项目中的其他自定义变量都可以在这里定义。</p>
+<p>在<code>global.less</code>中引入<code>_var.less</code>，这里面定义所有的全局样式，比如先来一个class：</p>
+<pre><code class="language-less">@import './_var.less';
+/**
+ * 此处定义整个应用所有组件的主题样式
+ * 组件自己的less(即其他所有less)均无法使用定制主题色，而是使用默认主题色
+ */
+
+.primary {
+    background: @primary-color;
+}
+</code></pre>
+<p>然后记得在应用中引入<code>global.less</code>，比如<code>index.js</code>中：</p>
+<pre><code class="language-javascript">import React from 'react';
+import ReactDOM from 'react-dom';
+import './styles/global.less';
+import App from './App';
+ReactDOM.render(&lt;App /&gt;, document.getElementById('root'));
+</code></pre>
+<h2>webpack配置</h2>
+<p>在webpack配置中需要新增一个plugin即一开始安装的<code>antd-theme-webpack-plugin</code>。在<code>HtmlWebpackPlugin</code>之后添加这个插件：</p>
+<pre><code class="language-javascript">new AntDesignThemePlugin({
+    indexFileName: 'index.html',
+    antDir: path.resolve(__dirname, '../node_modules/antd'),
+    stylesDir: path.resolve(__dirname, '../src/styles'),
+    varFile: path.resolve(__dirname, '../src/styles/_var.less'),
+    mainLessFile: path.resolve(__dirname, '../src/styles/global.less'),
+    themeVariables: [
+        '@primary-color'
+    ],
+}),
+</code></pre>
+<p>根据不同项目需要各自指定正确的路径配置，其中<code>antDir</code>、<code>stylesDir</code>、<code>varFile</code>、<code>mainLessFile</code>各自对应<code>antd</code>依赖位置、上面定义的<code>styles</code>目录位置、变量less位置、全局less位置。</p>
+<p><code>themeVariables</code>用于指定需要替换颜色的变量名，根据自己需求配置。</p>
+<h3>indexFileName</h3>
+<p>配置中的<code>indexFileName</code>字段为<code>index.html</code>，实际上当项目的<code>index.html</code>位置变化时，都必须指定正确的路径，此配置的作用是由插件来自动注入全局less到<code>index.html</code>，如果找不到或者为指定这个字段，则需要手动往项目的<code>index.html</code>中添加这样的配置：</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet/less&quot; type=&quot;text/css&quot; href=&quot;color.less&quot; /&gt;
+&lt;script&gt;window.less = { async: false, env: 'production', javascriptEnabled: true };&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot; src=&quot;assets/less.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>这三行代码做的事情是：</p>
+<ol>
+<li>引入一个<code>color.less</code>，此文件由之后less生成。</li>
+<li>配置全局less，如果是3.x版本需要配置<code>javascriptEnabled: true</code>，<code>antd-theme-webpack-plugin</code>自动生成的话目前使用的是2.7.2版本的CDN。</li>
+<li>全局引入less，与项目中自行配置的less不同，此less专门用于指定的这两个less和antd内部样式，而项目中的less则用于具体组件样式(所以只有antd内部和指定的<code>_var.less</code>和<code>global.less</code>支持动态更改主题色)。</li>
+</ol>
+<p>换句话说，你只要检查最终生成的<code>index.html</code>有没有自动注入这三行less配置(或者手动配置)就能判断是否配置成功。</p>
+<h2>总结</h2>
+<p>关于使用，做法是在需要初始化或切换主题色的地方通过<code>window.less.modifyVars({antd主题色名: 自定义颜色值})</code>来设置主题色。</p>
+<p>至此最简单的支持动态切换主题的antd项目已经配置好了，以下是笔者发现的几个坑点：</p>
+<ul>
+<li><code>indexFileName</code>一定要路径正确才能成功自动注入全局less，可以跟项目中<code>HtmlWebpackPlugin</code>的<code>filename</code>保持一致即可。</li>
+<li>项目中所有需要主题色的样式，都要集中到<code>_var.less</code>跟<code>global.less</code>中，否则访问到的主题色是antd默认的，而不是自定义好的。</li>
+<li>配置会自动生成<code>color.less</code>文件，但路径不一定就在<code>index.html</code>同级(根据项目配置)导致无法访问到，此时需要在插件配置中添加<code>publicPath</code>配置，值与<code>webpack</code>的<code>output.publicPath</code>保持一致即可。</li>
+<li>ChromeExtension不允许html中内联js脚本，此时不能再使用<code>indexFileName</code>自动注入less，而必须另外想办法来手动配置全局less。</li>
+<li>手动配置的less，需要注意2/3版本less的区别以及自己管理好publicPath(需要正确访问到color.less)。</li>
+</ul>
+</div>
+</body>
+</html>

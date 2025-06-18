@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>【翻译】Getting Started Tutorial | 再见二丁目</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>【翻译】Getting Started Tutorial</h1>
+    <div><p>原文链接：<a href="https://developer.chrome.com/extensions/getstarted">Getting Started Tutorial</a></p>
+<p>Chrome插件(以下简称插件)由不同但有凝聚力的组件组成。这些组件包括 <a href="https://developer.chrome.com/background_pages.html">background scripts</a>，<a href="https://developer.chrome.com/content_scripts.html">content scripts</a>，<a href="https://developer.chrome.com/optionsV2">options page</a>，<a href="https://developer.chrome.com/user_interface.html">UI elements</a>，以及许多的具体逻辑页面。插件组件使用web开发技术实现：HTML、JS和CSS。一个插件要实现的功能决定了它将使用到哪些组件，而不是全都会用到。</p>
+<p>本文将搭建一个插件，让用户可以更改<code>developer.chrome.com</code>站内所有页面的背景色。它将使用到许多核心组件以便介绍他们之间的关系。</p>
+<p>首先创建一个新的目录来存放插件文件，完整的插件代码可以在<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started_complete.zip">这里下载</a>。</p>
+<h2>创建Manifest</h2>
+<p>插件都从它们的<code>manifest</code>起步，创建<code>manifest.json</code>包含以下内容，或直接<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/manifest.json">下载</a>：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;description&quot;: &quot;Build an Extension!&quot;,
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>现在这个插件可以直接在Chrome中添加(只有单个manifest文件，连页面和图标都没有)。</p>
+<h2>添加指令</h2>
+<p>尽管现在插件安装好了，它还没有任何指令。现在添加一个<code>background</code>属性，并创建相应文件(<code>background.js</code>)：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;description&quot;: &quot;Build an Extension!&quot;,
+    &quot;background&quot;: {
+        &quot;scripts&quot;: [&quot;background.js&quot;],
+        &quot;persistent&quot;: false
+    },
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>以上代码说明插件现在包含了一个非持久化运行的后台脚本，在里面可以做一些监听事件。</p>
+<p>插件一旦安装就会需要一个持久化变量的信息。先在后台脚本中添加<code>runtime.onInstalled</code>事件的监听，回调中将设置一个值到storage中。并允许多个插件后续来访问和更新这个值：</p>
+<pre><code>chrome.runtime.onInstalled.addListener(function() {
+    chrome.storage.sync.set({color: '#3aa757'}, function() {
+        console.log(&quot;The color is green.&quot;);
+    });
+});
+</code></pre>
+<p>包括<code>storage</code>在内的大多数API都必须在manifest的permissions属性中声明过，像这样：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;description&quot;: &quot;Build an Extension!&quot;,
+    &quot;permissions&quot;: [&quot;storage&quot;],
+    &quot;background&quot;: {
+        &quot;scripts&quot;: [&quot;background.js&quot;],
+        &quot;persistent&quot;: false
+    },
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>现在刷新插件，会多出来一个<code>背景页</code>按钮，点击可以看到后台代码打出的log：&quot;The color is green.&quot;。</p>
+<h2>实现用户接口</h2>
+<p>插件可以有很多形式的用户接口，本插件将用到popup(弹出式页面)。创建文件<code>popup.html</code>，包含如下代码，用于显示一个按钮用于点击来更改背景色：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+  &lt;html&gt;
+    &lt;head&gt;
+      &lt;style&gt;
+        button {
+          height: 30px;
+          width: 30px;
+          outline: none;
+        }
+      &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;button id=&quot;changeColor&quot;&gt;&lt;/button&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>现在在manifest的page_action属性中声明这个文件作为弹出页面：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;description&quot;: &quot;Build an Extension!&quot;,
+    &quot;permissions&quot;: [&quot;storage&quot;],
+    &quot;background&quot;: {
+        &quot;scripts&quot;: [&quot;background.js&quot;],
+        &quot;persistent&quot;: false
+    },
+    &quot;page_action&quot;: {
+        &quot;default_popup&quot;: &quot;popup.html&quot;
+    },
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>然后继续配置插件的<a href="https://developer.chrome.com/extensions/examples/tutorials/get_started/images.zip">图标</a>，其中page_action中的图标用于在右上角显示，外部的icons中的图标用于在插件管理页中显示：</p>
+<pre><code>{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;description&quot;: &quot;Build an Extension!&quot;,
+    &quot;permissions&quot;: [&quot;storage&quot;],
+    &quot;background&quot;: {
+        &quot;scripts&quot;: [&quot;background.js&quot;],
+        &quot;persistent&quot;: false
+    },
+    &quot;page_action&quot;: {
+        &quot;default_popup&quot;: &quot;popup.html&quot;,
+        &quot;default_icon&quot;: {
+            &quot;16&quot;: &quot;images/get_started16.png&quot;,
+            &quot;32&quot;: &quot;images/get_started32.png&quot;,
+            &quot;48&quot;: &quot;images/get_started48.png&quot;,
+            &quot;128&quot;: &quot;images/get_started128.png&quot;
+        }
+    },
+    &quot;icons&quot;: {
+        &quot;16&quot;: &quot;images/get_started16.png&quot;,
+        &quot;32&quot;: &quot;images/get_started32.png&quot;,
+        &quot;48&quot;: &quot;images/get_started48.png&quot;,
+        &quot;128&quot;: &quot;images/get_started128.png&quot;
+    },
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>如果现在重载插件，将会显示一个灰色图标，但没有任何功能。因为<code>manifest</code>中定义了<code>page_actions</code>，将由插件来告诉浏览器用户合适可以和<code>popup.html交互</code>。</p>
+<p>现在在后台脚本中添加新功能：</p>
+<pre><code class="language-javascript">chrome.runtime.onInstalled.addListener(function() {
+    chrome.storage.sync.set({color: '#3aa757'}, function() {
+      console.log('The color is green.');
+    });
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+        chrome.declarativeContent.onPageChanged.addRules([{
+                conditions: [new chrome.declarativeContent.PageStateMatcher({
+                pageUrl: {hostEquals: 'developer.chrome.com'},
+            })
+            ],
+                actions: [new chrome.declarativeContent.ShowPageAction()]
+        }]);
+    });
+});
+</code></pre>
+<p>现在插件将需要<code>declarativeContent</code>权限：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    ...
+    &quot;permissions&quot;: [&quot;declarativeContent&quot;, &quot;storage&quot;],
+    ...
+}
+</code></pre>
+<p>现在当用户在<code>developer.chrome.com</code>站内时插件将变成正常彩色图标，，点击时将弹出<code>popup.html</code>页面。</p>
+<p>弹出页面的最后一步是添加按钮颜色。创建页面脚本<code>popup.js</code>：</p>
+<pre><code class="language-javascript">let changeColor = document.getElementById('changeColor');
+
+chrome.storage.sync.get('color', function(data) {
+    changeColor.style.backgroundColor = data.color;
+    changeColor.setAttribute('value', data.color);
+});
+</code></pre>
+<p>做的事情是从存储中获取颜色并设置。现在在popup.html中添加这个脚本：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    ...
+    &lt;body&gt;
+        &lt;button id=&quot;changeColor&quot;&gt;&lt;/button&gt;
+        &lt;script src=&quot;popup.js&quot;&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>重载插件你将看到一个绿色按钮。</p>
+<h2>Layer Logic</h2>
+<p>插件现在知道了弹出层要当用户在<code>developer.chrome.com</code>站内时可用，并显示一个有颜色的按钮，但还需要进一步的用户交互。更新<code>popup.js</code>：</p>
+<pre><code class="language-javascript">let changeColor = document.getElementById('changeColor');
+...
+changeColor.onclick = function(element) {
+    let color = element.target.value;
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.executeScript(
+        tabs[0].id,
+        {code: 'document.body.style.backgroundColor = &quot;' + color + '&quot;;'});
+    });
+};
+</code></pre>
+<p>更新的代码添加了一个点击事件到按钮，将会出发一个动态注入脚本。这将把页面的背景色设为跟按钮颜色相同。使用程序注入允许用户手动触发内容脚本，而不是添加不想要的代码到web页面中。</p>
+<p>manifest中需要添加<code>activeTab</code>权限来允许插件临时访问<code>tabs</code>接口，以允许插件调用<code>tabs.executeScript</code>方法。</p>
+<p>本插件现在可用了！重载插件，刷新页面，打开popup并点击按钮来把页面变绿！然而，有些用户可能想要将背景色更改为不同的颜色。</p>
+<h2>给用户选项</h2>
+<p>插件现在只允许用户更改背景色为绿色。</p>
+<p>创建<code>options.html</code>页面包含如下代码：</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+    &lt;style&gt;
+        button {
+        height: 30px;
+        width: 30px;
+        outline: none;
+        margin: 10px;
+        }
+    &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id=&quot;buttonDiv&quot;&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+            &lt;p&gt;Choose a different background color!&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+    &lt;script src=&quot;options.js&quot;&gt;&lt;/script&gt;
+&lt;/html&gt;
+</code></pre>
+<p>并在manifest中配置这个选项页面：</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;Getting Started Example&quot;,
+    ...
+    &quot;options_page&quot;: &quot;options.html&quot;,
+    ...
+    &quot;manifest_version&quot;: 2
+}
+</code></pre>
+<p>重载插件并点击<code>详细信息</code>，点击<code>扩展程序选项</code>即可看到这个页面。现在添加<code>options.js</code>包含如下内容：</p>
+<pre><code class="language-javascript">let page = document.getElementById('buttonDiv');
+const kButtonColors = ['#3aa757', '#e8453c', '#f9bb2d', '#4688f1'];
+function constructOptions(kButtonColors) {
+    for (let item of kButtonColors) {
+    let button = document.createElement('button');
+    button.style.backgroundColor = item;
+    button.addEventListener('click', function() {
+        chrome.storage.sync.set({color: item}, function() {
+        console.log('color is ' + item);
+        })
+    });
+    page.appendChild(button);
+    }
+}
+constructOptions(kButtonColors);
+</code></pre>
+<p>现在有四种颜色可选了。这几个页面都共享保存在插件全局storage中的颜色值。</p>
+</div>
+</body>
+</html>
