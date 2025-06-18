@@ -3,6 +3,9 @@
 .jekyll-cache
 .DS_Store
 
+temps
+dist
+
 dist-core
 release
 

@@ -1,4 +1,4 @@
-@import './variable.scss';
+@use './variable' as vars;
 
 .yitiblog {
     margin: 0 auto;
@@ -6,7 +6,7 @@
     .block {
         width: 100%;
         position: relative;
-        max-width: $max-width;
+        max-width: vars.$max-width;
         margin:  0 auto;
         min-height: 100%;
     }
@@ -27,7 +27,7 @@
     color: var(--theme-color-on-primary);
     
     &-inner {
-        padding: 0 $space;
+        padding: 0 vars.$space;
     }
 
     .flex {
@@ -39,11 +39,11 @@
         border-radius: 56px;
     }
     .title {
-        margin-left: $space;
+        margin-left: vars.$space;
         transition: 0.2s linear;
     }
     .theme-btn {
-        font-size: $font-lg;
+        font-size: vars.$font-lg;
         transition: 0.2s linear;
         cursor: pointer;
     }
@@ -57,7 +57,7 @@
 }
 
 .yitiblog-footer {
-    padding: $space-l*2 0;
+    padding: vars.$space-l*2 0;
     background: color-mix(in srgb, var(--theme-color-primary) 20%, transparent);
     backdrop-filter: blur(5px);
     color: var(--theme-color-outline);
@@ -66,23 +66,23 @@
         text-align: center;
     }
     .flex {
-        margin-bottom: $space-l;
+        margin-bottom: vars.$space-l;
     }
     ul {
         list-style: none;
         .link {
             display: block;
-            padding: $space-s $space;
-            margin: $space-s 0;
+            padding: vars.$space-s vars.$space;
+            margin: vars.$space-s 0;
         }
     }
     .copyright {
-        margin-top: $space;
+        margin-top: vars.$space;
         text-align: center;
 
         li {
             display: inline-block;
-            padding: $space-s $space;
+            padding: vars.$space-s vars.$space;
         }
     }
     .recordation:hover {
@@ -98,7 +98,7 @@
 }
 
 .post-item {
-    padding: $space;
+    padding: vars.$space;
     transition: 0.2s linear;
     position: relative;
     align-items: center;
@@ -124,20 +124,20 @@
         border-top: 1px solid var(--theme-color-primary);
     }
     &-desc {
-        margin-top: $space;
+        margin-top: vars.$space;
         color: var(--theme-color-outline);
     }
 
     &-time {
         color: var(--theme-color-outline);
         text-align: center;
-        margin-left: $space-m;
+        margin-left: vars.$space-m;
         .date {
             font-weight: 600;
         }
     }
     p:not(:first-of-type) {
-        margin-top: $space-m;
+        margin-top: vars.$space-m;
 
         &.month {
             margin-top: 0;
@@ -149,7 +149,7 @@
 }
 
 .yitiblog-pager {
-    padding: $space-l $space;
+    padding: vars.$space-l vars.$space;
     color: var(--theme-color-on-background);
     text-align: center;
 

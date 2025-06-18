@@ -1,9 +1,9 @@
-@import './variable.scss';
+@use './variable' as vars;
 
 @media (max-width: 1150px) {
     .yitiblog {
         .block {
-            max-width: $max-width-md;
+            max-width: vars.$max-width-md;
         }
     }
     .yitiblog-header {

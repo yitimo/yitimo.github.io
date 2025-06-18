@@ -1,4 +1,4 @@
-@import './variable.scss';
+@use './variable' as vars;
 
 html, body, div, ul, li, label, p, hr, h1, h2, h3, h4, h5 {
     margin: 0; padding: 0;
@@ -7,7 +7,7 @@ html, body, div, ul, li, label, p, hr, h1, h2, h3, h4, h5 {
 html, body {
     background: var(--theme-color-background);
     color: var(--theme-color-on-background);
-    font-size: $font;
+    font-size: vars.$font;
     min-height: 100%;width: 100%;
     font-family: "SF Pro SC","SF Pro Display","SF Pro Icons","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif;
     scroll-padding-top: var(--header-height);
@@ -18,7 +18,7 @@ html, body {
     outline: none;
 }
 ::selection {
-    border-radius: $border-radius;
+    border-radius: vars.$border-radius;
     background-color: var(--theme-color-secondary);
     color: var(--theme-color-on-secondary);
 }
@@ -42,13 +42,13 @@ a:hover, a:active, a:checked {
 }
 
 .font-l {
-    font-size: $font-lg;
+    font-size: vars.$font-lg;
 }
 .font {
-    font-size: $font;
+    font-size: vars.$font;
 }
 .font-m {
-    font-size: $font-md;
+    font-size: vars.$font-md;
 }
 
 .flex {

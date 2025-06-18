@@ -5,6 +5,5 @@
   "baseurl": "",
   "url": "https://www.yitimo.com",
   "github_username": "yitimo",
-  "markdown": "kramdown",
-  "dist": "docs"
+  "dist": "temps"
 }

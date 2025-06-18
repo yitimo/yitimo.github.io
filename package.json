@@ -1,0 +1,18 @@
+{
+  "name": "yitiblog-vue",
+  "version": "1.0.0",
+  "description": "Vite version of yitimo's blog",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview"
+  },
+  "devDependencies": {
+    "markdown-it": "^14.1.0",
+    "sass": "^1.89.2",
+    "vite": "^6.3.5",
+    "yaml": "^2.8.0"
+  }
+}

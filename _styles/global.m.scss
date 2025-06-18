@@ -1,16 +1,16 @@
-@import './variable.scss';
+@use './variable' as vars;
 
 @media (max-width: 812px) {
     body {
-        font-size: $font-md;
+        font-size: vars.$font-md;
     }
     .font-l {
-        font-size: $font-lg - 4px;
+        font-size: vars.$font-lg - 4px;
     }
     .font {
-        font-size: $font-md;
+        font-size: vars.$font-md;
     }
     .font-m {
-        font-size: $font-md - 2px;
+        font-size: vars.$font-md - 2px;
     }
 }

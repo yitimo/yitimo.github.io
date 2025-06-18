@@ -1,4 +1,10 @@
-@import './variable.scss';
+@use './variable' as vars;
+@use './global';
+@use './layout';
+@use './article';
+@use './global.m' as global-m;
+@use './layout.m' as layout-m;
+@use './article.m' as article-m;
 
 :root {
     --header-height: 80px;
@@ -14,11 +20,3 @@
         --header-height: 56px;
     }
 }
-
-@import './global.scss';
-@import './layout.scss';
-@import './article.scss';
-
-@import './global.m.scss';
-@import './layout.m.scss';
-@import './article.m.scss';

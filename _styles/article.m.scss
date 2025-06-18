@@ -1,4 +1,4 @@
-@import './variable.scss';
+@use './variable' as vars;
 
 @media (max-width: 1150px) {
     .article {
@@ -10,7 +10,7 @@
 
 @media (max-width: 812px) {
     .article {
-        font-size: $font + 2px;
+        font-size: vars.$font + 2px;
 
         h1 {
             font-size: 32px;
