@@ -1,0 +1,32 @@
+[package]
+name = "ritiblog"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ritiblog"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+tokio = { version = "1.0", features = ["full"] }
+anyhow = "1.0"
+regex = "1.10"
+walkdir = "2.3"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.0", features = ["derive"] }
+html-escape = "0.2"
+futures = "0.3"
+rayon = "1.7"
+grass = "0.13"
+markdown = "1.0"
+
+[dependencies.uuid]
+version = "1.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]

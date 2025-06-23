@@ -11,3 +11,17 @@ release
 
 node_modules
 yarn-error.log
+
+# Rust build artifacts
+/ritiblog/target/
+/ritiblog/Cargo.lock
+/ritiblog/bin/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log files
+*.log
